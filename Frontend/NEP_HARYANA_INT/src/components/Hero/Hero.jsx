@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styles from './Hero.module.css';
 import heroBg from '../../assets/hero-bg.png';
 
@@ -56,9 +57,9 @@ function Hero() {
                 <polyline points="12 5 19 12 12 19" />
               </svg>
             </a>
-            <a href="#college-login" className={styles.ctaSecondary} id="btn-college-login">
+            <Link to="/signup" className={styles.ctaSecondary} id="btn-college-login">
               College Login
-            </a>
+            </Link>
           </div>
         </div>
       </div>
