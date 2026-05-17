@@ -1,0 +1,154 @@
+/* ============================================
+   Sign In Page — CSS Module
+   ============================================ */
+
+.pageContainer {
+  min-height: calc(100vh - 200px); /* Adjust based on navbar/footer height */
+  background: var(--off-white, #f7f8fa);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.pageContainer::before {
+  content: '';
+  position: absolute;
+  inset: -10%; /* Negative inset prevents blurred edges from showing */
+  background-image: url('../../assets/emblem.png');
+  background-size: 80vh;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(15px) opacity(0.12);
+  z-index: 0;
+}
+
+.signinCard {
+  background: #ffffff;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  border-top: 5px solid #e8791d; /* var(--saffron) */
+  padding: 40px 50px;
+  position: relative;
+  z-index: 1;
+}
+
+.signinHeader {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.signinHeader h2 {
+  font-family: 'Playfair Display', 'Georgia', serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0d1b2a; /* var(--navy-primary) */
+  margin-bottom: 10px;
+}
+
+.signinHeader p {
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #5a6e82;
+  font-size: 0.95rem;
+}
+
+.formGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1a2332;
+}
+
+.formGroup input {
+  font-family: 'Inter', system-ui, sans-serif;
+  width: 100%;
+  height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid #d1d9e2;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #1a2332;
+  transition: all 0.2s ease;
+  background: #f7f8fa; /* var(--off-white) */
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: #e8791d; /* var(--saffron) */
+  box-shadow: 0 0 0 3px rgba(232, 121, 29, 0.2);
+  background: #ffffff;
+}
+
+.formActions {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.submitBtn {
+  width: 100%;
+  height: 48px;
+  background: linear-gradient(135deg, #f97316 0%, #ea670c 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3);
+  letter-spacing: 0.02em;
+}
+
+.submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+}
+
+.submitBtn:active {
+  transform: translateY(0);
+}
+
+.signupPrompt {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: #5a6e82;
+}
+
+.signupLink {
+  color: #e8791d;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.signupLink:hover {
+  color: #c06610;
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .signinCard {
+    padding: 30px 20px;
+  }
+}

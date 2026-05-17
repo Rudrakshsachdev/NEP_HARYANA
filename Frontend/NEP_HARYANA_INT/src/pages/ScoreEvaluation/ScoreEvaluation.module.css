@@ -1,0 +1,182 @@
+.pageContainer {
+  padding: 30px;
+  background: #f4f6f8;
+  min-height: calc(100vh - 60px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.card {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 800px;
+}
+
+.cardHeader {
+  margin-bottom: 30px;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 20px;
+}
+
+.cardHeader h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #0d1b2a;
+  margin: 0;
+}
+
+.cardHeader p {
+  color: #718096;
+  font-size: 0.95rem;
+  margin: 8px 0 0;
+}
+
+.scoreOverview {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  background: #f8fafc;
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 600px) {
+  .scoreOverview {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.scoreCircle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #0d1b2a;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.scoreCircle h3 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+  color: #d97706;
+}
+
+.scoreCircle span {
+  font-size: 0.8rem;
+  color: #a0aec0;
+}
+
+.levelInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+@media (max-width: 600px) {
+  .levelInfo {
+    align-items: center;
+  }
+}
+
+.levelBadge {
+  background: #fef3c7;
+  color: #d97706; /* Gold/Amber */
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+.levelInfo p {
+  color: #4a5568;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.statusPill {
+  background: #ebf8ff;
+  color: #3182ce;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+/* Parameters */
+.parametersSection h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0d1b2a;
+  margin-bottom: 20px;
+}
+
+.paramList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.paramItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.paramInfo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.progressBar {
+  height: 8px;
+  background: #edf2f7;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressBar div {
+  height: 100%;
+  background: #e8791d; /* Saffron */
+  border-radius: 4px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 30px;
+}
+
+.downloadBtn {
+  background: #0d1b2a;
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.downloadBtn:hover {
+  background: #1a2f4c;
+}

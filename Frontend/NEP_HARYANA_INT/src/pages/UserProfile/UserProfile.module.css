@@ -1,0 +1,123 @@
+.pageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0d1b2a;
+  margin: 0;
+}
+
+.header p {
+  font-size: 0.85rem;
+  color: #718096;
+  margin: 4px 0 0;
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 30px;
+}
+
+.profileCard {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 20px;
+}
+
+.avatarLarge {
+  width: 100px;
+  height: 100px;
+  background: #0d1b2a;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.profileInfo h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0d1b2a;
+  margin: 0;
+}
+
+.role {
+  font-size: 0.9rem;
+  color: #e8791d;
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.college {
+  font-size: 0.8rem;
+  color: #718096;
+}
+
+.editBtn {
+  background: none;
+  border: 1px solid #e8791d;
+  color: #e8791d;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.editBtn:hover {
+  background: rgba(232, 121, 29, 0.05);
+}
+
+.detailsCard {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.detailsCard h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0d1b2a;
+  margin-bottom: 20px;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 0.75rem;
+  color: #a0aec0;
+  font-weight: 600;
+}
+
+.value {
+  font-size: 0.9rem;
+  color: #4a5568;
+  font-weight: 500;
+}

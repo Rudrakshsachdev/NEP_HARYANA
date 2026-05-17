@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import emblemImg from '../../assets/emblem.png';
 import './Navbar.css';
 
 function Navbar() {
+  const navigate = useNavigate();
   const [activeNav, setActiveNav] = useState('HOME');
   const [fontSize, setFontSize] = useState(16);
   const [highContrast, setHighContrast] = useState(false);
@@ -145,7 +147,7 @@ function Navbar() {
                 aria-label="Search portal"
               />
             </div>
-            <button className="signin-btn" id="btn-signin">
+            <button className="signin-btn" id="btn-signin" onClick={() => navigate('/signin')}>
               Sign in
             </button>
           </div>
@@ -159,11 +161,20 @@ function Navbar() {
             {navItems.map((item) => (
               <li key={item} className="nav-item">
                 <a
-                  href={`#${item.toLowerCase()}`}
+                  href={item === 'HOME' ? '/' : item === 'DASHBOARD' ? '/dashboard' : `#${item.toLowerCase()}`}
                   className={`nav-link ${activeNav === item ? 'active' : ''}`}
                   onClick={(e) => {
-                    e.preventDefault();
-                    setActiveNav(item);
+                    if (item === 'HOME' || item === 'DASHBOARD') {
+                      e.preventDefault();
+                      setActiveNav(item);
+                      navigate(item === 'HOME' ? '/' : '/dashboard');
+                    } else {
+                      // For other items, we might still want to prevent default if they are just scroll anchors
+                      // But if we are on a different page (like dashboard), scroll anchors won't work unless we go home first.
+                      // For now, let's just let them be anchors.
+                      e.preventDefault();
+                      setActiveNav(item);
+                    }
                   }}
                   id={`nav-${item.toLowerCase()}`}
                 >
