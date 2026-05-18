@@ -29,7 +29,7 @@ function Signup() {
 
   return (
     <div className={styles.pageContainer}>
-      <div className={styles.signupCard}>
+      <div className={`${styles.signupCard} ${styles.glass3d}`}>
         <div className={styles.signupHeader}>
           <h2>College Registration</h2>
           <p>Join the Haryana State Higher Education Council portal</p>

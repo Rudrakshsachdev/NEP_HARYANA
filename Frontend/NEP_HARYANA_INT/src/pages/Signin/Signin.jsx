@@ -23,7 +23,7 @@ function Signin() {
 
   return (
     <div className={styles.pageContainer}>
-      <div className={styles.signinCard}>
+      <div className={`${styles.signinCard} ${styles.glass3d}`}>
         <div className={styles.signinHeader}>
           <h2>Sign In</h2>
           <p>Access your institutional dashboard</p>
