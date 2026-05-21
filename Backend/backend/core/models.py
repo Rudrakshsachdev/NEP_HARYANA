@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -33,3 +35,23 @@ class CollegeProfile(models.Model):
 
 	def __str__(self):
 		return self.college_name
+
+
+class NominationHeaderSubmission(models.Model):
+	class InstitutionType(models.TextChoices):
+		UNIVERSITY = 'university', 'University'
+		COLLEGE = 'college', 'College'
+
+	form_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+	profile = models.OneToOneField(CollegeProfile, on_delete=models.CASCADE, related_name='nomination_header_submission')
+	institution_name = models.CharField(max_length=255)
+	aishe_code = models.CharField(max_length=30)
+	head_name = models.CharField(max_length=255)
+	head_contact = models.CharField(max_length=255)
+	hei_address = models.TextField()
+	institution_type = models.CharField(max_length=20, choices=InstitutionType.choices)
+	created_at = models.DateTimeField(auto_now_add=True)
+	updated_at = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return f'{self.institution_name} - Nomination Header'

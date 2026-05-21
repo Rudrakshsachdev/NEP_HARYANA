@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../Dashboard/Dashboard.module.css";
+import FormsHub from "./FormsHub/FormsHub";
 import {
   AUTH_TOKEN_KEY,
   AUTH_USER_KEY,
@@ -64,6 +65,10 @@ function CollegeDashboard() {
     {
       title: "Compliance Checks",
       icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
+    },
+    {
+      title: "Forms",
+      icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h7l5 5v11a2 2 0 01-2 2z",
     },
     {
       title: "Documents",
@@ -789,6 +794,8 @@ function CollegeDashboard() {
               </div>
             </div>
           </>
+        ) : activeMenu === "Forms" ? (
+          <FormsHub />
         ) : (
           <div className={styles.analyticsGrid}>
             <div className={styles.chartCard}>

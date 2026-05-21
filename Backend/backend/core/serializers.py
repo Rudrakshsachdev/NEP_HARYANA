@@ -5,7 +5,7 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 
-from .models import College, CollegeProfile
+from .models import College, CollegeProfile, NominationHeaderSubmission
 
 
 class CollegeSerializer(serializers.ModelSerializer):
@@ -81,6 +81,51 @@ class CollegeLoginSerializer(serializers.Serializer):
 
     def validate_email(self, value):
         return User.objects.normalize_email(value).lower()
+
+
+class NominationHeaderSubmissionSerializer(serializers.ModelSerializer):
+    form_id = serializers.UUIDField(read_only=True)
+    institution_name = serializers.CharField(read_only=True)
+    aishe_code = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = NominationHeaderSubmission
+        fields = [
+            'form_id',
+            'institution_name',
+            'aishe_code',
+            'head_name',
+            'head_contact',
+            'hei_address',
+            'institution_type',
+            'created_at',
+            'updated_at',
+        ]
+        read_only_fields = ['created_at', 'updated_at']
+
+    def create(self, validated_data):
+        profile = self.context['request'].user.college_profile
+        return NominationHeaderSubmission.objects.create(
+            profile=profile,
+            institution_name=profile.college_name,
+            aishe_code=profile.aishe_code,
+            **validated_data,
+        )
+
+    def update(self, instance, validated_data):
+        for field in ['institution_name', 'aishe_code', 'head_name', 'head_contact', 'hei_address', 'institution_type']:
+            setattr(instance, field, validated_data.get(field, getattr(instance, field)))
+        instance.save()
+        return instance
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['full_name'] = instance.profile.full_name
+        data['address'] = instance.profile.address
+        data['city'] = instance.profile.city
+        data['state'] = instance.profile.state
+        data['pin'] = instance.profile.pin
+        return data
 
 
 class PasswordResetRequestSerializer(serializers.Serializer):

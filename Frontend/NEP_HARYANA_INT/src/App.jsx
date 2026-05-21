@@ -8,6 +8,7 @@ import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import CollegeDashboard from "./pages/CollegeDashboard/CollegeDashboard";
+import NominationForm from "./pages/CollegeDashboard/NominationForm/NominationForm";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 
 function App() {
@@ -15,7 +16,8 @@ function App() {
   const isDashboard =
     location.pathname === "/dashboard" ||
     location.pathname === "/college/dashboard" ||
-    location.pathname === "/admin/dashboard";
+    location.pathname === "/admin/dashboard" ||
+    location.pathname.startsWith("/college/forms/");
 
   return (
     <>
@@ -28,6 +30,10 @@ function App() {
         <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/college/dashboard" element={<CollegeDashboard />} />
+        <Route
+          path="/college/forms/nomination/:formId"
+          element={<NominationForm />}
+        />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
       {!isDashboard && <Footer />}

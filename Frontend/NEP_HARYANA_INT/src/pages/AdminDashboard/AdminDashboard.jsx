@@ -32,7 +32,8 @@ function AdminDashboard() {
   const savedUser = getSavedAuthUser();
   const officerName = savedUser?.full_name || "Ms. Kavita Sharma";
   const officerRole = formatRole(savedUser?.role);
-  const departmentName = savedUser?.college_name || "Higher Education Department";
+  const departmentName =
+    savedUser?.college_name || "Higher Education Department";
   const zoneCode = savedUser?.aishe_code || "DHE-HR";
 
   const handleLogout = () => {
@@ -158,7 +159,9 @@ function AdminDashboard() {
               <span className={styles.breadcrumbActive}>{activeMenu}</span>
             </div>
             <h2>{activeMenu}</h2>
-            <p>Department oversight for approvals, compliance, and reporting.</p>
+            <p>
+              Department oversight for approvals, compliance, and reporting.
+            </p>
           </div>
 
           <div className={styles.headerActions}>
@@ -172,7 +175,10 @@ function AdminDashboard() {
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
-              <input type="text" placeholder="Search colleges, reports, grants..." />
+              <input
+                type="text"
+                placeholder="Search colleges, reports, grants..."
+              />
               <div className={styles.searchShortcut}>⌘K</div>
             </div>
 
@@ -182,23 +188,39 @@ function AdminDashboard() {
                 className={styles.notifBtn}
                 onClick={() => setShowNotifDropdown(!showNotifDropdown)}
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
-                <span className={`${styles.notifBadge} ${styles.pulse}`}>6</span>
+                <span className={`${styles.notifBadge} ${styles.pulse}`}>
+                  6
+                </span>
               </button>
               {showNotifDropdown && (
                 <div className={styles.dropdownMenu}>
                   <div className={styles.dropdownHeader}>Admin Alerts</div>
-                  <div className={styles.dropdownItem}>4 colleges are awaiting approval.</div>
-                  <div className={styles.dropdownItem}>2 grant submissions need review.</div>
-                  <div className={styles.dropdownItem}>Monthly compliance export is ready.</div>
+                  <div className={styles.dropdownItem}>
+                    4 colleges are awaiting approval.
+                  </div>
+                  <div className={styles.dropdownItem}>
+                    2 grant submissions need review.
+                  </div>
+                  <div className={styles.dropdownItem}>
+                    Monthly compliance export is ready.
+                  </div>
                 </div>
               )}
             </div>
 
             <div className={styles.profileWrapper}>
-              <div className={styles.userProfile} onClick={() => setShowProfileDropdown(!showProfileDropdown)}>
+              <div
+                className={styles.userProfile}
+                onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+              >
                 <div className={styles.avatar}>AD</div>
                 <div>
                   <h4>{officerName}</h4>
@@ -208,20 +230,40 @@ function AdminDashboard() {
 
               {showProfileDropdown && (
                 <div className={styles.dropdownMenu}>
-                  <div className={styles.dropdownItem} onClick={() => { setActiveMenu("College Approvals"); setShowProfileDropdown(false); }}>
+                  <div
+                    className={styles.dropdownItem}
+                    onClick={() => {
+                      setActiveMenu("College Approvals");
+                      setShowProfileDropdown(false);
+                    }}
+                  >
                     My Profile
                   </div>
-                  <div className={styles.dropdownItem} onClick={() => { setActiveMenu("Settings"); setShowProfileDropdown(false); }}>
+                  <div
+                    className={styles.dropdownItem}
+                    onClick={() => {
+                      setActiveMenu("Settings");
+                      setShowProfileDropdown(false);
+                    }}
+                  >
                     Settings
                   </div>
-                  <button type="button" className={styles.dropdownItemButton} onClick={handleLogout}>
+                  <button
+                    type="button"
+                    className={styles.dropdownItemButton}
+                    onClick={handleLogout}
+                  >
                     Logout
                   </button>
                 </div>
               )}
             </div>
 
-            <button type="button" className={styles.logoutButton} onClick={handleLogout}>
+            <button
+              type="button"
+              className={styles.logoutButton}
+              onClick={handleLogout}
+            >
               Logout
             </button>
           </div>
@@ -232,7 +274,12 @@ function AdminDashboard() {
             <div className={styles.kpiGrid}>
               <div className={styles.kpiCard}>
                 <div className={`${styles.kpiIcon} ${styles.blue}`}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0V5a2 2 0 012-2h2a2 2 0 012 2v16" />
                   </svg>
                 </div>
@@ -243,8 +290,17 @@ function AdminDashboard() {
                     <span className={styles.trendDown}>-7%</span>
                   </div>
                   <div className={styles.sparklineWrapper}>
-                    <svg viewBox="0 0 100 30" className={styles.sparkline} preserveAspectRatio="none">
-                      <path d="M0,18 C30,12 70,24 100,10" fill="none" stroke="#f59e0b" strokeWidth="2" />
+                    <svg
+                      viewBox="0 0 100 30"
+                      className={styles.sparkline}
+                      preserveAspectRatio="none"
+                    >
+                      <path
+                        d="M0,18 C30,12 70,24 100,10"
+                        fill="none"
+                        stroke="#f59e0b"
+                        strokeWidth="2"
+                      />
                     </svg>
                   </div>
                   <a href="#">Review applications →</a>
@@ -253,7 +309,12 @@ function AdminDashboard() {
 
               <div className={styles.kpiCard}>
                 <div className={`${styles.kpiIcon} ${styles.green}`}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
@@ -264,17 +325,33 @@ function AdminDashboard() {
                     <span className={styles.trendUp}>+18%</span>
                   </div>
                   <div className={styles.sparklineWrapper}>
-                    <svg viewBox="0 0 100 30" className={styles.sparkline} preserveAspectRatio="none">
-                      <path d="M0,25 C30,16 70,7 100,14" fill="none" stroke="#10b981" strokeWidth="2" />
+                    <svg
+                      viewBox="0 0 100 30"
+                      className={styles.sparkline}
+                      preserveAspectRatio="none"
+                    >
+                      <path
+                        d="M0,25 C30,16 70,7 100,14"
+                        fill="none"
+                        stroke="#10b981"
+                        strokeWidth="2"
+                      />
                     </svg>
                   </div>
-                  <span className={styles.kpiSub}>College and grant approvals</span>
+                  <span className={styles.kpiSub}>
+                    College and grant approvals
+                  </span>
                 </div>
               </div>
 
               <div className={styles.kpiCard}>
                 <div className={`${styles.kpiIcon} ${styles.orange}`}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
@@ -285,8 +362,17 @@ function AdminDashboard() {
                     <span className={styles.trendDown}>-3%</span>
                   </div>
                   <div className={styles.sparklineWrapper}>
-                    <svg viewBox="0 0 100 30" className={styles.sparkline} preserveAspectRatio="none">
-                      <path d="M0,15 C30,5 70,25 100,15" fill="none" stroke="#ef4444" strokeWidth="2" />
+                    <svg
+                      viewBox="0 0 100 30"
+                      className={styles.sparkline}
+                      preserveAspectRatio="none"
+                    >
+                      <path
+                        d="M0,15 C30,5 70,25 100,15"
+                        fill="none"
+                        stroke="#ef4444"
+                        strokeWidth="2"
+                      />
                     </svg>
                   </div>
                   <span className={styles.kpiSub}>Awaiting admin action</span>
@@ -295,7 +381,12 @@ function AdminDashboard() {
 
               <div className={styles.kpiCard}>
                 <div className={`${styles.kpiIcon} ${styles.purple}`}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M9 19v-6a2 2 0 012-2h2a2 2 0 012 2v6m-6 0h6M12 10a2 2 0 100-4 2 2 0 000 4z" />
                   </svg>
                 </div>
@@ -306,11 +397,22 @@ function AdminDashboard() {
                     <span className={styles.trendUp}>+4%</span>
                   </div>
                   <div className={styles.sparklineWrapper}>
-                    <svg viewBox="0 0 100 30" className={styles.sparkline} preserveAspectRatio="none">
-                      <path d="M0,25 C30,18 70,8 100,6" fill="none" stroke="#10b981" strokeWidth="2" />
+                    <svg
+                      viewBox="0 0 100 30"
+                      className={styles.sparkline}
+                      preserveAspectRatio="none"
+                    >
+                      <path
+                        d="M0,25 C30,18 70,8 100,6"
+                        fill="none"
+                        stroke="#10b981"
+                        strokeWidth="2"
+                      />
                     </svg>
                   </div>
-                  <span className={styles.kpiSub}>Department-wide compliance score</span>
+                  <span className={styles.kpiSub}>
+                    Department-wide compliance score
+                  </span>
                 </div>
               </div>
             </div>
@@ -337,40 +439,64 @@ function AdminDashboard() {
 
                       <div className={styles.barGroup}>
                         <div className={styles.bars}>
-                          <div className={styles.barBlue} style={{ height: "82%" }}>
+                          <div
+                            className={styles.barBlue}
+                            style={{ height: "82%" }}
+                          >
                             <span>82</span>
                           </div>
-                          <div className={styles.barGray} style={{ height: "100%" }} />
+                          <div
+                            className={styles.barGray}
+                            style={{ height: "100%" }}
+                          />
                         </div>
                         <span>Approvals</span>
                       </div>
 
                       <div className={styles.barGroup}>
                         <div className={styles.bars}>
-                          <div className={styles.barBlue} style={{ height: "74%" }}>
+                          <div
+                            className={styles.barBlue}
+                            style={{ height: "74%" }}
+                          >
                             <span>74</span>
                           </div>
-                          <div className={styles.barGray} style={{ height: "100%" }} />
+                          <div
+                            className={styles.barGray}
+                            style={{ height: "100%" }}
+                          />
                         </div>
                         <span>Compliance</span>
                       </div>
 
                       <div className={styles.barGroup}>
                         <div className={styles.bars}>
-                          <div className={styles.barBlue} style={{ height: "66%" }}>
+                          <div
+                            className={styles.barBlue}
+                            style={{ height: "66%" }}
+                          >
                             <span>66</span>
                           </div>
-                          <div className={styles.barGray} style={{ height: "100%" }} />
+                          <div
+                            className={styles.barGray}
+                            style={{ height: "100%" }}
+                          />
                         </div>
                         <span>Funding</span>
                       </div>
 
                       <div className={styles.barGroup}>
                         <div className={styles.bars}>
-                          <div className={styles.barBlue} style={{ height: "58%" }}>
+                          <div
+                            className={styles.barBlue}
+                            style={{ height: "58%" }}
+                          >
                             <span>58</span>
                           </div>
-                          <div className={styles.barGray} style={{ height: "100%" }} />
+                          <div
+                            className={styles.barGray}
+                            style={{ height: "100%" }}
+                          />
                         </div>
                         <span>Reports</span>
                       </div>
@@ -403,10 +529,17 @@ function AdminDashboard() {
                     </div>
                     <div className={styles.badgeArea}>
                       <div className={styles.badgeGold}>MONITORING</div>
-                      <p>Prioritize pending colleges and overdue compliance items.</p>
+                      <p>
+                        Prioritize pending colleges and overdue compliance
+                        items.
+                      </p>
                     </div>
                   </div>
-                  <button type="button" className={styles.secondaryBtn} onClick={() => setActiveMenu("Policy Compliance")}>
+                  <button
+                    type="button"
+                    className={styles.secondaryBtn}
+                    onClick={() => setActiveMenu("Policy Compliance")}
+                  >
                     Open compliance view →
                   </button>
                 </div>
@@ -437,7 +570,11 @@ function AdminDashboard() {
                       </div>
                     </div>
                   </div>
-                  <button type="button" className={styles.primaryBtn} onClick={() => setActiveMenu("College Approvals")}>
+                  <button
+                    type="button"
+                    className={styles.primaryBtn}
+                    onClick={() => setActiveMenu("College Approvals")}
+                  >
                     Review queue
                   </button>
                 </div>
@@ -469,7 +606,9 @@ function AdminDashboard() {
                         <td>
                           <div className={styles.progressCell}>
                             <div className={styles.progBar}>
-                              <div style={{ width: "71%", background: "#10b981" }} />
+                              <div
+                                style={{ width: "71%", background: "#10b981" }}
+                              />
                             </div>
                             <span>71%</span>
                           </div>
@@ -484,7 +623,9 @@ function AdminDashboard() {
                         <td>
                           <div className={styles.progressCell}>
                             <div className={styles.progBar}>
-                              <div style={{ width: "79%", background: "#3b82f6" }} />
+                              <div
+                                style={{ width: "79%", background: "#3b82f6" }}
+                              />
                             </div>
                             <span>79%</span>
                           </div>
@@ -499,7 +640,9 @@ function AdminDashboard() {
                         <td>
                           <div className={styles.progressCell}>
                             <div className={styles.progBar}>
-                              <div style={{ width: "73%", background: "#f59e0b" }} />
+                              <div
+                                style={{ width: "73%", background: "#f59e0b" }}
+                              />
                             </div>
                             <span>73%</span>
                           </div>
@@ -516,7 +659,9 @@ function AdminDashboard() {
                         <td>
                           <div className={styles.progressCell}>
                             <div className={styles.progBar}>
-                              <div style={{ width: "75%", background: "#2563eb" }} />
+                              <div
+                                style={{ width: "75%", background: "#2563eb" }}
+                              />
                             </div>
                             <span>75%</span>
                           </div>
@@ -534,21 +679,27 @@ function AdminDashboard() {
                     <div className={styles.activityItem}>
                       <div className={styles.activityIcon}>📄</div>
                       <div className={styles.activityInfo}>
-                        <p>Approved <strong>annual report submission</strong></p>
+                        <p>
+                          Approved <strong>annual report submission</strong>
+                        </p>
                         <small>Today, 11:30 AM</small>
                       </div>
                     </div>
                     <div className={styles.activityItem}>
                       <div className={styles.activityIcon}>✏️</div>
                       <div className={styles.activityInfo}>
-                        <p>Reviewed <strong>college compliance flag</strong></p>
+                        <p>
+                          Reviewed <strong>college compliance flag</strong>
+                        </p>
                         <small>Today, 10:05 AM</small>
                       </div>
                     </div>
                     <div className={styles.activityItem}>
                       <div className={styles.activityIcon}>📤</div>
                       <div className={styles.activityInfo}>
-                        <p>Published <strong>grant instructions</strong></p>
+                        <p>
+                          Published <strong>grant instructions</strong>
+                        </p>
                         <small>Yesterday, 05:40 PM</small>
                       </div>
                     </div>
@@ -565,21 +716,27 @@ function AdminDashboard() {
                       <div className={styles.deadlineIcon}>1</div>
                       <div className={styles.deadlineInfo}>
                         <p>Finalize pending approvals</p>
-                        <span className={styles.deadlineTime}>Due today, 4:00 PM</span>
+                        <span className={styles.deadlineTime}>
+                          Due today, 4:00 PM
+                        </span>
                       </div>
                     </div>
                     <div className={styles.deadlineItem}>
                       <div className={styles.deadlineIcon}>2</div>
                       <div className={styles.deadlineInfo}>
                         <p>Submit department summary</p>
-                        <span className={styles.deadlineTime}>Due tomorrow</span>
+                        <span className={styles.deadlineTime}>
+                          Due tomorrow
+                        </span>
                       </div>
                     </div>
                     <div className={styles.deadlineItem}>
                       <div className={styles.deadlineIcon}>3</div>
                       <div className={styles.deadlineInfo}>
                         <p>Review grant exceptions</p>
-                        <span className={styles.deadlineTime}>Due in 2 days</span>
+                        <span className={styles.deadlineTime}>
+                          Due in 2 days
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -597,32 +754,46 @@ function AdminDashboard() {
                 </select>
               </div>
               <p style={{ color: "#64748b", lineHeight: 1.7, marginTop: 0 }}>
-                This admin section is ready for forms, review tables, and approval
-                workflows while keeping the same dashboard layout.
+                This admin section is ready for forms, review tables, and
+                approval workflows while keeping the same dashboard layout.
               </p>
               <div className={styles.kpiGrid}>
                 <div className={styles.kpiCard}>
                   <div className={`${styles.kpiIcon} ${styles.blue}`}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <path d="M12 14l9-5-9-5-9 5 9 5z" />
                     </svg>
                   </div>
                   <div className={styles.kpiInfo}>
                     <span>Next step</span>
                     <h3>Approve items</h3>
-                    <span className={styles.kpiSub}>Open the queue and process pending work.</span>
+                    <span className={styles.kpiSub}>
+                      Open the queue and process pending work.
+                    </span>
                   </div>
                 </div>
                 <div className={styles.kpiCard}>
                   <div className={`${styles.kpiIcon} ${styles.green}`}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
                       <path d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <div className={styles.kpiInfo}>
                     <span>Status</span>
                     <h3>Ready</h3>
-                    <span className={styles.kpiSub}>Admin dashboard shell is active.</span>
+                    <span className={styles.kpiSub}>
+                      Admin dashboard shell is active.
+                    </span>
                   </div>
                 </div>
               </div>
@@ -634,7 +805,11 @@ function AdminDashboard() {
                 <p style={{ color: "#64748b", margin: 0, lineHeight: 1.7 }}>
                   Jump to approvals, compliance, or reports from this section.
                 </p>
-                <button type="button" className={styles.primaryBtn} onClick={() => setActiveMenu("Dashboard")}>
+                <button
+                  type="button"
+                  className={styles.primaryBtn}
+                  onClick={() => setActiveMenu("Dashboard")}
+                >
                   Back to overview
                 </button>
               </div>
