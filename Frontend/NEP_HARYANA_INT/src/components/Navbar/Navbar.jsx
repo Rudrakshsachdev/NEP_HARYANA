@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import hshecLogo from "../../assets/hshec_logo.jpeg";
+import {
+  getDashboardPathFromSession,
+  getSavedAuthUser,
+} from "../../api/auth";
 import "./Navbar.css";
 
 function Navbar() {
@@ -35,6 +39,22 @@ function Navbar() {
     document.body.classList.toggle("high-contrast");
   };
 
+  const handleDashboardClick = (e) => {
+    e.preventDefault();
+    navigate(getDashboardPathFromSession());
+  };
+
+  const handleSignInClick = () => {
+    const savedUser = getSavedAuthUser();
+
+    if (savedUser) {
+      navigate(getDashboardPathFromSession());
+      return;
+    }
+
+    navigate("/login");
+  };
+
   const handleNavClick = (e, item) => {
     setActiveNav(item);
     setIsMenuOpen(false); // Close mobile drawer
@@ -44,8 +64,7 @@ function Navbar() {
       navigate("/");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else if (item === "DASHBOARD") {
-      e.preventDefault();
-      navigate("/dashboard");
+      handleDashboardClick(e);
     } else {
       e.preventDefault();
       const targetId = item.toLowerCase();
@@ -269,7 +288,7 @@ function Navbar() {
             <button
               className="signin-btn"
               id="btn-signin"
-              onClick={() => navigate("/login")}
+              onClick={handleSignInClick}
             >
               <svg
                 className="signin-icon"
@@ -299,13 +318,7 @@ function Navbar() {
             {navItems.map((item) => (
               <li key={item} className="nav-item">
                 <a
-                  href={
-                    item === "HOME"
-                      ? "/"
-                      : item === "DASHBOARD"
-                        ? "/dashboard"
-                        : `#${item.toLowerCase()}`
-                  }
+                  href={item === "HOME" ? "/" : item === "DASHBOARD" ? getDashboardPathFromSession() : `#${item.toLowerCase()}`}
                   className={`nav-link ${activeNav === item ? "active" : ""}`}
                   onClick={(e) => handleNavClick(e, item)}
                   id={`nav-${item.toLowerCase()}`}

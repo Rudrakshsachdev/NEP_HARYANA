@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginCollege, saveAuthSession } from "../../api/auth";
+import {
+  getDashboardPathForUser,
+  loginCollege,
+  saveAuthSession,
+} from "../../api/auth";
 import styles from "../Signup/Signup.module.css";
 
 function Signin() {
@@ -32,7 +36,7 @@ function Signin() {
         type: "success",
         message: response.message || "Signed in successfully.",
       });
-      navigate("/dashboard");
+      navigate(getDashboardPathForUser(response.user));
     } catch (error) {
       setStatus({
         type: "error",
