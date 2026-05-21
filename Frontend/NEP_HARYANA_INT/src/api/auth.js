@@ -74,6 +74,36 @@ export function saveAuthSession(token, user) {
   localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
 }
 
+export function getSavedAuthUser() {
+  const rawUser = localStorage.getItem(AUTH_USER_KEY);
+
+  if (!rawUser) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(rawUser);
+  } catch {
+    return null;
+  }
+}
+
+export function getDashboardPathForUser(user) {
+  const role = String(user?.role || "").toLowerCase();
+
+  return role === "principal" ? "/college/dashboard" : "/dashboard";
+}
+
+export function getDashboardPathFromSession(defaultPath = "/dashboard") {
+  const user = getSavedAuthUser();
+
+  if (!user) {
+    return defaultPath;
+  }
+
+  return getDashboardPathForUser(user);
+}
+
 export function getAuthToken() {
   return localStorage.getItem(AUTH_TOKEN_KEY);
 }

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
+  getDashboardPathForUser,
   fetchColleges,
   registerCollege,
   saveAuthSession,
@@ -130,7 +131,7 @@ function Signup() {
         type: "success",
         message: response.message || "Account created successfully.",
       });
-      navigate("/dashboard");
+      navigate(getDashboardPathForUser(response.user));
     } catch (error) {
       setStatus({
         type: "error",
