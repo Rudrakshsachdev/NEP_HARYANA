@@ -245,9 +245,8 @@ function Signup() {
               <label htmlFor="role">Role</label>
               <select
                 id="role"
-                disabled={
-                  isSubmitting || collegeLoading || colleges.length === 0
-                }
+                name="role"
+                disabled={isSubmitting}
                 value={formData.role}
                 onChange={handleChange}
                 required

@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import hshecLogo from "../../assets/hshec_logo.jpeg";
-import {
-  getDashboardPathFromSession,
-  getSavedAuthUser,
-} from "../../api/auth";
+import { getDashboardPathFromSession, getSavedAuthUser } from "../../api/auth";
 import "./Navbar.css";
 
 function Navbar() {
@@ -58,7 +55,7 @@ function Navbar() {
   const handleNavClick = (e, item) => {
     setActiveNav(item);
     setIsMenuOpen(false); // Close mobile drawer
-    
+
     if (item === "HOME") {
       e.preventDefault();
       navigate("/");
@@ -71,19 +68,19 @@ function Navbar() {
       let elementId = targetId;
       if (targetId === "about") elementId = "leadership-section";
       if (targetId === "schemes") elementId = "schemes";
-      if (targetId === "colleges") elementId = "about-stats"; 
+      if (targetId === "colleges") elementId = "about-stats";
       if (targetId === "notices") elementId = "news-events";
       if (targetId === "contact") elementId = "contact"; // target footer contact
-      
+
       const element = document.getElementById(elementId);
       if (element) {
         const offset = 140; // Navbar height offset
         const elementPosition = element.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - offset;
-        
+
         window.scrollTo({
           top: offsetPosition,
-          behavior: "smooth"
+          behavior: "smooth",
         });
       } else {
         navigate(`/#${elementId}`);
@@ -92,10 +89,11 @@ function Navbar() {
           if (el) {
             const offset = 140;
             const elementPosition = el.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - offset;
+            const offsetPosition =
+              elementPosition + window.pageYOffset - offset;
             window.scrollTo({
               top: offsetPosition,
-              behavior: "smooth"
+              behavior: "smooth",
             });
           }
         }, 150);
@@ -241,7 +239,11 @@ function Navbar() {
           {/* Left: Dual Logos + Branding Text */}
           <div className="header-left">
             <div className="logos-group">
-              <div className="hshec-logo-wrapper" id="hshec-logo" title="Haryana State Higher Education Council">
+              <div
+                className="hshec-logo-wrapper"
+                id="hshec-logo"
+                title="Haryana State Higher Education Council"
+              >
                 <img
                   src={hshecLogo}
                   alt="Haryana State Higher Education Council Logo"
@@ -255,7 +257,8 @@ function Navbar() {
                 Haryana State Higher Education Council
               </h1>
               <span className="branding-subtitle">
-                हरियाणा राज्य उच्च शिक्षा परिषद &nbsp;|&nbsp; National Education Policy Portal
+                हरियाणा राज्य उच्च शिक्षा परिषद &nbsp;|&nbsp; National Education
+                Policy Portal
               </span>
             </div>
           </div>
@@ -318,7 +321,13 @@ function Navbar() {
             {navItems.map((item) => (
               <li key={item} className="nav-item">
                 <a
-                  href={item === "HOME" ? "/" : item === "DASHBOARD" ? getDashboardPathFromSession() : `#${item.toLowerCase()}`}
+                  href={
+                    item === "HOME"
+                      ? "/"
+                      : item === "DASHBOARD"
+                        ? getDashboardPathFromSession()
+                        : `#${item.toLowerCase()}`
+                  }
                   className={`nav-link ${activeNav === item ? "active" : ""}`}
                   onClick={(e) => handleNavClick(e, item)}
                   id={`nav-${item.toLowerCase()}`}

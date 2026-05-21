@@ -91,7 +91,15 @@ export function getSavedAuthUser() {
 export function getDashboardPathForUser(user) {
   const role = String(user?.role || "").toLowerCase();
 
-  return role === "principal" ? "/college/dashboard" : "/dashboard";
+  if (role === "principal") {
+    return "/college/dashboard";
+  }
+
+  if (role === "admin") {
+    return "/admin/dashboard";
+  }
+
+  return "/dashboard";
 }
 
 export function getDashboardPathFromSession(defaultPath = "/dashboard") {

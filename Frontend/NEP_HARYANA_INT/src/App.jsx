@@ -8,12 +8,14 @@ import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import CollegeDashboard from "./pages/CollegeDashboard/CollegeDashboard";
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 
 function App() {
   const location = useLocation();
   const isDashboard =
     location.pathname === "/dashboard" ||
-    location.pathname === "/college/dashboard";
+    location.pathname === "/college/dashboard" ||
+    location.pathname === "/admin/dashboard";
 
   return (
     <>
@@ -26,6 +28,7 @@ function App() {
         <Route path="/reset-password/:uid/:token" element={<ResetPassword />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/college/dashboard" element={<CollegeDashboard />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
       {!isDashboard && <Footer />}
     </>
