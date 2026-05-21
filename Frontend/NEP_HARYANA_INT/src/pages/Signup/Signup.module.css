@@ -343,3 +343,15 @@
     min-height: 50px;
   }
 }
+
+/* Centering helper for single-column auth pages (Signin) */
+.centerFormWrapper {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  align-items: center;
+}
+
+.centerFormWrapper .formPanel {
+  max-width: 560px;
+  width: 100%;
+}
