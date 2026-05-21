@@ -438,7 +438,7 @@ function Signup() {
 
               <p className={styles.loginPrompt}>
                 Already registered?{" "}
-                <Link to="/signin" className={styles.loginLink}>
+                <Link to="/login" className={styles.loginLink}>
                   Sign in here
                 </Link>
               </p>
