@@ -301,6 +301,13 @@
   text-align: center;
 }
 
+.selectedInstitution {
+  margin: 0;
+  color: #526174;
+  font-size: 0.94rem;
+  text-align: left;
+}
+
 .loginLink {
   color: #b45309;
   font-weight: 700;
