@@ -256,12 +256,15 @@ function Signup() {
               </select>
             </div>
 
-            <div className={styles.formGroup}>
+            <div className={`${styles.formGroup} ${styles.fullWidth}`}>
               {selectedCollege && (
-                <p className={styles.loginPrompt}>
+                <p className={styles.selectedInstitution}>
                   Selected institution: {selectedCollege.name}
                 </p>
               )}
+            </div>
+
+            <div className={styles.formGroup}>
               <label htmlFor="password">Password</label>
               <div className={styles.inputWithIcon}>
                 <input
