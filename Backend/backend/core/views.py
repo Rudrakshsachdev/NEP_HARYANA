@@ -16,12 +16,13 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .models import College, CollegeProfile
+from .models import College, CollegeProfile, NominationHeaderSubmission
 from .serializers import (
 	CollegeLoginSerializer,
 	CollegeProfileSerializer,
 	CollegeRegistrationSerializer,
 	CollegeSerializer,
+	NominationHeaderSubmissionSerializer,
 	PasswordResetConfirmSerializer,
 	PasswordResetRequestSerializer,
 )
@@ -90,6 +91,133 @@ class MeView(APIView):
 				'username': request.user.username,
 				'profile': CollegeProfileSerializer(profile).data if profile else None,
 			}
+		)
+
+
+class NominationHeaderSubmissionView(APIView):
+	permission_classes = [IsAuthenticated]
+
+	def get(self, request):
+		profile = CollegeProfile.objects.filter(user=request.user).first()
+		if profile is None:
+			return Response({'detail': 'College profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+		submission = NominationHeaderSubmission.objects.filter(profile=profile).first()
+		if submission is None:
+			return Response(
+				{
+					'form_id': None,
+					'institution_name': profile.college_name,
+					'aishe_code': profile.aishe_code,
+					'head_name': profile.full_name,
+					'head_contact': request.user.email,
+					'hei_address': profile.address,
+					'institution_type': 'college',
+					'is_saved': False,
+				},
+				status=status.HTTP_200_OK,
+			)
+
+		serializer = NominationHeaderSubmissionSerializer(submission, context={'request': request})
+		payload = serializer.data
+		payload['is_saved'] = True
+		return Response(payload, status=status.HTTP_200_OK)
+
+	def post(self, request):
+		profile = CollegeProfile.objects.filter(user=request.user).first()
+		if profile is None:
+			return Response({'detail': 'College profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+		existing = NominationHeaderSubmission.objects.filter(profile=profile).first()
+		serializer = NominationHeaderSubmissionSerializer(
+			existing,
+			data=request.data,
+			context={'request': request},
+			partial=existing is not None,
+		)
+		serializer.is_valid(raise_exception=True)
+		submission = serializer.save()
+		response_data = NominationHeaderSubmissionSerializer(submission, context={'request': request}).data
+		response_data['is_saved'] = True
+		return Response(
+			{
+				'message': 'Nomination header saved successfully.',
+				'data': response_data,
+			},
+			status=status.HTTP_200_OK if existing else status.HTTP_201_CREATED,
+		)
+
+
+class NominationHeaderOpenView(APIView):
+	permission_classes = [IsAuthenticated]
+
+	def post(self, request):
+		profile = CollegeProfile.objects.filter(user=request.user).first()
+		if profile is None:
+			return Response({'detail': 'College profile not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+		submission, _ = NominationHeaderSubmission.objects.get_or_create(
+			profile=profile,
+			defaults={
+				'institution_name': profile.college_name,
+				'aishe_code': profile.aishe_code,
+				'head_name': profile.full_name,
+				'head_contact': request.user.email,
+				'hei_address': profile.address,
+				'institution_type': NominationHeaderSubmission.InstitutionType.COLLEGE,
+			},
+		)
+
+		serializer = NominationHeaderSubmissionSerializer(submission, context={'request': request})
+		return Response(
+			{
+				'message': 'Nomination header form opened.',
+				'data': serializer.data,
+			},
+			status=status.HTTP_200_OK,
+		)
+
+
+class NominationHeaderDetailView(APIView):
+	permission_classes = [IsAuthenticated]
+
+	def get_object(self, request, form_id):
+		profile = CollegeProfile.objects.filter(user=request.user).first()
+		if profile is None:
+			return None
+		return NominationHeaderSubmission.objects.filter(form_id=form_id, profile=profile).first()
+
+	def get(self, request, form_id):
+		submission = self.get_object(request, form_id)
+		if submission is None:
+			return Response({'detail': 'Form not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+		serializer = NominationHeaderSubmissionSerializer(submission, context={'request': request})
+		data = serializer.data
+		data['is_saved'] = True
+		return Response(data, status=status.HTTP_200_OK)
+
+	def put(self, request, form_id):
+		submission = self.get_object(request, form_id)
+		if submission is None:
+			return Response({'detail': 'Form not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+		serializer = NominationHeaderSubmissionSerializer(
+			submission,
+			data=request.data,
+			context={'request': request},
+			partial=True,
+		)
+		serializer.is_valid(raise_exception=True)
+		submission = serializer.save()
+		data = NominationHeaderSubmissionSerializer(submission, context={'request': request}).data
+		data['is_saved'] = True
+		return Response(
+			{
+				'message': 'Nomination header saved successfully.',
+				'data': data,
+			},
+			status=status.HTTP_200_OK,
 		)
 
 
