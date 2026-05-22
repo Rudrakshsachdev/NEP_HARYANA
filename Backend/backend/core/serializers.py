@@ -98,6 +98,20 @@ class NominationHeaderSubmissionSerializer(serializers.ModelSerializer):
             'head_contact',
             'hei_address',
             'institution_type',
+            'establishment_year',
+            'affiliating_university',
+            'nodal_name',
+            'nodal_contact',
+            'nodal_email',
+            'website_url',
+            'institution_email',
+            'institution_phone',
+            'ugc_status',
+            'accreditation_status',
+            'naac_grade',
+            'naac_cgpa',
+            'total_students',
+            'total_faculty',
             'created_at',
             'updated_at',
         ]
@@ -113,7 +127,12 @@ class NominationHeaderSubmissionSerializer(serializers.ModelSerializer):
         )
 
     def update(self, instance, validated_data):
-        for field in ['institution_name', 'aishe_code', 'head_name', 'head_contact', 'hei_address', 'institution_type']:
+        for field in [
+            'institution_name', 'aishe_code', 'head_name', 'head_contact', 'hei_address', 'institution_type',
+            'establishment_year', 'affiliating_university', 'nodal_name', 'nodal_contact', 'nodal_email',
+            'website_url', 'institution_email', 'institution_phone', 'ugc_status', 'accreditation_status',
+            'naac_grade', 'naac_cgpa', 'total_students', 'total_faculty'
+        ]:
             setattr(instance, field, validated_data.get(field, getattr(instance, field)))
         instance.save()
         return instance
