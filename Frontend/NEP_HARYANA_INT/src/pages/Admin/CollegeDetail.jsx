@@ -1,186 +1,492 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { 
+  ArrowLeft, 
+  CheckCircle, 
+  XCircle, 
+  AlertCircle,
+  FileText, 
+  Eye, 
+  Save,
+  MessageSquare,
+  History,
+  Calendar,
+  Layers,
+  Award
+} from 'lucide-react';
+import { 
+  getColleges, 
+  saveColleges, 
+  calculateTotalScore, 
+  getClassification, 
+  PARAMETERS,
+  CATEGORIES 
+} from '../../utils/mockData';
 
 const CollegeDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [status, setStatus] = useState('Submitted');
+  const [colleges, setColleges] = useState([]);
+  const [college, setCollege] = useState(null);
+  
+  // Tab states
+  const [activeTab, setActiveTab] = useState('existing'); // 'existing' or 'new'
+  
+  // Document view modal states
+  const [showDocModal, setShowDocModal] = useState(false);
+  const [selectedDocParam, setSelectedDocParam] = useState(null);
+  
+  // Editing state for scores and remarks
+  const [tempScores, setTempScores] = useState({});
   const [remarks, setRemarks] = useState('');
 
-  // Mock Data for a specific college
-  const college = {
-    id: id,
-    name: 'Govt College, Ambala',
-    aishe: 'C-12345',
-    type: 'Govt',
-    district: 'Ambala',
-    score: 85,
-    classification: 'Platinum',
-    data: {
-      institutional: {
-        established: '1950',
-        principalsName: 'Dr. R.K. Sharma',
-        totalArea: '50 Acres',
-      },
-      indicators: [
-        { name: 'Internship Programs', value: 'Yes', marks: 10, doc: 'internship_report.pdf' },
-        { name: 'Research Publications', value: '15', marks: 15, doc: 'research_list.pdf' },
-        { name: 'Innovation Cell', value: 'Yes', marks: 10, doc: 'ic_certificate.pdf' },
-        { name: 'Faculty with PhD', value: '60%', marks: 20, doc: 'faculty_list.pdf' },
-        { name: 'Student Feedback System', value: 'Yes', marks: 10, doc: 'feedback_summary.pdf' },
-      ]
+  useEffect(() => {
+    const list = getColleges() || [];
+    setColleges(list);
+    const found = list.find(c => c.id === id);
+    if (found) {
+      setCollege(found);
+      setTempScores({ ...found.scores });
+      setRemarks(found.remarks || '');
     }
+  }, [id]);
+
+  if (!college) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 space-y-4">
+        <AlertCircle className="w-12 h-12 text-slate-300 animate-bounce" />
+        <h2 className="text-lg font-bold text-slate-800">College Profile Not Found</h2>
+        <button onClick={() => navigate('/admin/colleges')} className="text-xs font-bold text-[#1D4ED8] hover:underline">
+          Back to College List
+        </button>
+      </div>
+    );
+  }
+
+  // Calculate scores on the fly for display
+  const currentTotalScore = calculateTotalScore(tempScores);
+  const currentClassification = getClassification(currentTotalScore);
+
+  // Group parameter configurations
+  const existingParams = PARAMETERS.filter(p => p.type === 'existing');
+  const newParams = PARAMETERS.filter(p => p.type === 'new');
+
+  // Dynamic category calculations based on tempScores
+  const categoryScores = Object.keys(CATEGORIES).map(catName => {
+    const cat = CATEGORIES[catName];
+    const score = cat.params.reduce((sum, pId) => sum + (Number(tempScores[pId]) || 0), 0);
+    return {
+      name: catName,
+      score,
+      max: cat.max
+    };
+  });
+
+  // Handle score change
+  const handleScoreChange = (paramId, val, maxVal) => {
+    let num = Number(val);
+    if (isNaN(num)) num = 0;
+    if (num < 0) num = 0;
+    if (num > maxVal) num = maxVal;
+    
+    setTempScores(prev => ({
+      ...prev,
+      [paramId]: num
+    }));
   };
 
-  const handleStatusChange = (newStatus) => {
-    setStatus(newStatus);
-    // In a real app, you would save this to the backend
-    alert(`Status changed to ${newStatus}`);
+  // View Document Handler
+  const handleViewDoc = (param) => {
+    setSelectedDocParam(param);
+    setShowDocModal(true);
+  };
+
+  // Submit Decision Handler
+  const handleDecision = (newStatus) => {
+    if (!remarks.trim()) {
+      alert("Please enter admin remarks before submitting your decision.");
+      return;
+    }
+
+    const timestamp = new Date().toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }) + ' ' + new Date().toLocaleTimeString('en-IN', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+
+    const updatedHistoryItem = {
+      date: timestamp,
+      status: newStatus,
+      user: 'Dr. Ramesh Kumar (Admin)'
+    };
+
+    const updatedColleges = colleges.map(c => {
+      if (c.id === id) {
+        return {
+          ...c,
+          status: newStatus,
+          remarks: remarks,
+          scores: tempScores,
+          history: [...(c.history || []), updatedHistoryItem]
+        };
+      }
+      return c;
+    });
+
+    saveColleges(updatedColleges);
+    alert(`Institutional Status Updated to: ${newStatus}`);
+    
+    // Refresh local states
+    const refreshed = updatedColleges.find(c => c.id === id);
+    setCollege(refreshed);
+    setRemarks(refreshed.remarks);
+    setTempScores(refreshed.scores);
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header with Back Button and Score */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-6 rounded-lg shadow-sm border border-slate-200">
+    <div className="space-y-8 animate-fadeIn">
+      {/* Back button & Title bar */}
+      <div className="flex items-center space-x-3">
+        <button 
+          onClick={() => navigate('/admin/colleges')}
+          className="p-2 bg-white rounded-xl border border-slate-200 text-slate-600 hover:text-[#1D4ED8] hover:border-slate-300 hover:bg-slate-50 transition-all cursor-pointer shadow-sm"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
         <div>
-          <button
-            onClick={() => navigate('/admin/colleges')}
-            className="text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Back to List
-          </button>
-          <h2 className="text-2xl font-bold text-slate-800 mt-2">{college.name}</h2>
-          <p className="text-sm text-slate-500">AISHE: {college.aishe} | Type: {college.type} | District: {college.district}</p>
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Audit Workstation</span>
+          <h1 className="text-xl font-bold text-slate-800 tracking-tight">Institutional Profile Review</h1>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="text-center">
-            <p className="text-xs text-slate-500 uppercase font-medium">Total Score</p>
-            <p className="text-3xl font-bold text-accent">{college.score}</p>
+      </div>
+
+      {/* College Header Card */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 relative overflow-hidden">
+        {/* Decorative corner flash */}
+        <div 
+          className="absolute top-0 right-0 w-24 h-24 rotate-45 translate-x-12 -translate-y-12 opacity-20"
+          style={{ backgroundColor: currentClassification.color }}
+        ></div>
+
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+          <div className="space-y-3 max-w-2xl">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
+                college.type === 'Govt' ? 'bg-sky-50 border-sky-100 text-sky-800' :
+                college.type === 'Aided' ? 'bg-orange-50 border-orange-100 text-orange-800' :
+                'bg-slate-100 border-slate-200 text-slate-800'
+              }`}>
+                {college.type} Managed
+              </span>
+              <span className="text-[10px] bg-slate-100 border border-slate-200 text-slate-500 font-bold px-2 py-0.5 rounded-md">
+                District: {college.district}
+              </span>
+            </div>
+            
+            <h2 className="text-xl font-extrabold text-slate-800 leading-tight">{college.name}</h2>
+            
+            <p className="text-xs text-slate-400 font-bold">
+              AISHE Code: <span className="font-mono text-slate-600">{college.aishe}</span>
+            </p>
           </div>
-          <div className={`px-4 py-2 rounded-lg font-semibold ${
-            college.classification === 'Platinum' ? 'bg-purple-100 text-purple-800' :
-            college.classification === 'Gold' ? 'bg-yellow-100 text-yellow-800' :
-            'bg-slate-100 text-slate-800'
-          }`}>
-            {college.classification}
+
+          <div className="flex items-center space-x-6 shrink-0 bg-slate-50/70 border border-slate-200/60 p-4 rounded-2xl">
+            <div className="text-center border-r border-slate-200 pr-6">
+              <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider">Total Score</span>
+              <span className="block text-3xl font-black text-slate-800 mt-1">{currentTotalScore}<span className="text-xs text-slate-400 font-bold">/100</span></span>
+            </div>
+            <div className="text-center">
+              <span className="block text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-2">Award Grade</span>
+              <span 
+                className={`text-xs font-black tracking-wide px-3 py-1.5 rounded-full border shadow-sm ${currentClassification.bg}`}
+                style={{ borderColor: `${currentClassification.color}33` }}
+              >
+                {currentClassification.name}
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Data Views */}
-        <div className="lg:cols-span-2 space-y-6">
-          {/* Institutional Info */}
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">Institutional Information</h3>
-            <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6">
-              <div>
-                <dt className="text-sm font-medium text-slate-500">Established</dt>
-                <dd className="mt-1 text-sm text-slate-900">{college.data.institutional.established}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-slate-500">Principal's Name</dt>
-                <dd className="mt-1 text-sm text-slate-900">{college.data.institutional.principalsName}</dd>
-              </div>
-              <div>
-                <dt className="text-sm font-medium text-slate-500">Total Area</dt>
-                <dd className="mt-1 text-sm text-slate-900">{college.data.institutional.totalArea}</dd>
-              </div>
-            </dl>
+      {/* Evaluation Dashboard layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Category Breakdown Progress Bars (takes 1 col) */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6 h-fit">
+          <div className="flex items-center space-x-2 pb-4 border-b border-slate-100">
+            <Layers className="w-5 h-5 text-slate-500" />
+            <h3 className="text-base font-bold text-slate-800 tracking-tight">Category Breakdown</h3>
+          </div>
+          
+          <div className="space-y-5">
+            {categoryScores.map((cat, idx) => {
+              const pct = cat.max ? Math.round((cat.score / cat.max) * 100) : 0;
+              const color = idx === 0 ? 'bg-[#1D4ED8]' : idx === 1 ? 'bg-emerald-600' : idx === 2 ? 'bg-amber-600' : 'bg-purple-600';
+              const text = idx === 0 ? 'text-[#1D4ED8]' : idx === 1 ? 'text-emerald-700' : idx === 2 ? 'text-amber-700' : 'text-purple-700';
+              const bg = idx === 0 ? 'bg-blue-50' : idx === 1 ? 'bg-emerald-50' : idx === 2 ? 'bg-amber-50' : 'bg-purple-50';
+              return (
+                <div key={cat.name} className={`p-4 rounded-xl border border-slate-100/50 ${bg}`}>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs font-bold text-slate-700">{cat.name}</span>
+                    <span className={`text-xs font-black ${text}`}>{cat.score}/{cat.max}</span>
+                  </div>
+                  <div className="w-full bg-slate-200/60 rounded-full h-2 overflow-hidden">
+                    <div 
+                      className={`h-2 rounded-full transition-all duration-300 ${color}`}
+                      style={{ width: `${pct}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-[9px] text-slate-400 font-bold mt-1.5 block">Contribution: {pct}% achieved</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Scoring list (takes 2 cols) */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-2 space-y-6">
+          {/* Tab headers */}
+          <div className="flex border-b border-slate-100">
+            <button
+              onClick={() => setActiveTab('existing')}
+              className={`pb-4 px-6 text-xs font-bold uppercase tracking-wider border-b-2 transition-colors cursor-pointer ${
+                activeTab === 'existing' 
+                  ? 'border-[#1D4ED8] text-[#1D4ED8]' 
+                  : 'border-transparent text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              Existing Parameters (1-14) <span className="ml-1 text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">68 pts</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('new')}
+              className={`pb-4 px-6 text-xs font-bold uppercase tracking-wider border-b-2 transition-colors cursor-pointer ${
+                activeTab === 'new' 
+                  ? 'border-[#1D4ED8] text-[#1D4ED8]' 
+                  : 'border-transparent text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              Suggested Parameters (15-22) <span className="ml-1 text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-full">32 pts</span>
+            </button>
           </div>
 
-          {/* NEP Indicators */}
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">NEP Indicators & Evaluation</h3>
-            <div className="overflow-hidden border border-slate-200 rounded-md">
-              <table className="min-w-full divide-y divide-slate-200">
-                <thead className="bg-slate-50">
-                  <tr>
-                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Indicator</th>
-                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Value</th>
-                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Marks</th>
-                    <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase">Document</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-slate-200">
-                  {college.data.indicators.map((ind, index) => (
-                    <tr key={index}>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{ind.name}</td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-slate-500">{ind.value}</td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-slate-500">{ind.marks}</td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-accent hover:underline">
-                        <a href={`#${ind.doc}`} onClick={(e) => { e.preventDefault(); alert(`Downloading ${ind.doc}`); }}>
-                          {ind.doc}
-                        </a>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {/* Parameters List */}
+          <div className="space-y-4">
+            {(activeTab === 'existing' ? existingParams : newParams).map((param) => {
+              const scoreVal = tempScores[param.id] ?? 0;
+              const hasDoc = college.docs && college.docs[param.id];
+              return (
+                <div key={param.id} className="p-4 bg-slate-50/50 rounded-2xl border border-slate-200/60 hover:bg-slate-50 transition-colors flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                  <div className="space-y-1.5 flex-1 min-w-0">
+                    <div className="flex items-center space-x-2">
+                      <span className="text-[10px] font-extrabold px-1.5 py-0.5 rounded bg-slate-200 text-slate-600">
+                        P-{param.num}
+                      </span>
+                      <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-blue-100 text-[#1D4ED8]">
+                        {param.category}
+                      </span>
+                    </div>
+                    <p className="text-xs font-bold text-slate-700 leading-snug">{param.name}</p>
+                    <div className="flex items-center space-x-3 text-[10px] text-slate-400 font-bold">
+                      <span>Submitted value:</span>
+                      <span className="text-slate-500 font-semibold">{scoreVal > 0 ? "Compliant & Configured" : "Not Implemented"}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center space-x-4 shrink-0 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 pt-3 md:pt-0 border-slate-100">
+                    {/* Document Status */}
+                    <div className="flex items-center space-x-1.5">
+                      <span className={`text-[10px] font-bold flex items-center gap-1 ${
+                        hasDoc ? 'text-emerald-600' : 'text-slate-400'
+                      }`}>
+                        <FileText className="w-3.5 h-3.5" />
+                        <span>{hasDoc ? 'Uploaded' : 'No Doc'}</span>
+                      </span>
+                      {hasDoc && (
+                        <button
+                          onClick={() => handleViewDoc(param)}
+                          className="p-1 text-slate-400 hover:text-[#1D4ED8] hover:bg-white rounded border border-transparent hover:border-slate-200 cursor-pointer"
+                          title="View Proof File"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Score Editor Input */}
+                    <div className="flex items-center space-x-2 bg-white border border-slate-200 rounded-lg p-1.5">
+                      <input
+                        type="number"
+                        min="0"
+                        max={param.max}
+                        className="w-10 text-center font-bold text-xs text-slate-800 focus:outline-none"
+                        value={scoreVal}
+                        onChange={(e) => handleScoreChange(param.id, e.target.value, param.max)}
+                      />
+                      <span className="text-xs text-slate-400 font-bold">/ {param.max}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+      </div>
+
+      {/* Review Actions & Timeline Details */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Remarks and Buttons (takes 2 cols) */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-2 space-y-6">
+          <div className="flex items-center space-x-2 pb-4 border-b border-slate-100">
+            <MessageSquare className="w-5 h-5 text-slate-500" />
+            <h3 className="text-base font-bold text-slate-800 tracking-tight">Review Decision Desk</h3>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Evaluator Remarks & Instructions</label>
+              <textarea
+                rows="4"
+                className="w-full p-4 border border-slate-200 rounded-2xl text-xs font-medium text-slate-700 placeholder-slate-400 bg-slate-50/50 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-[#1D4ED8]"
+                placeholder="Write specific auditing remarks regarding parameter checks, documents missing, or praises for implementation..."
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+              ></textarea>
+            </div>
+
+            <div className="flex flex-col sm:flex-row justify-between gap-4 border-t border-slate-100 pt-4">
+              <span className="text-[10px] text-slate-400 font-bold leading-normal max-w-xs">
+                Saving score reviews or statuses registers live records into the Council's Local Session DB.
+              </span>
+              
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => handleDecision('Sent Back')}
+                  className="flex items-center gap-1.5 px-4 py-2 border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-bold rounded-xl cursor-pointer transition-colors"
+                >
+                  <AlertCircle className="w-4 h-4" />
+                  <span>Send Back</span>
+                </button>
+                <button
+                  onClick={() => handleDecision('Rejected')}
+                  className="flex items-center gap-1.5 px-4 py-2 border border-red-300 bg-red-50 hover:bg-red-100 text-red-700 text-xs font-bold rounded-xl cursor-pointer transition-colors"
+                >
+                  <XCircle className="w-4 h-4" />
+                  <span>Reject Appraisal</span>
+                </button>
+                <button
+                  onClick={() => handleDecision('Approved')}
+                  className="flex items-center gap-1.5 px-5 py-2.5 bg-[#1D4ED8] hover:bg-blue-700 text-white text-xs font-bold rounded-xl cursor-pointer transition-all shadow-md shadow-blue-500/10"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  <span>Approve Award</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Review Panel */}
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200 sticky top-24">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">Review Panel</h3>
+        {/* Timeline (takes 1 col) */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-6">
+          <div className="flex items-center space-x-2 pb-4 border-b border-slate-100">
+            <History className="w-5 h-5 text-slate-500" />
+            <h3 className="text-base font-bold text-slate-800 tracking-tight">Audit Trail Timeline</h3>
+          </div>
+
+          <div className="flow-root">
+            <ul className="-mb-8">
+              {(college.history || []).map((hist, index) => (
+                <li key={index}>
+                  <div className="relative pb-8">
+                    {index !== college.history.length - 1 ? (
+                      <span className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-100" aria-hidden="true"></span>
+                    ) : null}
+                    <div className="relative flex space-x-3">
+                      <div>
+                        <span className={`h-8 w-8 rounded-full flex items-center justify-center ring-4 ring-white ${
+                          hist.status === 'Approved' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
+                          hist.status === 'Submitted' ? 'bg-indigo-50 text-indigo-600 border border-indigo-200' :
+                          hist.status === 'Pending Review' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
+                          hist.status === 'Sent Back' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
+                          'bg-red-50 text-red-600 border border-red-200'
+                        }`}>
+                          <Calendar className="w-3.5 h-3.5" />
+                        </span>
+                      </div>
+                      <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
+                        <div>
+                          <p className="text-xs font-bold text-slate-700">Status: {hist.status}</p>
+                          <span className="text-[10px] text-slate-400 font-bold block mt-0.5">{hist.user}</span>
+                        </div>
+                        <div className="text-right text-[10px] whitespace-nowrap text-slate-400 font-bold">
+                          <span>{hist.date.split(' ')[0]}</span>
+                          <span className="block text-[8px] font-medium text-slate-400/80 mt-0.5">{hist.date.split(' ')[1] || ''}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Document Viewer Modal */}
+      {showDocModal && selectedDocParam && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden animate-zoomIn">
+            <div className="px-6 py-4 bg-[#1E3A5F] text-white flex justify-between items-center">
+              <div className="flex items-center space-x-2">
+                <FileText className="w-5 h-5 text-blue-300" />
+                <span className="text-sm font-bold tracking-tight">Verified Document: P-{selectedDocParam.num}</span>
+              </div>
+              <button 
+                onClick={() => setShowDocModal(false)}
+                className="p-1 bg-[#172e4c] hover:bg-slate-700/50 rounded-lg text-white transition-colors cursor-pointer"
+              >
+                <XCircle className="w-5 h-5" />
+              </button>
+            </div>
             
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-slate-700">Current Status</label>
-                <div className="mt-1 flex items-center gap-2">
-                  <span className={`px-3 py-1 text-sm font-semibold rounded-full ${
-                    status === 'Approved' ? 'bg-green-100 text-green-800' :
-                    status === 'Under Review' ? 'bg-yellow-100 text-yellow-800' :
-                    status === 'Rejected' ? 'bg-red-100 text-red-800' :
-                    'bg-blue-100 text-blue-800'
-                  }`}>
-                    {status}
-                  </span>
+            <div className="p-8 space-y-6">
+              <div className="border border-slate-100 bg-slate-50/50 p-4 rounded-xl space-y-1">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">Evaluating Parameter</p>
+                <p className="text-xs font-bold text-slate-700 leading-snug">{selectedDocParam.name}</p>
+              </div>
+
+              {/* Mock PDF document body */}
+              <div className="border-2 border-dashed border-slate-200 rounded-2xl p-10 flex flex-col items-center justify-center space-y-4 bg-slate-50">
+                <div className="p-4 bg-blue-50 border border-blue-100 rounded-full text-blue-600">
+                  <Award className="w-12 h-12" />
+                </div>
+                <div className="text-center space-y-1">
+                  <h4 className="text-sm font-black text-slate-800">Haryana State Higher Education Council Verification Proof</h4>
+                  <p className="text-xs font-medium text-slate-500">Document Hash Ref: SHA256-4902FJKDLS9320</p>
+                  <p className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full inline-block mt-2 border border-emerald-100">
+                    Digitally Signed & Validated (AISHE: {college.aishe})
+                  </p>
                 </div>
               </div>
+            </div>
 
-              <div>
-                <label htmlFor="remarks" className="block text-sm font-medium text-slate-700">Remarks / Comments</label>
-                <textarea
-                  id="remarks"
-                  rows="4"
-                  className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-accent focus:border-accent sm:text-sm"
-                  placeholder="Add notes for the college or internal use..."
-                  value={remarks}
-                  onChange={(e) => setRemarks(e.target.value)}
-                ></textarea>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <button
-                  onClick={() => handleStatusChange('Approved')}
-                  className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                >
-                  Approve
-                </button>
-                <button
-                  onClick={() => handleStatusChange('Under Review')}
-                  className="w-full inline-flex justify-center py-2 px-4 border border-slate-300 shadow-sm text-sm font-medium rounded-md text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent"
-                >
-                  Send Back for Review
-                </button>
-                <button
-                  onClick={() => handleStatusChange('Rejected')}
-                  className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                >
-                  Reject
-                </button>
-              </div>
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+              <button 
+                onClick={() => setShowDocModal(false)}
+                className="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl cursor-pointer transition-colors"
+              >
+                Close Viewer
+              </button>
             </div>
           </div>
         </div>
-      </div>
+      )}
+
     </div>
   );
 };

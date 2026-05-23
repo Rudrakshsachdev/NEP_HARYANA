@@ -1,134 +1,413 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  School, 
+  CheckCircle2, 
+  Clock, 
+  AlertTriangle,
+  ArrowRight,
+  TrendingUp,
+  FileCheck
+} from 'lucide-react';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend, 
+  PieChart, 
+  Pie, 
+  Cell, 
+  ResponsiveContainer 
+} from 'recharts';
+import { 
+  getColleges, 
+  calculateTotalScore, 
+  getClassification,
+  CATEGORIES,
+  PARAMETERS
+} from '../../utils/mockData';
 
 const AdminOverview = () => {
-  // Mock Data
+  const navigate = useNavigate();
+  const [colleges, setColleges] = useState([]);
+
+  useEffect(() => {
+    setColleges(getColleges() || []);
+  }, []);
+
+  // 1. KPI Cards data calculations
+  const totalCollegesCount = colleges.length;
+  const approvedCount = colleges.filter(c => c.status === 'Approved').length;
+  const pendingCount = colleges.filter(c => c.status === 'Pending Review').length;
+  const sentBackCount = colleges.filter(c => c.status === 'Sent Back').length;
+  const totalSubmissions = totalCollegesCount; // All are submitted in this setup
+
   const kpis = [
-    { title: 'Total Colleges', value: '150', color: 'bg-blue-500' },
-    { title: 'Submissions', value: '120', color: 'bg-green-500' },
-    { title: 'Under Review', value: '25', color: 'bg-yellow-500' },
-    { title: 'Approved', value: '85', color: 'bg-purple-500' },
-    { title: 'Rejected', value: '10', color: 'bg-red-500' },
+    { 
+      title: 'Total Institutions', 
+      value: totalCollegesCount, 
+      desc: 'Participating Colleges',
+      icon: School, 
+      color: 'text-blue-600 bg-blue-50 border-blue-100',
+      progress: 100
+    },
+    { 
+      title: 'Total Submissions', 
+      value: totalSubmissions, 
+      desc: 'NEP Self-Appraisal Portals',
+      icon: FileCheck, 
+      color: 'text-indigo-600 bg-indigo-50 border-indigo-100',
+      progress: 100
+    },
+    { 
+      title: 'Approved Awards', 
+      value: approvedCount, 
+      desc: 'Evaluation completed',
+      icon: CheckCircle2, 
+      color: 'text-emerald-600 bg-emerald-50 border-emerald-100',
+      progress: totalCollegesCount ? Math.round((approvedCount / totalCollegesCount) * 100) : 0
+    },
+    { 
+      title: 'Pending Review', 
+      value: pendingCount, 
+      desc: 'Awaiting desk audit',
+      icon: Clock, 
+      color: 'text-amber-600 bg-amber-50 border-amber-100',
+      progress: totalCollegesCount ? Math.round((pendingCount / totalCollegesCount) * 100) : 0
+    }
   ];
 
-  const barData = [
-    { name: 'College A', score: 85 },
-    { name: 'College B', score: 72 },
-    { name: 'College C', score: 90 },
-    { name: 'College D', score: 65 },
-    { name: 'College E', score: 88 },
-  ];
+  // 2. Classification Breakdown (Pie Chart)
+  const classificationCounts = {
+    'Platinum': 0,
+    'Gold': 0,
+    'Silver': 0,
+    'No Award': 0
+  };
 
-  const pieData = [
-    { name: 'Platinum', value: 20 },
-    { name: 'Gold', value: 50 },
-    { name: 'Silver', value: 30 },
-  ];
+  colleges.forEach(c => {
+    const totalScore = calculateTotalScore(c.scores);
+    const classification = getClassification(totalScore);
+    classificationCounts[classification.name] += 1;
+  });
 
-  const COLORS = ['#00C49F', '#FFBB28', '#FF8042'];
+  const pieData = Object.keys(classificationCounts).map(key => ({
+    name: key,
+    value: classificationCounts[key]
+  })).filter(item => item.value > 0);
 
-  const activities = [
-    { id: 1, action: 'New submission from Govt College, Ambala', time: '10 mins ago' },
-    { id: 2, action: 'Status changed to Approved for RK College', time: '1 hour ago' },
-    { id: 3, action: 'New submission from DAV College, Karnal', time: '2 hours ago' },
-    { id: 4, action: 'Status changed to Rejected for MLN College', time: '1 day ago' },
-  ];
+  const CLASSIFICATION_COLORS = {
+    'Platinum': '#7C3AED',  // purple
+    'Gold': '#D97706',      // amber
+    'Silver': '#6B7280',    // gray
+    'No Award': '#EF4444'   // red
+  };
+
+  // 3. Top 10 colleges by total score
+  const top10Colleges = [...colleges]
+    .map(c => {
+      const score = calculateTotalScore(c.scores);
+      return {
+        id: c.id,
+        fullName: c.name,
+        name: c.name.length > 20 ? c.name.substring(0, 20) + '...' : c.name,
+        score: score,
+        classification: getClassification(score).name
+      };
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 10);
+
+  // 4. Category-wise average score across all colleges
+  const categoryAverages = Object.keys(CATEGORIES).map(catName => {
+    const categoryInfo = CATEGORIES[catName];
+    let totalScoreInCat = 0;
+    
+    colleges.forEach(c => {
+      categoryInfo.params.forEach(paramId => {
+        totalScoreInCat += c.scores[paramId] || 0;
+      });
+    });
+
+    const average = totalCollegesCount > 0 ? Number((totalScoreInCat / totalCollegesCount).toFixed(1)) : 0;
+    
+    return {
+      category: catName,
+      average: average,
+      max: categoryInfo.max
+    };
+  });
+
+  // Custom tooltips
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-slate-900 text-white p-3 rounded-lg shadow-md border border-slate-700 text-xs font-semibold max-w-xs">
+          <p className="mb-1 text-slate-300 leading-normal">{data.fullName || data.category || data.name}</p>
+          <p className="text-sm font-bold text-blue-300">Score: {payload[0].value} {data.max ? `/ ${data.max}` : 'pts'}</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
-    <div className="space-y-6">
-      {/* KPI Tiles */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        {kpis.map((kpi) => (
-          <div key={kpi.title} className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-500 font-medium">{kpi.title}</p>
-                <p className="text-2xl font-bold text-slate-800 mt-1">{kpi.value}</p>
-              </div>
-              <div className={`w-3 h-3 rounded-full ${kpi.color}`}></div>
-            </div>
-          </div>
-        ))}
+    <div className="space-y-8 animate-fadeIn">
+      
+      {/* Welcome Banner */}
+      <div className="bg-gradient-to-r from-[#1E3A5F] to-[#1D4ED8] p-6 rounded-2xl shadow-lg text-white flex flex-col md:flex-row justify-between items-start md:items-center">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">NEP Excellence Awards Evaluation Portal</h1>
+          <p className="text-blue-100 text-xs mt-1 font-medium max-w-xl">
+            Monitor, audit, and compare the Haryana State Higher Education Council self-appraisals under the NEP 2020 parameters.
+          </p>
+        </div>
+        <div className="mt-4 md:mt-0 flex items-center space-x-2 text-xs font-bold bg-[#172e4c]/40 border border-blue-400/20 py-2 px-4 rounded-xl">
+          <TrendingUp className="w-4 h-4 text-emerald-400" />
+          <span>Evaluation Status: {Math.round((approvedCount / totalCollegesCount) * 100)}% Evaluated</span>
+        </div>
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Bar Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">College-wise Scores</h3>
-          <div className="h-80">
+      {/* KPI Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {kpis.map((kpi) => {
+          const Icon = kpi.icon;
+          return (
+            <div key={kpi.title} className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-shadow duration-200 flex flex-col justify-between">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{kpi.title}</p>
+                  <p className="text-3xl font-extrabold text-slate-800 mt-2 tracking-tight">{kpi.value}</p>
+                </div>
+                <div className={`p-3 rounded-xl border ${kpi.color}`}>
+                  <Icon className="w-6 h-6" />
+                </div>
+              </div>
+              <div className="mt-5">
+                <div className="flex justify-between items-center text-[10px] text-slate-400 font-bold uppercase mb-1">
+                  <span>{kpi.desc}</span>
+                  <span>{kpi.progress}%</span>
+                </div>
+                <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                  <div 
+                    className="bg-[#1D4ED8] h-1.5 rounded-full transition-all duration-500" 
+                    style={{ width: `${kpi.progress}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Main Analytics Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Top 10 Scores Bar Chart (takes 2 cols) */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-2">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="text-lg font-bold text-slate-800 tracking-tight">Top 10 Performing Institutions</h3>
+              <p className="text-xs text-slate-400 font-medium">Ranked by total validated score (out of 100 marks)</p>
+            </div>
+          </div>
+          <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={barData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="score" fill="#1D4ED8" />
+              <BarChart 
+                layout="vertical" 
+                data={top10Colleges} 
+                margin={{ top: 10, right: 30, left: 10, bottom: 10 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                <XAxis 
+                  type="number"
+                  domain={[0, 100]} 
+                  tick={{ fill: '#64748b', fontSize: 10, fontWeight: 500 }}
+                />
+                <YAxis 
+                  type="category"
+                  dataKey="name" 
+                  tick={{ fill: '#64748b', fontSize: 10, fontWeight: 500 }}
+                  width={140}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="score" radius={[0, 6, 6, 0]}>
+                  {top10Colleges.map((entry, index) => (
+                    <Cell 
+                      key={`cell-${index}`} 
+                      fill={CLASSIFICATION_COLORS[entry.classification] || '#1D4ED8'} 
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Pie Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Classification Breakdown</h3>
-          <div className="h-80 flex items-center justify-center">
+        {/* Classification Breakdown Pie Chart */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
+          <div>
+            <h3 className="text-lg font-bold text-slate-800 tracking-tight">Awards Classification</h3>
+            <p className="text-xs text-slate-400 font-medium mb-4">Breakdown by current evaluated results</p>
+          </div>
+          
+          <div className="h-48 flex items-center justify-center relative">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={pieData}
                   cx="50%"
                   cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={100}
-                  fill="#8884d8"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
                   dataKey="value"
                 >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  {pieData.map((entry) => (
+                    <Cell key={entry.name} fill={CLASSIFICATION_COLORS[entry.name]} />
                   ))}
                 </Pie>
-                <Tooltip />
-                <Legend />
+                <Tooltip content={<CustomTooltip />} />
               </PieChart>
+            </ResponsiveContainer>
+            
+            {/* Center Label */}
+            <div className="absolute text-center">
+              <span className="block text-2xl font-black text-slate-800 leading-none">{totalCollegesCount}</span>
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Colleges</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 mt-6 pt-4 border-t border-slate-100">
+            {Object.keys(CLASSIFICATION_COLORS).map(cls => {
+              const count = classificationCounts[cls] || 0;
+              const pct = totalCollegesCount ? Math.round((count / totalCollegesCount) * 100) : 0;
+              return (
+                <div key={cls} className="flex items-center space-x-2">
+                  <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: CLASSIFICATION_COLORS[cls] }}></span>
+                  <div className="min-w-0">
+                    <span className="block text-xs font-bold text-slate-700 truncate">{cls}</span>
+                    <span className="block text-[10px] text-slate-400 font-medium">{count} ({pct}%)</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+      </div>
+
+      {/* Category Wise Averages and Recent Activities */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        {/* Category Averages Bar Chart (takes 2 cols) */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm lg:col-span-2">
+          <div>
+            <h3 className="text-lg font-bold text-slate-800 tracking-tight">Category-wise Average Score</h3>
+            <p className="text-xs text-slate-400 font-medium mb-6">Grouped metrics comparison across all 15+ evaluated institutions</p>
+          </div>
+          <div className="h-72 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={categoryAverages} layout="vertical" margin={{ top: 5, right: 20, left: 30, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                <XAxis type="number" tick={{ fill: '#64748b', fontSize: 10, fontWeight: 500 }} />
+                <YAxis dataKey="category" type="category" tick={{ fill: '#64748b', fontSize: 10, fontWeight: 500 }} />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar dataKey="average" fill="#1D4ED8" radius={[0, 4, 4, 0]} maxBarSize={30}>
+                  {categoryAverages.map((entry, idx) => (
+                    <Cell 
+                      key={`cell-${idx}`} 
+                      fill={idx === 0 ? '#1D4ED8' : idx === 1 ? '#0F766E' : idx === 2 ? '#D97706' : '#7C3AED'} 
+                    />
+                  ))}
+                </Bar>
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
+
+        {/* Recent Submissions Feed */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col">
+          <div className="flex justify-between items-center mb-6">
+            <div>
+              <h3 className="text-lg font-bold text-slate-800 tracking-tight">Submissions Feed</h3>
+              <p className="text-xs text-slate-400 font-medium">Recent evaluation activities</p>
+            </div>
+            <button 
+              onClick={() => navigate('/admin/colleges')}
+              className="text-xs font-bold text-[#1D4ED8] hover:text-blue-700 flex items-center gap-1 group cursor-pointer"
+            >
+              <span>View All</span>
+              <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
+
+          <div className="flow-root flex-1 overflow-y-auto max-h-72 pr-2">
+            <ul className="-mb-8">
+              {colleges.slice(0, 5).map((col, index) => {
+                const totalScore = calculateTotalScore(col.scores);
+                const latestHistory = col.history && col.history.length > 0 
+                  ? col.history[col.history.length - 1] 
+                  : { date: '2026-05-19', status: col.status, user: 'Admin' };
+
+                return (
+                  <li key={col.id}>
+                    <div className="relative pb-8">
+                      {index !== 4 ? (
+                        <span className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-100" aria-hidden="true"></span>
+                      ) : null}
+                      <div className="relative flex space-x-3">
+                        <div>
+                          <span className={`h-8 w-8 rounded-lg flex items-center justify-center ring-4 ring-white ${
+                            col.status === 'Approved' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
+                            col.status === 'Pending Review' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
+                            col.status === 'Sent Back' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
+                            'bg-red-50 text-red-600 border border-red-200'
+                          }`}>
+                            <School className="w-4 h-4" />
+                          </span>
+                        </div>
+                        <div className="min-w-0 flex-1 pt-1 flex justify-between space-x-4">
+                          <div>
+                            <p 
+                              onClick={() => navigate(`/admin/colleges/${col.id}`)}
+                              className="text-xs font-bold text-slate-700 hover:text-[#1D4ED8] transition-colors cursor-pointer truncate max-w-[140px]"
+                              title={col.name}
+                            >
+                              {col.name}
+                            </p>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase ${
+                                col.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' :
+                                col.status === 'Pending Review' ? 'bg-blue-100 text-blue-800' :
+                                col.status === 'Sent Back' ? 'bg-amber-100 text-amber-800' :
+                                'bg-red-100 text-red-800'
+                              }`}>
+                                {col.status}
+                              </span>
+                              <span className="text-[10px] text-slate-400 font-bold">{totalScore} Marks</span>
+                            </div>
+                          </div>
+                          <div className="text-right text-[10px] whitespace-nowrap text-slate-400 font-medium">
+                            <time>{latestHistory.date.split(' ')[0]}</time>
+                            <span className="block text-[8px] text-slate-400/80 mt-0.5">{latestHistory.user}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </div>
+
       </div>
 
-      {/* Recent Activity */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-        <h3 className="text-lg font-semibold text-slate-800 mb-4">Recent Activity</h3>
-        <div className="flow-root">
-          <ul className="-mb-8">
-            {activities.map((activity, index) => (
-              <li key={activity.id}>
-                <div className="relative pb-8">
-                  {index !== activities.length - 1 ? (
-                    <span className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-200" aria-hidden="true"></span>
-                  ) : null}
-                  <div className="relative flex space-x-3">
-                    <div>
-                      <span className="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center ring-8 ring-white">
-                        <span className="text-sm font-medium text-slate-500">{activity.id}</span>
-                      </span>
-                    </div>
-                    <div className="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
-                      <div>
-                        <p className="text-sm text-slate-800">{activity.action}</p>
-                      </div>
-                      <div className="text-right text-sm whitespace-nowrap text-slate-500">
-                        <time>{activity.time}</time>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
     </div>
   );
 };
