@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { openNominationHeaderForm } from "../../../api/nomination";
+import { getSavedAuthUser } from "../../../api/auth";
 import styles from "./FormsHub.module.css";
 
 const FORM_CARDS = [
@@ -42,13 +43,23 @@ function FormsHub() {
 
     try {
       const response = await openNominationHeaderForm();
-      const formId = response?.data?.form_id;
+      const formId = response?.id;
 
       if (!formId) {
         throw new Error("Could not open nomination form.");
       }
 
-      navigate(`/college/forms/nomination/${formId}`);
+      const savedUser = getSavedAuthUser();
+      const nameSlug = String(savedUser?.college_name || "college")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)+/g, "");
+      const codeSlug = String(savedUser?.aishe_code || "code")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)+/g, "");
+
+      navigate(`/institution/${nameSlug}/${codeSlug}/forms/nomination/${formId}`);
     } catch (requestError) {
       setError(requestError.message || "Could not open nomination form.");
     } finally {
