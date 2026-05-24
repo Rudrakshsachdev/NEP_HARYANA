@@ -64,9 +64,25 @@ export function saveIndicators(formId, indicatorsList) {
   });
 }
 
-export function uploadIndicatorFile(formId, indicatorNum, file) {
-  const formData = new FormData();
-  formData.append("file", file);
+export async function uploadIndicatorFile(formId, indicatorNum, file) {
+  const cloudName = "duimpfjil";
+  const uploadPreset = "NEP_EXCELLENCE-AWARDS";
+
+  const cloudinaryFormData = new FormData();
+  cloudinaryFormData.append("file", file);
+  cloudinaryFormData.append("upload_preset", uploadPreset);
+
+  const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+    method: "POST",
+    body: cloudinaryFormData,
+  });
+
+  const cloudinaryData = await cloudinaryResponse.json();
+  if (!cloudinaryResponse.ok) {
+    throw new Error(cloudinaryData.error?.message || "Cloudinary upload failed.");
+  }
+
+  const secureUrl = cloudinaryData.secure_url;
 
   const API_BASE_URL = (
     import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api"
@@ -74,17 +90,25 @@ export function uploadIndicatorFile(formId, indicatorNum, file) {
   const token = localStorage.getItem(AUTH_TOKEN_KEY);
   const authHeader = token ? { Authorization: `Token ${token}` } : {};
 
-  return fetch(`${API_BASE_URL}/nomination-header/${formId}/indicators/${indicatorNum}/upload/`, {
+  const backendResponse = await fetch(`${API_BASE_URL}/nomination-header/${formId}/indicators/${indicatorNum}/upload/`, {
     method: "POST",
     headers: {
+      "Content-Type": "application/json",
       ...authHeader,
     },
-    body: formData,
-  }).then(async (response) => {
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      throw new Error(data.detail || data.message || "File upload failed.");
-    }
-    return data;
+    body: JSON.stringify({
+      file_url: secureUrl,
+    }),
   });
+
+  const backendData = await backendResponse.json();
+  if (!backendResponse.ok) {
+    throw new Error(backendData.detail || backendData.message || "Failed to save file URL on backend.");
+  }
+
+  return {
+    indicator_number: indicatorNum,
+    uploaded_file_name: secureUrl.split("/").pop(),
+    uploaded_file_url: secureUrl,
+  };
 }
