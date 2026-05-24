@@ -22,5 +22,6 @@ urlpatterns = [
     path('api/', include('apps.authentication.urls')),
     path('api/', include('apps.forms.urls')),
     path('api/', include('apps.scoring.urls')),
+    path('api/', include('apps.admin_panel.urls')),
 ]
 

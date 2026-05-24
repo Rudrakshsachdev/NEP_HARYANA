@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 	'apps.authentication',
 	'apps.forms',
 	'apps.scoring',
+	'apps.admin_panel',
 ]
 
 MIDDLEWARE = [
