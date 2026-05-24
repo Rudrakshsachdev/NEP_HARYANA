@@ -112,3 +112,8 @@ export async function uploadIndicatorFile(formId, indicatorNum, file) {
     uploaded_file_url: secureUrl,
   };
 }
+
+export function fetchMyScore() {
+  return request("/scoring/my-score/");
+}
+

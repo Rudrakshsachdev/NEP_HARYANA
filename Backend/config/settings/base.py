@@ -47,6 +47,7 @@ INSTALLED_APPS = [
 	'corsheaders',
 	'apps.authentication',
 	'apps.forms',
+	'apps.scoring',
 ]
 
 MIDDLEWARE = [
