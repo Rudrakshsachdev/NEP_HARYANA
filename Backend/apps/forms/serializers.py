@@ -29,6 +29,7 @@ class NominationHeaderSerializer(serializers.ModelSerializer):
             'total_students',
             'total_faculty',
             'academic_session', 
+            'is_submitted',
             'created_at', 
             'updated_at'
         ]

@@ -55,6 +55,9 @@ class NominationHeaderDetailView(APIView):
         except NominationHeader.DoesNotExist:
             return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
         
+        if header.is_submitted:
+            return Response({'detail': 'This form has been submitted and cannot be modified.'}, status=status.HTTP_400_BAD_REQUEST)
+        
         serializer = NominationHeaderSerializer(header, data=request.data, context={'request': request}, partial=True)
         if serializer.is_valid():
             serializer.save()

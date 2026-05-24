@@ -28,6 +28,7 @@ const initialState = {
   naac_cgpa: "",
   total_students: "",
   total_faculty: "",
+  is_submitted: false,
 };
 
 function NominationForm() {
@@ -37,6 +38,9 @@ function NominationForm() {
   const [status, setStatus] = useState({ type: "", message: "" });
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitType, setSubmitType] = useState("draft");
+
+  const isLocked = formData.is_submitted;
 
   useEffect(() => {
     if (!formId) {
@@ -79,6 +83,7 @@ function NominationForm() {
           naac_cgpa: data.naac_cgpa || "",
           total_students: data.total_students || "",
           total_faculty: data.total_faculty || "",
+          is_submitted: data.is_submitted || false,
         });
       } catch (error) {
         if (active) {
@@ -140,7 +145,11 @@ function NominationForm() {
     setIsSubmitting(true);
 
     try {
-      const response = await saveNominationHeaderById(formId, formData);
+      const payload = {
+        ...formData,
+        is_submitted: submitType === "final",
+      };
+      const response = await saveNominationHeaderById(formId, payload);
       const saved = response.data || response;
       setFormData({
         institution_name: saved.institution_name || formData.institution_name,
@@ -163,10 +172,13 @@ function NominationForm() {
         naac_cgpa: saved.naac_cgpa || formData.naac_cgpa,
         total_students: saved.total_students || formData.total_students,
         total_faculty: saved.total_faculty || formData.total_faculty,
+        is_submitted: saved.is_submitted || false,
       });
       setStatus({
         type: "success",
-        message: response.message || "Nomination header saved successfully.",
+        message: submitType === "final"
+          ? "Nomination Form successfully submitted and locked."
+          : "Nomination Draft saved successfully.",
       });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (error) {
@@ -233,6 +245,18 @@ function NominationForm() {
           </div>
         </div>
 
+        {isLocked && (
+          <div className={styles.lockedBanner}>
+            <div className={styles.statusIcon}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+            </div>
+            <span>This Nomination Form has been final submitted and is locked for editing (Read-Only Mode).</span>
+          </div>
+        )}
+
         {status.message && (
           <div
             className={`${styles.statusMessage} ${status.type === "success" ? styles.success : styles.error}`}
@@ -255,6 +279,7 @@ function NominationForm() {
           </div>
         ) : (
           <form className={styles.nominationForm} onSubmit={handleSubmit}>
+            <fieldset disabled={isLocked} style={{ border: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "2rem" }}>
             
             {/* Section 1: Basic Institutional Profile */}
             <section className={styles.formCard}>
@@ -580,22 +605,52 @@ function NominationForm() {
               </div>
             </section>
 
+            </fieldset>
+
             {/* Submit Action */}
             <div className={styles.formActions}>
-              <button
-                type="submit"
-                className={styles.submitButton}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <>
-                    <span className={styles.btnSpinner}></span>
-                    Saving Nomination Draft...
-                  </>
-                ) : (
-                  "Save Section A (Nomination Header)"
-                )}
-              </button>
+              {isLocked ? (
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "#166534", fontWeight: "700" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span>Submitted & Verification Pending</span>
+                </div>
+              ) : (
+                <div className={styles.submitTypeRow}>
+                  <button
+                    type="submit"
+                    formNoValidate
+                    className={styles.draftButton}
+                    disabled={isSubmitting}
+                    onClick={() => setSubmitType("draft")}
+                  >
+                    {isSubmitting && submitType === "draft" ? (
+                      <>
+                        <span className={styles.btnSpinner}></span>
+                        Saving Draft...
+                      </>
+                    ) : (
+                      "Save Draft"
+                    )}
+                  </button>
+                  <button
+                    type="submit"
+                    className={styles.submitButton}
+                    disabled={isSubmitting}
+                    onClick={() => setSubmitType("final")}
+                  >
+                    {isSubmitting && submitType === "final" ? (
+                      <>
+                        <span className={styles.btnSpinner}></span>
+                        Submitting...
+                      </>
+                    ) : (
+                      "Submit Nomination"
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
           </form>
         )}

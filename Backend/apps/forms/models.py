@@ -5,6 +5,7 @@ from django.conf import settings
 class NominationHeader(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='nomination_header')
     form_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    is_submitted = models.BooleanField(default=False)
     
     # Basic Profile
     institution_name = models.CharField(max_length=255)
