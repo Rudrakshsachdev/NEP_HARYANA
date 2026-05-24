@@ -8,6 +8,7 @@ import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import CollegeDashboard from "./pages/CollegeDashboard/CollegeDashboard";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
+import NominationForm from "./pages/CollegeDashboard/NominationForm/NominationForm";
 import { ProtectedRoute, GuestRoute } from "./components/ProtectedRoute/ProtectedRoute";
 
 function App() {
@@ -34,6 +35,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["principal"]}>
               <CollegeDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/institution/:institutionName/:institutionAisheCode/forms/nomination/:formId"
+          element={
+            <ProtectedRoute allowedRoles={["principal"]}>
+              <NominationForm />
             </ProtectedRoute>
           }
         />

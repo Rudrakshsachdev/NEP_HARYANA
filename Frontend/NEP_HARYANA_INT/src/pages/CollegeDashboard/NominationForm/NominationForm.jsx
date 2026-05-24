@@ -180,6 +180,19 @@ function NominationForm() {
     }
   };
 
+  const handleBackToDashboard = () => {
+    const savedUser = getSavedAuthUser();
+    const nameSlug = String(savedUser?.college_name || "college")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
+    const codeSlug = String(savedUser?.aishe_code || "code")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
+    navigate(`/institution/${nameSlug}/${codeSlug}/dashboard`);
+  };
+
   return (
     <main className={styles.pageShell}>
       <div className={styles.pageContainer}>
@@ -188,7 +201,7 @@ function NominationForm() {
           <button
             type="button"
             className={styles.backButton}
-            onClick={() => navigate("/college/dashboard")}
+            onClick={handleBackToDashboard}
           >
             <svg
               width="16"
