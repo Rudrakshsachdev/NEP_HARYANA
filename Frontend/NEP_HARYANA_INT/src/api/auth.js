@@ -100,10 +100,10 @@ export function getDashboardPathForUser(user) {
     return "/admin/dashboard";
   }
 
-  return "/dashboard";
+  return "/admin/dashboard";
 }
 
-export function getDashboardPathFromSession(defaultPath = "/dashboard") {
+export function getDashboardPathFromSession(defaultPath = "/admin/dashboard") {
   const user = getSavedAuthUser();
 
   if (!user) {
