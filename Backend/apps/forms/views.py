@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 
 from .models import NominationHeader, IndicatorEntry
 from .serializers import NominationHeaderSerializer, IndicatorEntrySerializer
@@ -91,7 +91,7 @@ class IndicatorListView(APIView):
 
 class IndicatorFileUploadView(APIView):
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def post(self, request, form_id, indicator_num):
         try:
@@ -107,6 +107,19 @@ class IndicatorFileUploadView(APIView):
         except IndicatorEntry.DoesNotExist:
             return Response({'detail': 'Indicator not found.'}, status=status.HTTP_404_NOT_FOUND)
 
+        # Check for direct JSON Cloudinary URL upload
+        file_url = request.data.get('file_url')
+        if file_url:
+            entry.uploaded_file_url = file_url
+            entry.uploaded_file = None  # Clear local file reference
+            entry.save()
+            return Response({
+                'indicator_number': entry.indicator_number,
+                'uploaded_file_name': file_url.split('/')[-1],
+                'uploaded_file_url': entry.uploaded_file_url
+            }, status=status.HTTP_200_OK)
+
+        # Fallback to local Django multipart upload
         file_obj = request.FILES.get('file')
         if not file_obj:
             return Response({'detail': 'No file uploaded.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -159,6 +172,13 @@ class IndicatorBulkSaveView(APIView):
                     entry.page_number = int(page_no)
                 else:
                     entry.page_number = None
+
+                # Persist uploaded_file_url if present
+                file_url = item.get('uploaded_file_url')
+                if file_url is not None:
+                    entry.uploaded_file_url = file_url
+                    if not file_url:
+                        entry.uploaded_file = None  # Clear local file if cleared on front
 
                 entry.save()
                 updated_entries.append(entry)
