@@ -152,10 +152,6 @@ function Dashboard() {
                 </div>
               )}
             </div>
-
-            <button type="button" className={styles.logoutButton} onClick={handleLogout}>
-              Logout
-            </button>
           </div>
         </header>
 
@@ -174,11 +170,6 @@ function Dashboard() {
                     <h3>78</h3>
                     <span className={styles.trendUp}>+5%</span>
                   </div>
-                  <div className={styles.sparklineWrapper}>
-                    <svg viewBox="0 0 100 30" className={styles.sparkline} preserveAspectRatio="none">
-                      <path d="M0,20 C30,10 70,30 100,15" fill="none" stroke="#10b981" strokeWidth="2" />
-                    </svg>
-                  </div>
                   <a href="#">All Indicators →</a>
                 </div>
               </div>
@@ -191,11 +182,6 @@ function Dashboard() {
                   <div className={styles.kpiValueRow}>
                     <h3>52</h3>
                     <span className={styles.trendUp}>+12%</span>
-                  </div>
-                  <div className={styles.sparklineWrapper}>
-                    <svg viewBox="0 0 100 30" className={styles.sparkline} preserveAspectRatio="none">
-                      <path d="M0,25 C25,5 75,5 100,25" fill="none" stroke="#10b981" strokeWidth="2" />
-                    </svg>
                   </div>
                   <span className={styles.kpiSub}>66.67% Completed</span>
                 </div>
@@ -210,11 +196,6 @@ function Dashboard() {
                     <h3>18</h3>
                     <span className={styles.trendDown}>-3%</span>
                   </div>
-                  <div className={styles.sparklineWrapper}>
-                    <svg viewBox="0 0 100 30" className={styles.sparkline} preserveAspectRatio="none">
-                      <path d="M0,15 C30,5 70,25 100,15" fill="none" stroke="#ef4444" strokeWidth="2" />
-                    </svg>
-                  </div>
                   <span className={styles.kpiSub}>23.08% Pending</span>
                 </div>
               </div>
@@ -228,11 +209,6 @@ function Dashboard() {
                     <h3>64</h3>
                     <span className={styles.trendUp}>+8%</span>
                   </div>
-                  <div className={styles.sparklineWrapper}>
-                    <svg viewBox="0 0 100 30" className={styles.sparkline} preserveAspectRatio="none">
-                      <path d="M0,15 C30,5 70,25 100,20" fill="none" stroke="#10b981" strokeWidth="2" />
-                    </svg>
-                  </div>
                   <a href="#">View All Documents →</a>
                 </div>
               </div>
@@ -245,11 +221,6 @@ function Dashboard() {
                   <div className={styles.kpiValueRow}>
                     <h3>612 <span className={styles.scoreMax}>/ 1000</span></h3>
                     <span className={styles.trendUp}>+15%</span>
-                  </div>
-                  <div className={styles.sparklineWrapper}>
-                    <svg viewBox="0 0 100 30" className={styles.sparkline} preserveAspectRatio="none">
-                      <path d="M0,25 C30,25 70,5 100,10" fill="none" stroke="#10b981" strokeWidth="2" />
-                    </svg>
                   </div>
                   <a href="#">View Score Details →</a>
                 </div>
@@ -270,58 +241,60 @@ function Dashboard() {
                   {/* Simulated Chart */}
                   <div className={styles.barChart}>
                     <div className={styles.chartYAxis}>
-                      <span>1000</span><span>750</span><span>500</span><span>250</span><span>0</span>
+                      <span>200</span><span>150</span><span>100</span><span>50</span><span>0</span>
                     </div>
                     <div className={styles.chartBarsArea}>
                       {/* Dotted Line for State Average */}
-                      <div className={styles.dottedLine}></div>
+                      <div className={styles.dottedLine}>
+                        <span>State Avg: 120</span>
+                      </div>
                       
                       <div className={styles.barGroup}>
                         <div className={styles.bars}>
-                          <div className={styles.barBlue} style={{ height: '70%' }}><span>140</span></div>
-                          <div className={styles.barGray} style={{ height: '100%' }}></div>
+                          <div className={styles.barGray}></div>
+                          <div className={styles.barOrange} style={{ height: '70%' }}><span>140 / 200</span></div>
                         </div>
                         <span>Academic</span>
                       </div>
                       <div className={styles.barGroup}>
                         <div className={styles.bars}>
-                          <div className={styles.barBlue} style={{ height: '60%' }}><span>120</span></div>
-                          <div className={styles.barGray} style={{ height: '100%' }}></div>
+                          <div className={styles.barGray}></div>
+                          <div className={styles.barOrange} style={{ height: '60%' }}><span>120 / 200</span></div>
                         </div>
                         <span>Research</span>
                       </div>
                       <div className={styles.barGroup}>
                         <div className={styles.bars}>
-                          <div className={styles.barBlue} style={{ height: '80%' }}><span>160</span></div>
-                          <div className={styles.barGray} style={{ height: '100%' }}></div>
+                          <div className={styles.barGray}></div>
+                          <div className={styles.barOrange} style={{ height: '80%' }}><span>160 / 200</span></div>
                         </div>
                         <span>NEP Impl.</span>
                       </div>
                       <div className={styles.barGroup}>
                         <div className={styles.bars}>
-                          <div className={styles.barBlue} style={{ height: '55%' }}><span>110</span></div>
-                          <div className={styles.barGray} style={{ height: '100%' }}></div>
+                          <div className={styles.barGray}></div>
+                          <div className={styles.barOrange} style={{ height: '55%' }}><span>110 / 200</span></div>
                         </div>
                         <span>Infra.</span>
                       </div>
                       <div className={styles.barGroup}>
                         <div className={styles.bars}>
-                          <div className={styles.barBlue} style={{ height: '50%' }}><span>100</span></div>
-                          <div className={styles.barGray} style={{ height: '100%' }}></div>
+                          <div className={styles.barGray}></div>
+                          <div className={styles.barOrange} style={{ height: '50%' }}><span>100 / 200</span></div>
                         </div>
                         <span>Support</span>
                       </div>
                       <div className={styles.barGroup}>
                         <div className={styles.bars}>
-                          <div className={styles.barBlue} style={{ height: '36%' }}><span>72</span></div>
-                          <div className={styles.barGray} style={{ height: '100%' }}></div>
+                          <div className={styles.barGray}></div>
+                          <div className={styles.barOrange} style={{ height: '36%' }}><span>72 / 200</span></div>
                         </div>
                         <span>Governance</span>
                       </div>
                     </div>
                   </div>
                   <div className={styles.chartLegend}>
-                    <div><span className={styles.legendBlue}></span> Your Score</div>
+                    <div><span className={styles.legendOrange}></span> Your Score</div>
                     <div><span className={styles.legendGray}></span> Max Score</div>
                     <div><span className={styles.legendDotted}></span> State Avg</div>
                   </div>

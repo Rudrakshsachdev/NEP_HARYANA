@@ -6,8 +6,8 @@ const AdminLayout = ({ title }) => {
   return (
     <div className="min-h-screen bg-slate-50">
       <Sidebar />
-      <div className="pl-64">
-        <Header title={title} />
+      <Header title={title} />
+      <div className="pl-20 transition-all duration-300 ease-in-out">
         <main className="pt-16 p-6">
           <Outlet />
         </main>

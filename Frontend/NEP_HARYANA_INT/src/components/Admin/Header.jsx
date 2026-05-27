@@ -16,7 +16,7 @@ const Header = ({ title }) => {
   };
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200/80 flex items-center justify-between px-8 fixed top-0 right-0 left-64 z-10 shadow-sm shadow-slate-100">
+    <header className="h-16 bg-white border-b border-slate-200/80 flex items-center justify-between px-8 fixed top-0 right-0 left-20 peer-hover:left-64 z-10 shadow-sm shadow-slate-100 transition-all duration-300 ease-in-out">
       <div className="flex items-center space-x-4">
         <h2 className="text-xl font-bold text-slate-800 tracking-tight">{title}</h2>
       </div>

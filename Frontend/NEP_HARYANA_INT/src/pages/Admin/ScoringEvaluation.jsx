@@ -9,11 +9,11 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { 
-  Radar, 
-  RadarChart, 
-  PolarGrid, 
-  PolarAngleAxis, 
-  PolarRadiusAxis, 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
   ResponsiveContainer,
   Legend,
   Tooltip
@@ -22,7 +22,8 @@ import {
   getColleges, 
   calculateTotalScore, 
   getClassification, 
-  PARAMETERS 
+  PARAMETERS,
+  CATEGORIES
 } from '../../utils/mockData';
 
 const ScoringEvaluation = () => {
@@ -67,15 +68,19 @@ const ScoringEvaluation = () => {
     window.print();
   };
 
-  // Build Radar Chart Data (Parameters as subjects, scores of selected colleges as values)
-  const radarData = PARAMETERS.map(p => {
-    const row = { 
-      subject: `P-${p.num}`, 
-      name: p.name,
-      max: p.max 
+  // Build Category Chart Data (Categories as subjects, scores of selected colleges as values)
+  const chartData = Object.keys(CATEGORIES).map(catName => {
+    const categoryInfo = CATEGORIES[catName];
+    const row = {
+      subject: catName,
+      max: categoryInfo.max
     };
     selectedColleges.forEach(c => {
-      row[c.name] = c.scores[p.id] || 0;
+      let scoreInCat = 0;
+      categoryInfo.params.forEach(paramId => {
+        scoreInCat += c.scores[paramId] || 0;
+      });
+      row[c.name] = scoreInCat;
     });
     return row;
   });
@@ -205,41 +210,44 @@ const ScoringEvaluation = () => {
       {selectedColleges.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Radar Chart (takes 1 col) */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between min-h-[350px] print:break-inside-avoid print:shadow-none print:border">
+          {/* Bar Chart (takes 1 col) */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col min-h-[350px] print:break-inside-avoid print:shadow-none print:border">
             <div>
               <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5 mb-1">
                 <ArrowRightLeft className="w-4.5 h-4.5 text-slate-500" />
-                <span>Radar Footprint Profiles</span>
+                <span>Category Benchmarks</span>
               </h3>
-              <p className="text-[10px] text-slate-400 font-bold mb-4">Benchmarks across 22 parameters (P-1 to P-22)</p>
+              <p className="text-[10px] text-slate-400 font-bold mb-4">Category scores comparison across compared institutions</p>
             </div>
             
-            <div className="h-64 w-full flex items-center justify-center">
+            <div className="flex-1 w-full min-h-[340px] flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
-                <RadarChart cx="50%" cy="50%" outerRadius="70%" data={radarData}>
-                  <PolarGrid stroke="#e2e8f0" />
-                  <PolarAngleAxis 
+                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                  <XAxis 
                     dataKey="subject" 
                     tick={{ fill: '#64748b', fontSize: 10, fontWeight: 700 }}
                   />
-                  <PolarRadiusAxis 
-                    angle={30} 
-                    domain={[0, 8]} 
-                    tick={{ fill: '#94a3b8', fontSize: 8 }}
+                  <YAxis 
+                    domain={[0, 40]}
+                    tick={{ fill: '#94a3b8', fontSize: 10 }}
                   />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#0f172a', borderRadius: '8px', border: 'none', color: '#fff', fontSize: '12px' }}
+                    itemStyle={{ color: '#fff' }}
+                    formatter={(value, name, props) => [`${value} / ${props.payload.max} pts`, name]}
+                  />
+                  <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '15px', fontWeight: 600, color: '#475569' }} iconSize={10} />
                   {selectedColleges.map((col, idx) => (
-                    <Radar
+                    <Bar
                       key={col.id}
                       name={col.name.substring(0, 15) + '...'}
                       dataKey={col.name}
-                      stroke={RADAR_COLORS[idx]}
                       fill={RADAR_COLORS[idx]}
-                      fillOpacity={0.15}
+                      radius={[4, 4, 0, 0]}
                     />
                   ))}
-                  <Legend tick={{ fontSize: 10, fill: '#475569', fontWeight: 600 }} />
-                </RadarChart>
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
