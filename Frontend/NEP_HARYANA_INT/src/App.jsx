@@ -1,49 +1,72 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
-import Navbar from './components/Navbar/Navbar'
-import Footer from './components/Footer/Footer'
-import Home from './pages/Home/Home'
-import Signup from './pages/Signup/Signup'
-import Signin from './pages/Signin/Signin'
-import Dashboard from './pages/Dashboard/Dashboard'
-
-// Admin Pages
-import AdminLayout from './components/Admin/AdminLayout'
-import AdminOverview from './pages/Admin/AdminOverview'
-import CollegeManagement from './pages/Admin/CollegeManagement'
-import CollegeDetail from './pages/Admin/CollegeDetail'
-import ScoringEvaluation from './pages/Admin/ScoringEvaluation'
-import Reports from './pages/Admin/Reports'
-import Settings from './pages/Admin/Settings'
+import { Routes, Route, useLocation } from "react-router-dom";
+import Navbar from "./components/Navbar/Navbar";
+import Footer from "./components/Footer/Footer";
+import Home from "./pages/Home/Home";
+import Signup from "./pages/Signup/Signup";
+import Signin from "./pages/Signin/Signin";
+import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword/ResetPassword";
+import CollegeDashboard from "./pages/CollegeDashboard/CollegeDashboard";
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
+import NominationForm from "./pages/CollegeDashboard/NominationForm/NominationForm";
+import IndicatorForm from "./pages/CollegeDashboard/IndicatorForm/IndicatorForm";
+import { ProtectedRoute, GuestRoute } from "./components/ProtectedRoute/ProtectedRoute";
 
 function App() {
   const location = useLocation();
-  const isDashboard = location.pathname === '/dashboard';
-  const isAdmin = location.pathname.startsWith('/admin');
-
-  const hideNavFooter = isDashboard || isAdmin;
+  const isDashboard =
+    location.pathname.startsWith("/institution/") ||
+    location.pathname === "/admin/dashboard";
 
   return (
     <>
-      {!hideNavFooter && <Navbar />}
+      {!isDashboard && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/signin" element={<Signin />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        
-        {/* Admin Routes */}
-        <Route path="/admin" element={<AdminLayout title="Admin Dashboard" />}>
-          <Route index element={<AdminOverview />} />
-          <Route path="colleges" element={<CollegeManagement />} />
-          <Route path="colleges/:id" element={<CollegeDetail />} />
-          <Route path="scoring" element={<ScoringEvaluation />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
+
+        {/* Guest Routes */}
+        <Route path="/auth/signup" element={<GuestRoute><Signup /></GuestRoute>} />
+        <Route path="/auth/login" element={<GuestRoute><Signin /></GuestRoute>} />
+        <Route path="/auth/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
+        <Route path="/auth/reset-password/:uid/:token" element={<GuestRoute><ResetPassword /></GuestRoute>} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/institution/:institutionName/:institutionAisheCode/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["principal"]}>
+              <CollegeDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/institution/:institutionName/:institutionAisheCode/forms/nomination/:formId"
+          element={
+            <ProtectedRoute allowedRoles={["principal"]}>
+              <NominationForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/institution/:institutionName/:institutionAisheCode/forms/indicators/:formId"
+          element={
+            <ProtectedRoute allowedRoles={["principal"]}>
+              <IndicatorForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
-      {!hideNavFooter && <Footer />}
+      {!isDashboard && <Footer />}
     </>
-  )
+  );
 }
 
-export default App
+export default App;

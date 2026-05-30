@@ -1,0 +1,390 @@
+.section {
+  position: relative;
+  overflow: hidden;
+  padding: 96px 0 88px;
+  color: #f8fafc;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(249, 115, 22, 0.16),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at top right,
+      rgba(244, 196, 99, 0.12),
+      transparent 28%
+    ),
+    linear-gradient(180deg, #09111e 0%, #0c1726 46%, #08111b 100%);
+}
+
+.section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0.03) 0%,
+      transparent 18%,
+      transparent 82%,
+      rgba(255, 255, 255, 0.02) 100%
+    ),
+    repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.015) 0 1px,
+      transparent 1px 72px
+    );
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.heroPanel {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  align-items: stretch;
+  padding-bottom: 2rem;
+  margin-bottom: 2.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.copyColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.sectionBadge {
+  width: fit-content;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f8fafc;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.sectionTitle {
+  max-width: 18ch;
+  margin: 0;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: clamp(2.2rem, 4.3vw, 4rem);
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  color: #fffaf2;
+}
+
+.sectionLead {
+  max-width: 62ch;
+  margin: 0;
+  color: rgba(248, 250, 252, 0.76);
+  font-size: 1.04rem;
+  line-height: 1.85;
+}
+
+.highlightRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.highlightPill {
+  padding: 0.72rem 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: #e2e8f0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.cardsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.35rem;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  padding: 1.5rem;
+  border-radius: 28px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.04)
+    ),
+    rgba(9, 17, 30, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.26);
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    rgba(249, 115, 22, 0.9),
+    rgba(244, 196, 99, 0.95)
+  );
+}
+
+.cardHeader {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.cardIndex {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3rem;
+  height: 3rem;
+  border-radius: 999px;
+  background: rgba(249, 115, 22, 0.14);
+  border: 1px solid rgba(249, 115, 22, 0.28);
+  color: #ffd9b0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.portraitFrame {
+  width: 96px;
+  height: 96px;
+  padding: 5px;
+  border-radius: 24px;
+  background: linear-gradient(
+    135deg,
+    rgba(249, 115, 22, 0.88),
+    rgba(244, 196, 99, 0.86)
+  );
+  box-shadow: 0 14px 30px rgba(249, 115, 22, 0.16);
+}
+
+.portraitImg {
+  width: 100%;
+  height: 100%;
+  border-radius: 19px;
+  object-fit: cover;
+  object-position: top center;
+  border: 3px solid rgba(255, 255, 255, 0.92);
+}
+
+.identityBlock {
+  min-width: 0;
+}
+
+.cardEyebrow {
+  margin: 0 0 0.35rem;
+  color: #f59e0b;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.leaderName {
+  margin: 0;
+  color: #fffaf2;
+  font-size: 1.3rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.leaderTitle {
+  margin: 0.35rem 0 0;
+  color: rgba(248, 250, 252, 0.88);
+  font-size: 0.98rem;
+  font-weight: 600;
+}
+
+.leaderDesignation {
+  margin: 0.45rem 0 0;
+  color: rgba(226, 232, 240, 0.68);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.messageBlock {
+  position: relative;
+  padding-left: 3.2rem;
+}
+
+.quoteMark {
+  position: absolute;
+  top: -0.65rem;
+  left: 0;
+  color: rgba(245, 158, 11, 0.95);
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 4.3rem;
+  line-height: 1;
+}
+
+.messageBody {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+.messageText {
+  margin: 0;
+  color: rgba(248, 250, 252, 0.8);
+  font-size: 0.99rem;
+  line-height: 1.85;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.closingLabel {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: rgba(248, 250, 252, 0.52);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.closingText {
+  margin: 0;
+  color: #fffaf2;
+  font-size: 0.97rem;
+  font-weight: 600;
+}
+
+.signatureBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.55rem;
+  min-width: 120px;
+}
+
+.signatureLine {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(245, 158, 11, 0.95),
+    transparent
+  );
+}
+
+.signatureName {
+  color: rgba(248, 250, 252, 0.72);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: right;
+}
+
+@media (max-width: 1100px) {
+  .heroPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .cardsGrid {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 920px) {
+  .cardsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .cardHeader {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .cardIndex {
+    grid-row: span 2;
+  }
+
+  .messageBlock {
+    padding-left: 2.4rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .section {
+    padding: 72px 0 64px;
+  }
+
+  .container {
+    padding: 0 1.1rem;
+  }
+
+  .heroPanel {
+    gap: 1.35rem;
+  }
+
+  .card {
+    padding: 1.25rem;
+    border-radius: 24px;
+  }
+
+  .cardHeader {
+    gap: 0.8rem;
+  }
+
+  .portraitFrame {
+    width: 78px;
+    height: 78px;
+  }
+
+  .cardIndex {
+    min-width: 2.55rem;
+    height: 2.55rem;
+    font-size: 0.8rem;
+  }
+
+  .messageBlock {
+    padding-left: 2rem;
+  }
+
+  .quoteMark {
+    font-size: 3.4rem;
+  }
+
+  .cardFooter {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .signatureBlock {
+    align-items: flex-start;
+    width: 100%;
+  }
+}
