@@ -203,43 +203,47 @@ function Signup() {
               />
             </div>
 
-            <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-              <label htmlFor="collegeId">Institution Name</label>
-              <select
-                id="collegeId"
-                name="collegeId"
-                value={formData.collegeId}
-                onChange={handleChange}
-                required
-                disabled={collegeLoading || colleges.length === 0}
-              >
-                <option value="" disabled>
-                  {collegeLoading
-                    ? "Loading institutions..."
-                    : "Select an institution"}
-                </option>
-                {colleges.map((college) => (
-                  <option key={college.id} value={college.id}>
-                    {college.name}
+            {formData.role !== "admin" && (
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                <label htmlFor="collegeId">Institution Name</label>
+                <select
+                  id="collegeId"
+                  name="collegeId"
+                  value={formData.collegeId}
+                  onChange={handleChange}
+                  required
+                  disabled={collegeLoading || colleges.length === 0}
+                >
+                  <option value="" disabled>
+                    {collegeLoading
+                      ? "Loading institutions..."
+                      : "Select an institution"}
                   </option>
-                ))}
-              </select>
-            </div>
+                  {colleges.map((college) => (
+                    <option key={college.id} value={college.id}>
+                      {college.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
-            <div className={styles.formGroup}>
-              <label htmlFor="aisheCode">AISHE Code</label>
-              <input
-                type="text"
-                id="aisheCode"
-                name="aisheCode"
-                value={formData.aisheCode}
-                onChange={handleChange}
-                required
-                placeholder="AISHE code"
-                autoComplete="off"
-                readOnly
-              />
-            </div>
+            {formData.role !== "admin" && (
+              <div className={styles.formGroup}>
+                <label htmlFor="aisheCode">AISHE Code</label>
+                <input
+                  type="text"
+                  id="aisheCode"
+                  name="aisheCode"
+                  value={formData.aisheCode}
+                  onChange={handleChange}
+                  required
+                  placeholder="AISHE code"
+                  autoComplete="off"
+                  readOnly
+                />
+              </div>
+            )}
 
             <div className={styles.formGroup}>
               <label htmlFor="role">Role</label>
@@ -256,13 +260,15 @@ function Signup() {
               </select>
             </div>
 
-            <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-              {selectedCollege && (
-                <p className={styles.selectedInstitution}>
-                  Selected institution: {selectedCollege.name}
-                </p>
-              )}
-            </div>
+            {formData.role !== "admin" && (
+              <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+                {selectedCollege && (
+                  <p className={styles.selectedInstitution}>
+                    Selected institution: {selectedCollege.name}
+                  </p>
+                )}
+              </div>
+            )}
 
             <div className={styles.formGroup}>
               <label htmlFor="password">Password</label>
