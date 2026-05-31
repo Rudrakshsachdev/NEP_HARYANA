@@ -8,9 +8,10 @@ import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import CollegeDashboard from "./pages/CollegeDashboard/CollegeDashboard";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
-import NominationForm from "./pages/CollegeDashboard/NominationForm/NominationForm";
-import IndicatorForm from "./pages/CollegeDashboard/IndicatorForm/IndicatorForm";
-import { ProtectedRoute, GuestRoute } from "./components/ProtectedRoute/ProtectedRoute";
+import {
+  ProtectedRoute,
+  GuestRoute,
+} from "./components/ProtectedRoute/ProtectedRoute";
 
 function App() {
   const location = useLocation();
@@ -25,10 +26,38 @@ function App() {
         <Route path="/" element={<Home />} />
 
         {/* Guest Routes */}
-        <Route path="/auth/signup" element={<GuestRoute><Signup /></GuestRoute>} />
-        <Route path="/auth/login" element={<GuestRoute><Signin /></GuestRoute>} />
-        <Route path="/auth/forgot-password" element={<GuestRoute><ForgotPassword /></GuestRoute>} />
-        <Route path="/auth/reset-password/:uid/:token" element={<GuestRoute><ResetPassword /></GuestRoute>} />
+        <Route
+          path="/auth/signup"
+          element={
+            <GuestRoute>
+              <Signup />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/auth/login"
+          element={
+            <GuestRoute>
+              <Signin />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/auth/forgot-password"
+          element={
+            <GuestRoute>
+              <ForgotPassword />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="/auth/reset-password/:uid/:token"
+          element={
+            <GuestRoute>
+              <ResetPassword />
+            </GuestRoute>
+          }
+        />
 
         {/* Protected Routes */}
         <Route
@@ -36,22 +65,6 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["principal"]}>
               <CollegeDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/institution/:institutionName/:institutionAisheCode/forms/nomination/:formId"
-          element={
-            <ProtectedRoute allowedRoles={["principal"]}>
-              <NominationForm />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/institution/:institutionName/:institutionAisheCode/forms/indicators/:formId"
-          element={
-            <ProtectedRoute allowedRoles={["principal"]}>
-              <IndicatorForm />
             </ProtectedRoute>
           }
         />

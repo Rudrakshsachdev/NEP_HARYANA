@@ -49,8 +49,6 @@ INSTALLED_APPS = [
 
 	# local apps
 	'apps.authentication',
-	'apps.forms',
-	'apps.scoring',
 	'apps.admin_panel',
 ]
 
