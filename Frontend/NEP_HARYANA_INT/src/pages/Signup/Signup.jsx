@@ -3,9 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   getDashboardPathForUser,
   fetchColleges,
-  registerCollege,
-  saveAuthSession,
 } from "../../api/auth";
+import { useAuth } from "../../context/AuthContext.jsx";
 import SignupHero from "./SignupHero";
 import styles from "./Signup.module.css";
 
@@ -21,6 +20,7 @@ const initialFormState = {
 
 function Signup() {
   const navigate = useNavigate();
+  const { register } = useAuth();
   const [formData, setFormData] = useState(initialFormState);
   const [colleges, setColleges] = useState([]);
   const [collegeError, setCollegeError] = useState("");
@@ -125,8 +125,7 @@ function Signup() {
         password: formData.password,
       };
 
-      const response = await registerCollege(payload);
-      saveAuthSession(response.token, response.user);
+      const response = await register(payload);
       setStatus({
         type: "success",
         message: response.message || "Account created successfully.",

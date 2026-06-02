@@ -2,31 +2,63 @@ const API_BASE_URL = (
   import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api"
 ).replace(/\/$/, "");
 
-export const AUTH_TOKEN_KEY = "nep_haryana_auth_token";
-export const AUTH_USER_KEY = "nep_haryana_auth_user";
+let isRefreshing = false;
+let refreshSubscribers = [];
 
-async function request(path, options = {}) {
-  const token = localStorage.getItem(AUTH_TOKEN_KEY);
-  const authHeader = token ? { Authorization: `Token ${token}` } : {};
+function subscribeTokenRefresh(cb) {
+  refreshSubscribers.push(cb);
+}
+
+function onRefreshed() {
+  refreshSubscribers.forEach((cb) => cb());
+  refreshSubscribers = [];
+}
+
+export async function request(path, options = {}) {
+  // Always include credentials to send HttpOnly cookies
+  options.credentials = "include";
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
       "Content-Type": "application/json",
-      ...authHeader,
       ...(options.headers || {}),
     },
     ...options,
   });
 
+  // If unauthorized and it's not an auth flow endpoint, attempt to refresh tokens
+  if (
+    response.status === 401 &&
+    path !== "/auth/refresh/" &&
+    path !== "/auth/login/" &&
+    path !== "/auth/signup/"
+  ) {
+    if (!isRefreshing) {
+      isRefreshing = true;
+      try {
+        await refreshSession();
+        isRefreshing = false;
+        onRefreshed();
+      } catch (err) {
+        isRefreshing = false;
+        refreshSubscribers = [];
+        // Broadcast custom event for logout state sync
+        window.dispatchEvent(new Event("auth-session-expired"));
+        throw err;
+      }
+    }
+
+    return new Promise((resolve, reject) => {
+      subscribeTokenRefresh(() => {
+        request(path, options).then(resolve).catch(reject);
+      });
+    });
+  }
+
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    // If token is invalid/expired, clear local session to force re-auth
-    if (response.status === 401) {
-      logout();
-    }
-
-    const fallbackMessage = "Authentication request failed.";
+    const fallbackMessage = "Request failed.";
     const firstMessage =
       data?.detail ||
       Object.values(data || {})?.flat?.()?.[0] ||
@@ -44,7 +76,6 @@ export function registerCollege(payload) {
   });
 }
 
-
 export function fetchColleges() {
   return request("/colleges/");
 }
@@ -54,6 +85,22 @@ export function loginCollege(payload) {
     method: "POST",
     body: JSON.stringify(payload),
   });
+}
+
+export function refreshSession() {
+  return request("/auth/refresh/", {
+    method: "POST",
+  });
+}
+
+export function logoutCollege() {
+  return request("/auth/logout/", {
+    method: "POST",
+  });
+}
+
+export function getCurrentUser() {
+  return request("/auth/me/");
 }
 
 export function requestPasswordReset(payload) {
@@ -68,25 +115,6 @@ export function confirmPasswordReset(payload) {
     method: "POST",
     body: JSON.stringify(payload),
   });
-}
-
-export function saveAuthSession(token, user) {
-  localStorage.setItem(AUTH_TOKEN_KEY, token);
-  localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
-}
-
-export function getSavedAuthUser() {
-  const rawUser = localStorage.getItem(AUTH_USER_KEY);
-
-  if (!rawUser) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(rawUser);
-  } catch {
-    return null;
-  }
 }
 
 export function getDashboardPathForUser(user) {
@@ -109,23 +137,4 @@ export function getDashboardPathForUser(user) {
   }
 
   return "/admin/dashboard";
-}
-
-export function getDashboardPathFromSession(defaultPath = "/admin/dashboard") {
-  const user = getSavedAuthUser();
-
-  if (!user) {
-    return defaultPath;
-  }
-
-  return getDashboardPathForUser(user);
-}
-
-export function getAuthToken() {
-  return localStorage.getItem(AUTH_TOKEN_KEY);
-}
-
-export function logout() {
-  localStorage.removeItem(AUTH_TOKEN_KEY);
-  localStorage.removeItem(AUTH_USER_KEY);
 }
