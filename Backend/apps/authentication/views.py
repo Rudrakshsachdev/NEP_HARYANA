@@ -1,12 +1,15 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from rest_framework.authtoken.models import Token
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import authenticate
+from django.core.cache import cache
+from django.utils import timezone
+import datetime
 
-from .models import College, User
+from .models import College, User, RefreshToken
 from .serializers import CollegeSerializer, UserSerializer, RegisterSerializer, LoginSerializer
+from .utils import set_auth_cookies, clear_auth_cookies, rotate_refresh_token
 
 class CollegeListView(APIView):
     permission_classes = [AllowAny]
@@ -23,13 +26,14 @@ class RegisterView(APIView):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
-            token, created = Token.objects.get_or_create(user=user)
             user_data = UserSerializer(user).data
-            return Response({
-                'token': token.key,
+            response = Response({
                 'user': user_data,
                 'message': 'Account created successfully.'
             }, status=status.HTTP_201_CREATED)
+            # Set HttpOnly secure cookies
+            set_auth_cookies(response, user)
+            return response
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -42,21 +46,52 @@ class LoginView(APIView):
             email = serializer.validated_data['email']
             password = serializer.validated_data['password']
             
+            # Brute-force protection / Account Lockout check
+            lockout_key = f"lockout_{email}"
+            attempts_key = f"attempts_{email}"
+            
+            lockout_time = cache.get(lockout_key)
+            if lockout_time:
+                # Handle timezone-aware conversion or native timezone
+                now = timezone.now()
+                if lockout_time > now:
+                    time_left = int((lockout_time - now).total_seconds())
+                    return Response({
+                        'detail': f'Too many failed login attempts. Locked out. Try again in {time_left} seconds.'
+                    }, status=status.HTTP_429_TOO_MANY_REQUESTS)
+            
             user = authenticate(request, username=email, password=password)
             if user is not None:
-                token, created = Token.objects.get_or_create(user=user)
+                # Success: reset login attempt counts
+                cache.delete(attempts_key)
+                cache.delete(lockout_key)
+                
                 user_data = UserSerializer(user).data
-                return Response({
-                    'token': token.key,
+                response = Response({
                     'user': user_data,
                     'message': 'Signed in successfully.'
                 }, status=status.HTTP_200_OK)
+                # Set HttpOnly secure cookies
+                set_auth_cookies(response, user)
+                return response
             else:
+                # Failure: increment login attempts count
+                attempts = cache.get(attempts_key, 0) + 1
+                if attempts >= 5:
+                    cache.set(lockout_key, timezone.now() + datetime.timedelta(minutes=15), 15 * 60)
+                    cache.delete(attempts_key)
+                    return Response({
+                        'detail': 'Account locked due to too many failed login attempts. Locked for 15 minutes.'
+                    }, status=status.HTTP_429_TOO_MANY_REQUESTS)
+                else:
+                    cache.set(attempts_key, attempts, 15 * 60)
+                
                 return Response({
                     'detail': 'Invalid email or password.'
                 }, status=status.HTTP_401_UNAUTHORIZED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class PasswordResetRequestView(APIView):
     permission_classes = [AllowAny]
@@ -163,7 +198,10 @@ class PasswordResetConfirmView(APIView):
             user.save()
             
             # Clear all existing tokens for this user so they have to login again
+            from rest_framework.authtoken.models import Token
             Token.objects.filter(user=user).delete()
+            # Invalidate all active refresh tokens
+            RefreshToken.objects.filter(user=user).update(is_revoked=True)
             
             return Response({
                 'message': 'Password updated successfully.'
@@ -172,3 +210,46 @@ class PasswordResetConfirmView(APIView):
             return Response({
                 'detail': 'The reset link is invalid or has expired.'
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogoutView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        refresh_token = request.COOKIES.get('refresh_token')
+        if refresh_token:
+            from .utils import hash_token
+            hashed = hash_token(refresh_token)
+            RefreshToken.objects.filter(token=hashed).update(is_revoked=True)
+            
+        response = Response({'message': 'Logged out successfully.'}, status=status.HTTP_200_OK)
+        clear_auth_cookies(response)
+        return response
+
+
+class RefreshTokenView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        refresh_token = request.COOKIES.get('refresh_token')
+        if not refresh_token:
+            return Response({'detail': 'Refresh token cookie is missing.'}, status=status.HTTP_401_UNAUTHORIZED)
+            
+        response = Response({'message': 'Token refreshed successfully.'}, status=status.HTTP_200_OK)
+        user = rotate_refresh_token(refresh_token, response)
+        if not user:
+            clear_auth_cookies(response)
+            response.status_code = status.HTTP_401_UNAUTHORIZED
+            response.data = {'detail': 'Invalid, expired, or reused refresh token.'}
+            return response
+            
+        return response
+
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+

@@ -8,11 +8,7 @@ import OverviewSection from "./sections/OverviewSection";
 import ApplicationsSection from "./sections/ApplicationsSection";
 import InstitutionsSection from "./sections/InstitutionsSection";
 import AnalyticsSection from "./sections/AnalyticsSection";
-import {
-  AUTH_TOKEN_KEY,
-  AUTH_USER_KEY,
-  getSavedAuthUser,
-} from "../../api/auth";
+import { useAuth } from "../../context/AuthContext.jsx";
 import {
   fetchAdminAnalytics,
   fetchAdminApplications,
@@ -50,7 +46,7 @@ export default function AdminDashboard() {
     analytics: null,
   });
 
-  const savedUser = getSavedAuthUser();
+  const { user: savedUser, logout } = useAuth();
   const officerName = savedUser?.full_name || "Admin";
   const officerRole = formatRole(savedUser?.role);
   const departmentName = savedUser?.college_name || "Higher Education Department";
@@ -152,9 +148,8 @@ export default function AdminDashboard() {
     }
   }, [activeSection, loadAnalytics]);
 
-  const handleLogout = () => {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
-    localStorage.removeItem(AUTH_USER_KEY);
+  const handleLogout = async () => {
+    await logout();
     setShowProfileDropdown(false);
     navigate("/auth/login");
   };

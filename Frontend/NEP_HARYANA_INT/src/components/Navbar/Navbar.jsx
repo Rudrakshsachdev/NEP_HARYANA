@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import hshecLogo from "../../assets/hshec_logo.jpeg";
-import { getDashboardPathFromSession, getSavedAuthUser } from "../../api/auth";
+import { getDashboardPathForUser } from "../../api/auth";
+import { useAuth } from "../../context/AuthContext.jsx";
 import "./Navbar.css";
 
 function Navbar() {
   const navigate = useNavigate();
+  const { user: savedUser } = useAuth();
   const [activeNav, setActiveNav] = useState("HOME");
   const [fontSize, setFontSize] = useState(16);
   const [highContrast, setHighContrast] = useState(false);
@@ -38,14 +40,16 @@ function Navbar() {
 
   const handleDashboardClick = (e) => {
     e.preventDefault();
-    navigate(getDashboardPathFromSession());
+    if (savedUser) {
+      navigate(getDashboardPathForUser(savedUser));
+    } else {
+      navigate("/auth/login");
+    }
   };
 
   const handleSignInClick = () => {
-    const savedUser = getSavedAuthUser();
-
     if (savedUser) {
-      navigate(getDashboardPathFromSession());
+      navigate(getDashboardPathForUser(savedUser));
       return;
     }
 
@@ -304,7 +308,7 @@ function Navbar() {
               >
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3" />
               </svg>
-              <span>Sign in</span>
+              <span>{savedUser ? "Dashboard" : "Sign in"}</span>
             </button>
           </div>
         </div>
@@ -325,7 +329,7 @@ function Navbar() {
                     item === "HOME"
                       ? "/"
                       : item === "DASHBOARD"
-                        ? getDashboardPathFromSession()
+                        ? (savedUser ? getDashboardPathForUser(savedUser) : "/auth/login")
                         : `#${item.toLowerCase()}`
                   }
                   className={`nav-link ${activeNav === item ? "active" : ""}`}

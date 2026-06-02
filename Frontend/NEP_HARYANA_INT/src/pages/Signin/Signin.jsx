@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  getDashboardPathForUser,
-  loginCollege,
-  saveAuthSession,
-} from "../../api/auth";
+import { getDashboardPathForUser } from "../../api/auth";
+import { useAuth } from "../../context/AuthContext.jsx";
 import styles from "../Signup/Signup.module.css";
 
 function Signin() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -30,8 +28,7 @@ function Signin() {
     setStatus({ type: "", message: "" });
 
     try {
-      const response = await loginCollege(formData);
-      saveAuthSession(response.token, response.user);
+      const response = await login(formData);
       setStatus({
         type: "success",
         message: response.message || "Signed in successfully.",
@@ -46,6 +43,7 @@ function Signin() {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <main className={styles.pageShell}>

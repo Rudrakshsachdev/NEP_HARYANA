@@ -12,6 +12,7 @@ import {
   ProtectedRoute,
   GuestRoute,
 } from "./components/ProtectedRoute/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext.jsx";
 
 function App() {
   const location = useLocation();
@@ -20,7 +21,7 @@ function App() {
     location.pathname === "/admin/dashboard";
 
   return (
-    <>
+    <AuthProvider>
       {!isDashboard && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
@@ -78,7 +79,7 @@ function App() {
         />
       </Routes>
       {!isDashboard && <Footer />}
-    </>
+    </AuthProvider>
   );
 }
 

@@ -2,11 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "../Dashboard/Dashboard.module.css";
 import pageStyles from "./CollegeDashboard.module.css";
-import {
-  AUTH_TOKEN_KEY,
-  AUTH_USER_KEY,
-  getSavedAuthUser,
-} from "../../api/auth";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 function formatRole(role) {
   if (role === "principal") {
@@ -26,15 +22,14 @@ function CollegeDashboard() {
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
-  const savedUser = getSavedAuthUser();
+  const { user: savedUser, logout } = useAuth();
   const collegeName = savedUser?.college_name || "Govt College Example";
   const principalName = savedUser?.full_name || "Dr. Rajesh Kumar";
   const principalRole = formatRole(savedUser?.role);
   const aisheCode = savedUser?.aishe_code || "C-12345";
 
-  const handleLogout = () => {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
-    localStorage.removeItem(AUTH_USER_KEY);
+  const handleLogout = async () => {
+    await logout();
     setShowProfileDropdown(false);
     navigate("/auth/login");
   };
