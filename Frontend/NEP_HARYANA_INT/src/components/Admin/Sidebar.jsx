@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   School, 
@@ -8,9 +8,21 @@ import {
   LogOut,
   UserCheck
 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext.jsx';
 
 const Sidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/auth/login');
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
+  };
 
   const links = [
     { name: 'Overview', path: '/admin', icon: LayoutDashboard },
@@ -75,13 +87,13 @@ const Sidebar = () => {
             <UserCheck className="w-5 h-5 text-white" />
           </div>
           <div className="min-w-0 flex-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-            <p className="text-xs font-semibold text-white truncate">Dr. Ramesh Kumar</p>
-            <p className="text-[10px] text-blue-300 font-medium truncate">Chief Evaluator (Admin)</p>
+            <p className="text-xs font-semibold text-white truncate">{user?.full_name || "Admin Officer"}</p>
+            <p className="text-[10px] text-blue-300 font-medium truncate">{user?.role === "admin" ? "DHE Admin" : "Evaluator"}</p>
           </div>
         </div>
         <button 
-          onClick={() => alert("Admin is locked in for evaluation session.")}
-          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors border border-transparent hover:border-red-500/20"
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors border border-transparent hover:border-red-500/20 cursor-pointer"
         >
           <LogOut className="w-4 h-4 shrink-0" />
           <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
