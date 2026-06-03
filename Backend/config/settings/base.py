@@ -31,7 +31,11 @@ SECRET_KEY = 'django-insecure-^2&m-q6^v_r@@o7i6mtgthl&h53sf&wulmgmi8ydtm6p9+ogww
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+	host.strip()
+	for host in os.environ.get('ALLOWED_HOSTS', '').split(',')
+	if host.strip()
+]
 
 
 # Application definition
@@ -56,6 +60,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
 	'corsheaders.middleware.CorsMiddleware',
 	'django.middleware.security.SecurityMiddleware',
+	"whitenoise.middleware.WhiteNoiseMiddleware",
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
@@ -69,7 +74,12 @@ AUTH_USER_MODEL = 'authentication.User'
 CORS_ALLOW_CREDENTIALS = False
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    "http://[IP_ADDRESS]",
+    *[
+        host.strip()
+        for host in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+        if host.strip()
+    ]
 ]
 
 REST_FRAMEWORK = {
