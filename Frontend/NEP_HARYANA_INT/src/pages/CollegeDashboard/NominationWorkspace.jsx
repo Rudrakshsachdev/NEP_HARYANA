@@ -808,22 +808,61 @@ export default function NominationWorkspace({ formId, onBack }) {
                     <div className={styles.commonInputs}>
                       <div className={styles.uploadSlot}>
                         <label style={{ fontSize: "0.75rem", fontWeight: "600", color: "#475569" }}>Evidence Document (PDF/Image)</label>
-                        {!isFormLocked ? (
-                          <label className={styles.uploadButtonLabel}>
-                            <input
-                              type="file"
-                              accept=".pdf,image/*"
-                              style={{ display: "none" }}
-                              onChange={(e) => handleFileUpload(ind.num, e)}
-                            />
-                            {uploadingIndicator === ind.num ? "Uploading..." : "Choose File"}
-                          </label>
-                        ) : null}
-                        {data.evidence_url && (
-                          <a href={data.evidence_url} target="_blank" rel="noopener noreferrer" className={styles.uploadedFileLink}>
-                            📄 {evidenceName || "View Evidence Document"}
-                          </a>
-                        )}
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap", marginTop: "4px" }}>
+                          {!isFormLocked ? (
+                            <label className={styles.uploadButtonLabel} style={{ margin: 0 }}>
+                              <input
+                                type="file"
+                                accept=".pdf,image/*"
+                                style={{ display: "none" }}
+                                onChange={(e) => handleFileUpload(ind.num, e)}
+                              />
+                              {uploadingIndicator === ind.num ? "Uploading..." : "Choose File"}
+                            </label>
+                          ) : null}
+                          
+                          {uploadingIndicator === ind.num && (
+                            <span style={{ fontSize: "0.8125rem", color: "#64748b" }}>Uploading...</span>
+                          )}
+
+                          {data.evidence_url && (
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                              {data.evidence_url.match(/\.(jpeg|jpg|gif|png|webp)$/i) && (
+                                <img 
+                                  src={data.evidence_url} 
+                                  alt="Preview" 
+                                  style={{ width: "32px", height: "32px", borderRadius: "4px", objectFit: "cover", border: "1px solid #cbd5e1" }} 
+                                />
+                              )}
+                              <a href={data.evidence_url} target="_blank" rel="noopener noreferrer" className={styles.uploadedFileLink} style={{ margin: 0 }}>
+                                {data.evidence_url.match(/\.(jpeg|jpg|gif|png|webp)$/i) ? "🖼️" : "📄"} {evidenceName || "View Evidence Document"}
+                              </a>
+                              {!isFormLocked && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    updateIndicatorValue(ind.num, "evidence_url", "");
+                                    updateIndicatorValue(ind.num, "evidence_name", "");
+                                  }}
+                                  style={{
+                                    background: "none",
+                                    border: "none",
+                                    color: "#ef4444",
+                                    cursor: "pointer",
+                                    padding: "4px 8px",
+                                    fontSize: "0.8125rem",
+                                    fontWeight: "600",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "4px"
+                                  }}
+                                >
+                                  ❌ Remove
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                       <div className={styles.formGroup}>
                         <label style={{ fontSize: "0.75rem", fontWeight: "600", color: "#475569" }}>Doc Page No.</label>
