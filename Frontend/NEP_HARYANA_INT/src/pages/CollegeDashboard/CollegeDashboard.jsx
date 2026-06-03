@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styles from "../Dashboard/Dashboard.module.css";
 import pageStyles from "./CollegeDashboard.module.css";
 import { useAuth } from "../../context/AuthContext.jsx";
@@ -140,6 +140,7 @@ function calculateCategoryScores(answers = {}) {
 
 function CollegeDashboard() {
   const navigate = useNavigate();
+  const { institutionName, institutionAisheCode, formId } = useParams();
   const [activeMenu, setActiveMenu] = useState("Dashboard");
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
 
@@ -159,6 +160,27 @@ function CollegeDashboard() {
   const [formsLoading, setFormsLoading] = useState(false);
   const [formsError, setFormsError] = useState("");
   const [selectedFormId, setSelectedFormId] = useState(null);
+
+  const collegeNameSlug = String(savedUser?.college_name || "college")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+  const collegeAisheSlug = String(savedUser?.aishe_code || "code")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+
+  const instName = institutionName || collegeNameSlug;
+  const instAishe = institutionAisheCode || collegeAisheSlug;
+
+  useEffect(() => {
+    if (formId) {
+      setSelectedFormId(formId);
+      setActiveMenu("Forms");
+    } else {
+      setSelectedFormId(null);
+    }
+  }, [formId]);
 
   const loadFormsList = useCallback(async () => {
     setFormsLoading(true);
@@ -222,7 +244,12 @@ function CollegeDashboard() {
       <aside className={styles.sidebar}>
         <div
           className={styles.sidebarLogo}
-          onClick={() => setActiveMenu("Dashboard")}
+          onClick={() => {
+            setActiveMenu("Dashboard");
+            if (formId) {
+              navigate(`/institution/${instName}/${instAishe}/dashboard`);
+            }
+          }}
           style={{ cursor: "pointer" }}
         >
           <svg
@@ -248,7 +275,12 @@ function CollegeDashboard() {
               key={index}
               type="button"
               className={`${styles.navItem} ${activeMenu === item.title ? styles.active : ""}`}
-              onClick={() => setActiveMenu(item.title)}
+              onClick={() => {
+                setActiveMenu(item.title);
+                if (formId) {
+                  navigate(`/institution/${instName}/${instAishe}/dashboard`);
+                }
+              }}
             >
               <svg
                 className={styles.navIcon}
@@ -338,7 +370,7 @@ function CollegeDashboard() {
         </header>
 
         {selectedFormId ? (
-          <NominationWorkspace formId={selectedFormId} onBack={() => { setSelectedFormId(null); loadFormsList(); }} />
+          <NominationWorkspace formId={selectedFormId} onBack={() => navigate(`/institution/${instName}/${instAishe}/dashboard`)} />
         ) : activeMenu === "Dashboard" ? (
           <div style={{ padding: "24px" }}>
             {nominationError && (
@@ -364,7 +396,7 @@ function CollegeDashboard() {
                     <button
                       type="button"
                       className={pageStyles.startBtn}
-                      onClick={() => setSelectedFormId("nep-excellence-nomination-2025")}
+                      onClick={() => navigate(`/institution/${instName}/${instAishe}/dashboard/forms/nep-excellence-nomination-2025`)}
                     >
                       {nomination?.is_submitted ? "View Nomination" : nomination?.answers && Object.keys(nomination.answers).length > 0 ? "Continue Form" : "Start Nomination"}
                     </button>
@@ -421,7 +453,7 @@ function CollegeDashboard() {
                         <button
                           type="button"
                           className={pageStyles.primaryActionBtn}
-                          onClick={() => setSelectedFormId("nep-excellence-nomination-2025")}
+                          onClick={() => navigate(`/institution/${instName}/${instAishe}/dashboard/forms/nep-excellence-nomination-2025`)}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "4px" }}>
                             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
@@ -572,7 +604,7 @@ function CollegeDashboard() {
                         type="button"
                         className={styles.secondaryBtn}
                         style={{ padding: "8px 16px", fontSize: "0.8125rem", fontWeight: "600", borderColor: "#2563eb", color: "#2563eb", cursor: "pointer" }}
-                        onClick={() => setSelectedFormId(form.id)}
+                        onClick={() => navigate(`/institution/${instName}/${instAishe}/dashboard/forms/${form.id}`)}
                       >
                         Open Form
                       </button>
