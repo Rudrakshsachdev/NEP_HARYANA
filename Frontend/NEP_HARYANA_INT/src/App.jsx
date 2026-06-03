@@ -9,7 +9,7 @@ import ResetPassword from "./pages/ResetPassword/ResetPassword";
 import CollegeDashboard from "./pages/CollegeDashboard/CollegeDashboard";
 
 // New Admin Panel imports
-import AdminLayout from "./components/admin/AdminLayout";
+import AdminLayout from "./components/Admin/AdminLayout";
 import AdminOverview from "./pages/Admin/AdminOverview";
 import CollegeManagement from "./pages/Admin/CollegeManagement";
 import CollegeDetail from "./pages/Admin/CollegeDetail";
