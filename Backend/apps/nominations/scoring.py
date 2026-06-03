@@ -293,7 +293,4 @@ def get_individual_indicator_scores(answers):
     p20_val = min(len(ans17.get('items', [])), 6) if ans17.get('value') == 'Yes' else 0
     scores['p20'] = min(p20_val, 2)
     
-    scores['p21'] = 0
-    scores['p22'] = 0
-    
     return scores
