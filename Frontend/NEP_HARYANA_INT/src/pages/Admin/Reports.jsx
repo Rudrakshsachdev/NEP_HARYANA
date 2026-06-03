@@ -8,15 +8,12 @@ import {
   RotateCcw,
   SlidersHorizontal
 } from 'lucide-react';
-import { 
-  getColleges, 
-  calculateTotalScore, 
-  getClassification, 
-  PARAMETERS 
-} from '../../utils/mockData';
+import { PARAMETERS } from '../../utils/mockData';
+import { fetchAdminInstitutions } from '../../api/admin';
 
 const Reports = () => {
   const [colleges, setColleges] = useState([]);
+  const [loading, setLoading] = useState(true);
   
   // Filtering & Search state
   const [search, setSearch] = useState('');
@@ -25,7 +22,17 @@ const Reports = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
 
   useEffect(() => {
-    setColleges(getColleges() || []);
+    async function loadData() {
+      try {
+        const res = await fetchAdminInstitutions();
+        setColleges(res.institutions || []);
+      } catch (err) {
+        console.error("Failed to load reports data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
   }, []);
 
   // Extract unique districts for filters
@@ -41,7 +48,7 @@ const Reports = () => {
 
   // Filtered dataset
   const filteredColleges = colleges.filter(c => {
-    const totalScore = calculateTotalScore(c.scores);
+    const totalScore = c.score || 0;
     const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) || 
                           c.aishe.toLowerCase().includes(search.toLowerCase());
     const matchesType = selectedType === 'all' ? true : c.type === selectedType;
@@ -72,8 +79,8 @@ const Reports = () => {
 
     // Build Rows
     const rows = filteredColleges.map(c => {
-      const totalScore = calculateTotalScore(c.scores);
-      const grade = getClassification(totalScore).name;
+      const totalScore = c.score || 0;
+      const grade = c.award_category || 'No Award';
       
       const paramScores = PARAMETERS.map(p => c.scores[p.id] || 0);
 
@@ -108,6 +115,15 @@ const Reports = () => {
   const handleExportPDF = () => {
     window.print();
   };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 space-y-4">
+        <div className="w-10 h-10 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
+        <p className="text-xs text-slate-400 font-bold uppercase tracking-wider animate-pulse">Loading Reports...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-fadeIn print:bg-white print:p-0 print:m-0">
@@ -241,8 +257,8 @@ const Reports = () => {
             </thead>
             <tbody className="bg-white divide-y divide-slate-100 text-xs">
               {filteredColleges.map((c) => {
-                const totalScore = calculateTotalScore(c.scores);
-                const grade = getClassification(totalScore);
+                const totalScore = c.score || 0;
+                const grade = c.classification || { name: c.award_category || "No Award", bg: "bg-red-100 border-red-200 text-red-700" };
                 
                 return (
                   <tr key={c.id} className="hover:bg-slate-50/50 transition-colors divide-x divide-slate-100">

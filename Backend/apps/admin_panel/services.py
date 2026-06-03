@@ -2,6 +2,7 @@ from datetime import timedelta
 from django.utils import timezone
 from apps.authentication.models import College, User
 from apps.nominations.models import Nomination
+from apps.nominations.scoring import get_individual_indicator_scores
 
 def get_all_applications():
     nominations = Nomination.objects.all().order_by("-updated_at")
@@ -90,14 +91,11 @@ def get_institutions_summary():
                 "status": status_str,
                 "is_submitted": is_sub,
                 "score": score,
-                "scores": {
-                    "p1": score // 20, "p2": score // 20, "p3": score // 20, "p4": score // 20,
-                    "p5": score // 20, "p6": score // 20, "p7": score // 20, "p8": score // 20,
-                    "p9": score // 20, "p10": score // 20, "p11": score // 20, "p12": score // 20,
-                    "p13": score // 20, "p14": score // 20, "p15": score // 20, "p16": score // 20,
-                    "p17": score // 20, "p18": score // 20, "p19": score // 20, "p20": score // 20,
-                    "p21": score // 20, "p22": score // 20
-                },
+                "scores": (
+                    get_individual_indicator_scores(nom.answers or {}) 
+                    if has_app else 
+                    {f"p{i}": 0 for i in range(1, 23)}
+                ),
                 "grand_total": score,
                 "award_category": award,
                 "classification": {
