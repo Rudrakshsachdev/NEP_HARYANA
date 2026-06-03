@@ -31,6 +31,9 @@ SECRET_KEY = 'django-insecure-^2&m-q6^v_r@@o7i6mtgthl&h53sf&wulmgmi8ydtm6p9+ogww
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Frontend Base URL
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+
 ALLOWED_HOSTS = [
 	host.strip()
 	for host in os.environ.get('ALLOWED_HOSTS', '').split(',')
@@ -73,13 +76,18 @@ AUTH_USER_MODEL = 'authentication.User'
 
 CORS_ALLOW_CREDENTIALS = False
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://[IP_ADDRESS]",
-    *[
-        host.strip()
-        for host in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
-        if host.strip()
-    ]
+	'http://localhost:5173',
+	'http://localhost:5174',
+	FRONTEND_URL.rstrip('/'),
+	*[
+		host.strip()
+		for host in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+		if host.strip()
+	]
+]
+CORS_ALLOWED_ORIGIN_REGEXES = [
+	r'^http://localhost:\d+$',
+	r'^http://127\.0\.0\.1:\d+$',
 ]
 
 REST_FRAMEWORK = {
@@ -203,9 +211,6 @@ if '@' not in DEFAULT_FROM_EMAIL:
         DEFAULT_FROM_EMAIL = f"{DEFAULT_FROM_EMAIL} <{EMAIL_HOST_USER}>"
     else:
         DEFAULT_FROM_EMAIL = f"{DEFAULT_FROM_EMAIL} <noreply@haryana.gov.in>"
-
-# Frontend Base URL
-FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
 
 # Media Files (Uploads)
 MEDIA_URL = '/media/'

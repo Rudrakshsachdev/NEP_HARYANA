@@ -170,23 +170,51 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #ffffff;
-  padding: 15px 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  padding: 20px 35px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.breadcrumbs svg {
+  width: 12px;
+  height: 12px;
+  color: #94a3b8;
+}
+
+.breadcrumbActive {
+  color: #e8791d;
+  font-weight: 700;
 }
 
 .headerTitle h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #0d1b2a;
+  font-size: 1.75rem;
+  font-weight: 850;
+  color: #0f172a;
   margin: 0;
+  letter-spacing: -0.02em;
 }
 
 .headerTitle p {
-  font-size: 0.85rem;
-  color: #718096;
-  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 6px 0 0;
+  font-weight: 500;
 }
 
 .headerActions {

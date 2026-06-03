@@ -77,6 +77,15 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/institution/:institutionName/:institutionAisheCode/dashboard/forms/:formId"
+          element={
+            <ProtectedRoute allowedRoles={["principal"]}>
+              <CollegeDashboard />
+            </ProtectedRoute>
+          }
+        />
+
 
         {/* Protected Routes - DHE Admin Console */}
         <Route
