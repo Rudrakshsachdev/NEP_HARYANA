@@ -22,15 +22,13 @@ export const PARAMETERS = [
   { id: 'p17', num: 17, name: 'Research Outcome – Patents Filed & Granted', max: 4, type: 'new', category: 'Research' },
   { id: 'p18', num: 18, name: 'Registration & Performance in NIRF', max: 2, type: 'new', category: 'Research' },
   { id: 'p19', num: 19, name: 'Outcome-Based Education (OBE) Implementation', max: 6, type: 'new', category: 'Academic' },
-  { id: 'p20', num: 20, name: 'Utilization of Funds (Previous Financial Year)', max: 2, type: 'new', category: 'NEP Implementation' },
-  { id: 'p21', num: 21, name: 'Research Enrollment (PhD Scholars)', max: 4, type: 'new', category: 'Research' },
-  { id: 'p22', num: 22, name: 'RPL Adoption & Implementation', max: 4, type: 'new', category: 'NEP Implementation' }
+  { id: 'p20', num: 20, name: 'Utilization of Funds (Previous Financial Year)', max: 2, type: 'new', category: 'NEP Implementation' }
 ];
 
 export const CATEGORIES = {
   Academic: { max: 38, params: ['p1', 'p2', 'p3', 'p6', 'p13', 'p15', 'p16', 'p19'] },
-  Research: { max: 16, params: ['p9', 'p17', 'p18', 'p21'] },
-  'NEP Implementation': { max: 28, params: ['p4', 'p5', 'p7', 'p8', 'p20', 'p22'] },
+  Research: { max: 12, params: ['p9', 'p17', 'p18'] },
+  'NEP Implementation': { max: 24, params: ['p4', 'p5', 'p7', 'p8', 'p20'] },
   'Welfare & Inclusion': { max: 18, params: ['p10', 'p11', 'p12', 'p14'] }
 };
 

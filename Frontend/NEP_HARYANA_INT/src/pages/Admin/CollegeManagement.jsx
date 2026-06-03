@@ -72,12 +72,10 @@ const CollegeManagement = () => {
   // Apply filters and sort
   const filteredColleges = colleges
     .map(c => {
-      const score = calculateTotalScore(c.scores);
-      const classification = getClassification(score);
       return {
         ...c,
-        totalScore: score,
-        classification: classification
+        totalScore: c.score || 0,
+        classification: c.classification || { name: c.award_category || "No Award", bg: "bg-red-100 text-red-800 border-red-300", color: "#EF4444" }
       };
     })
     .filter(c => {

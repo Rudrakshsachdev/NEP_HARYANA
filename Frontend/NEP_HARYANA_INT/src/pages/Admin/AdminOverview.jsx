@@ -110,9 +110,12 @@ const AdminOverview = () => {
   };
 
   colleges.forEach(c => {
-    const totalScore = calculateTotalScore(c.scores);
-    const classification = getClassification(totalScore);
-    classificationCounts[classification.name] += 1;
+    const award = c.award_category || 'No Award';
+    if (classificationCounts[award] !== undefined) {
+      classificationCounts[award] += 1;
+    } else {
+      classificationCounts['No Award'] += 1;
+    }
   });
 
   const pieData = Object.keys(classificationCounts).map(key => ({
@@ -130,13 +133,13 @@ const AdminOverview = () => {
   // 3. Top 10 colleges by total score
   const top10Colleges = [...colleges]
     .map(c => {
-      const score = calculateTotalScore(c.scores);
+      const score = c.score || 0;
       return {
         id: c.id,
         fullName: c.name,
         name: c.name.length > 20 ? c.name.substring(0, 20) + '...' : c.name,
         score: score,
-        classification: getClassification(score).name
+        classification: c.award_category || 'No Award'
       };
     })
     .sort((a, b) => b.score - a.score)
@@ -370,10 +373,10 @@ const AdminOverview = () => {
           <div className="flow-root flex-1 overflow-y-auto max-h-72 pr-2">
             <ul className="-mb-8">
               {colleges.slice(0, 5).map((col, index) => {
-                const totalScore = calculateTotalScore(col.scores);
+                const totalScore = col.score || 0;
                 const latestHistory = col.history && col.history.length > 0 
                   ? col.history[col.history.length - 1] 
-                  : { date: '2026-05-19', status: col.status, user: 'Admin' };
+                  : { date: col.updated_at || 'Not Available', status: col.status, user: 'Principal' };
 
                 return (
                   <li key={col.id}>
