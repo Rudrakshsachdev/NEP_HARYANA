@@ -1,0 +1,230 @@
+/* ==========================================================================
+   Mobile Hero Section — CSS Modules
+   ========================================================================== */
+
+.hero {
+  --hero-navy: #0a1628;
+  --hero-orange: #f97316;
+  --hero-orange-hover: #ea670c;
+  --hero-white: #ffffff;
+  --font-serif: 'Playfair Display', 'Georgia', serif;
+  --font-sans: 'DM Sans', 'Inter', system-ui, sans-serif;
+
+  position: relative;
+  width: 100%;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background-color: var(--hero-navy);
+}
+
+/* ---------- Background Image ---------- */
+.bgImage {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  opacity: 0.55;
+  animation: heroZoomMobile 20s ease-in-out infinite alternate;
+}
+
+@keyframes heroZoomMobile {
+  0% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1.15);
+  }
+}
+
+/* ---------- Gradient Overlay ---------- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 22, 40, 0.9) 0%,
+    rgba(10, 22, 40, 0.8) 50%,
+    rgba(10, 22, 40, 0.95) 100%
+  );
+}
+
+/* ---------- Container ---------- */
+.container {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 80px 20px 40px 20px;
+}
+
+/* ---------- Content Block ---------- */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  text-align: center;
+  align-items: center;
+}
+
+/* ---------- Badge ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--hero-orange);
+  color: var(--hero-white);
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 50px;
+  box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+  animation: badgeSlideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.badgeDot {
+  font-size: 0.5rem;
+  animation: pulseDot 2s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes badgeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Headline ---------- */
+.headline {
+  font-family: var(--font-serif);
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--hero-white);
+  line-height: 1.25;
+  margin: 0;
+  animation: headlineSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+.highlight {
+  color: var(--hero-orange);
+  position: relative;
+  display: inline-block;
+}
+
+@keyframes headlineSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Description ---------- */
+.description {
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin: 0;
+  max-width: 440px;
+  animation: descSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+@keyframes descSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- CTA Buttons ---------- */
+.ctas {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 320px;
+  gap: 12px;
+  margin-top: 10px;
+  animation: ctasSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+@keyframes ctasSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ctaPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--hero-orange);
+  color: var(--hero-white);
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 700;
+  padding: 14px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+}
+
+.ctaPrimary:active {
+  transform: scale(0.97);
+  background-color: var(--hero-orange-hover);
+}
+
+.ctaArrow {
+  width: 16px;
+  height: 16px;
+}
+
+.ctaSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--hero-white);
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 14px 20px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.ctaSecondary:active {
+  transform: scale(0.97);
+  background: rgba(255, 255, 255, 0.08);
+}

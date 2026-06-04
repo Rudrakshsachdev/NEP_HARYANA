@@ -1,0 +1,485 @@
+/* ==========================================================================
+   Mobile-Specific Navbar — CSS Modules
+   ========================================================================== */
+
+/* Color & sizing local tokens */
+.mobileNavbar {
+  --navy-deep: #081125;
+  --navy-primary: #0f1c3f;
+  --saffron: #e77e23;
+  --saffron-hover: #cf6815;
+  --white: #ffffff;
+  --border-light: #e2e8f0;
+  --shadow-sm: 0 2px 8px rgba(8, 17, 37, 0.08);
+  --shadow-lg: 0 10px 25px rgba(8, 17, 37, 0.15);
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  font-family: var(--font-sans);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  width: 100%;
+  background-color: var(--white);
+  box-shadow: var(--shadow-sm);
+  border-top: 3px solid var(--saffron);
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  height: 64px;
+}
+
+/* --- Brand Logo & Name --- */
+.brandGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.logoWrapper {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid var(--saffron);
+  overflow: hidden;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.brandSub {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--saffron);
+  letter-spacing: 0.1em;
+}
+
+.brandTitle {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--navy-deep);
+  letter-spacing: -0.01em;
+}
+
+/* --- Action Group --- */
+.actionsGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quickSignInBtn {
+  background: none;
+  border: none;
+  color: var(--navy-primary);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  border: 1px solid var(--border-light);
+}
+
+.quickSignInBtn:active {
+  transform: scale(0.92);
+  background-color: rgba(15, 28, 63, 0.05);
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* --- Hamburger Menu Icon --- */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--navy-deep);
+  border-radius: 1px;
+  transition: all 0.25s ease;
+}
+
+.hamburgerOpen span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburgerOpen span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburgerOpen span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* --- Drawer Overlay --- */
+.drawerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(8, 17, 37, 0.45);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+}
+
+/* --- Drawer (Slide-out) --- */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 80%;
+  max-width: 320px;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  z-index: 1001;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.drawerOpen {
+  transform: translateX(0);
+}
+
+/* Drawer Header */
+.drawerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-light);
+  height: 64px;
+}
+
+.drawerStateIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--navy-primary);
+}
+
+.flagStub {
+  display: inline-block;
+  width: 14px;
+  height: 9px;
+  border-radius: 1px;
+  background: linear-gradient(
+    to bottom,
+    #ff9933 33.3%,
+    #ffffff 33.3%,
+    #ffffff 66.6%,
+    #128807 66.6%
+  );
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  color: var(--navy-primary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.closeBtn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Drawer Content area */
+.drawerContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Drawer Search */
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px 0 38px;
+  border: 1.5px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.searchInput:focus {
+  border-color: var(--saffron);
+  box-shadow: 0 0 0 3px rgba(231, 126, 35, 0.1);
+}
+
+/* Navigation inside Drawer */
+.navContainer {
+  margin-top: 10px;
+}
+
+.navList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  height: 46px;
+  padding: 0 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--navy-primary);
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  letter-spacing: 0.02em;
+}
+
+.navLink:active {
+  background-color: rgba(15, 28, 63, 0.05);
+}
+
+.navActive {
+  background-color: rgba(231, 126, 35, 0.1);
+  color: var(--saffron-hover);
+  font-weight: 700;
+}
+
+/* Accessibility settings group */
+.accessibilityGroup {
+  border-top: 1px solid var(--border-light);
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.controlLabel {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+
+.fontSizeSelector .btnGroup {
+  display: flex;
+  gap: 6px;
+}
+
+.fontSizeSelector button {
+  flex: 1;
+  height: 38px;
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--navy-primary);
+}
+
+.fontSizeSelector button:active {
+  background-color: var(--border-light);
+}
+
+.contrastSelector button {
+  width: 100%;
+  height: 38px;
+  background: var(--white);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--navy-primary);
+  transition: all 0.2s ease;
+}
+
+.contrastSelector button.active {
+  background-color: var(--navy-deep);
+  color: var(--white);
+  border-color: var(--navy-deep);
+}
+
+/* Drawer Footer */
+.drawerFooter {
+  padding: 16px;
+  border-top: 1px solid var(--border-light);
+}
+
+.primaryActionBtn {
+  width: 100%;
+  height: 48px;
+  background-color: var(--navy-deep);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.primaryActionBtn:active {
+  background-color: var(--saffron-hover);
+}
+
+/* High Contrast overrides (CSS Modules namespace) */
+.highContrast {
+  background-color: #000000 !important;
+  border-top-color: #ffff00 !important;
+  color: #ffffff !important;
+}
+
+.highContrast .brandTitle {
+  color: #ffffff !important;
+}
+
+.highContrast .brandSub {
+  color: #ffff00 !important;
+}
+
+.highContrast .logoWrapper {
+  border-color: #ffff00 !important;
+}
+
+.highContrast .hamburger span {
+  background-color: #ffffff !important;
+}
+
+.highContrast .quickSignInBtn {
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+.highContrast.drawer {
+  background-color: #000000 !important;
+  border-left: 2px solid #ffff00 !important;
+}
+
+.highContrast .drawerHeader {
+  border-bottom-color: #ffff00 !important;
+}
+
+.highContrast .drawerStateIndicator {
+  color: #ffffff !important;
+}
+
+.highContrast .closeBtn {
+  color: #ffffff !important;
+}
+
+.highContrast .searchInput {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+.highContrast .navLink {
+  color: #ffffff !important;
+}
+
+.highContrast .navLink:active {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+}
+
+.highContrast .navActive {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+}
+
+.highContrast .fontSizeSelector button {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+.highContrast .fontSizeSelector button:active {
+  background: #ffff00 !important;
+  color: #000000 !important;
+}
+
+.highContrast .contrastBtn {
+  background: #000000 !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+.highContrast .contrastBtn.active {
+  background: #ffff00 !important;
+  color: #000000 !important;
+}
+
+.highContrast .primaryActionBtn {
+  background: #ffff00 !important;
+  color: #000000 !important;
+  border: 1px solid #ffff00 !important;
+}
