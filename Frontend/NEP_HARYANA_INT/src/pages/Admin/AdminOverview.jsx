@@ -64,7 +64,7 @@ const AdminOverview = () => {
   const approvedCount = colleges.filter(c => c.status === 'Approved').length;
   const pendingCount = colleges.filter(c => c.status === 'Pending Review').length;
   const sentBackCount = colleges.filter(c => c.status === 'Sent Back').length;
-  const totalSubmissions = totalCollegesCount; // All are submitted in this setup
+  const totalSubmissions = colleges.filter(c => c.is_submitted === true || String(c.is_submitted).toLowerCase() === 'true').length;
 
   const kpis = [
     { 
@@ -81,7 +81,7 @@ const AdminOverview = () => {
       desc: 'NEP Self-Appraisal Portals',
       icon: FileCheck, 
       color: 'text-indigo-600 bg-indigo-50 border-indigo-100',
-      progress: 100
+      progress: totalCollegesCount ? Math.round((totalSubmissions / totalCollegesCount) * 100) : 0
     },
     { 
       title: 'Approved Awards', 
@@ -109,7 +109,7 @@ const AdminOverview = () => {
     'No Award': 0
   };
 
-  colleges.forEach(c => {
+  colleges.filter(c => c.is_submitted === true || String(c.is_submitted).toLowerCase() === 'true').forEach(c => {
     const award = c.award_category || 'No Award';
     if (classificationCounts[award] !== undefined) {
       classificationCounts[award] += 1;
@@ -144,6 +144,11 @@ const AdminOverview = () => {
     })
     .sort((a, b) => b.score - a.score)
     .slice(0, 10);
+
+  // Recent submitted colleges sorted by updated_at descending
+  const submittedCollegesForFeed = colleges
+    .filter(c => c.is_submitted === true || String(c.is_submitted).toLowerCase() === 'true')
+    .sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
 
   // 4. Category-wise average score across all colleges
   const categoryAverages = Object.keys(CATEGORIES).map(catName => {
@@ -301,15 +306,15 @@ const AdminOverview = () => {
             
             {/* Center Label */}
             <div className="absolute text-center">
-              <span className="block text-2xl font-black text-slate-800 leading-none">{totalCollegesCount}</span>
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Colleges</span>
+              <span className="block text-2xl font-black text-slate-800 leading-none">{totalSubmissions}</span>
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Submissions</span>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3 mt-6 pt-4 border-t border-slate-100">
             {Object.keys(CLASSIFICATION_COLORS).map(cls => {
               const count = classificationCounts[cls] || 0;
-              const pct = totalCollegesCount ? Math.round((count / totalCollegesCount) * 100) : 0;
+              const pct = totalSubmissions ? Math.round((count / totalSubmissions) * 100) : 0;
               return (
                 <div key={cls} className="flex items-center space-x-2">
                   <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: CLASSIFICATION_COLORS[cls] }}></span>
@@ -372,60 +377,66 @@ const AdminOverview = () => {
 
           <div className="flow-root flex-1 overflow-y-auto max-h-72 pr-2">
             <ul className="-mb-8">
-              {colleges.slice(0, 5).map((col, index) => {
-                const totalScore = col.score || 0;
-                const latestHistory = col.history && col.history.length > 0 
-                  ? col.history[col.history.length - 1] 
-                  : { date: col.updated_at || 'Not Available', status: col.status, user: 'Principal' };
+              {submittedCollegesForFeed.length === 0 ? (
+                <div className="text-center py-12 text-slate-400 text-xs font-bold uppercase tracking-wider animate-pulse">
+                  No submissions received yet.
+                </div>
+              ) : (
+                submittedCollegesForFeed.slice(0, 5).map((col, index) => {
+                  const totalScore = col.score || 0;
+                  const latestHistory = col.history && col.history.length > 0 
+                    ? col.history[col.history.length - 1] 
+                    : { date: col.updated_at || 'Not Available', status: col.status, user: 'Principal' };
 
-                return (
-                  <li key={col.id}>
-                    <div className="relative pb-8">
-                      {index !== 4 ? (
-                        <span className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-100" aria-hidden="true"></span>
-                      ) : null}
-                      <div className="relative flex space-x-3">
-                        <div>
-                          <span className={`h-8 w-8 rounded-lg flex items-center justify-center ring-4 ring-white ${
-                            col.status === 'Approved' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
-                            col.status === 'Pending Review' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
-                            col.status === 'Sent Back' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
-                            'bg-red-50 text-red-600 border border-red-200'
-                          }`}>
-                            <School className="w-4 h-4" />
-                          </span>
-                        </div>
-                        <div className="min-w-0 flex-1 pt-1 flex justify-between space-x-4">
+                  return (
+                    <li key={col.id}>
+                      <div className="relative pb-8">
+                        {index !== submittedCollegesForFeed.slice(0, 5).length - 1 ? (
+                          <span className="absolute top-4 left-4 -ml-px h-full w-0.5 bg-slate-100" aria-hidden="true"></span>
+                        ) : null}
+                        <div className="relative flex space-x-3">
                           <div>
-                            <p 
-                              onClick={() => navigate(`/admin/colleges/${col.id}`)}
-                              className="text-xs font-bold text-slate-700 hover:text-[#1D4ED8] transition-colors cursor-pointer truncate max-w-[140px]"
-                              title={col.name}
-                            >
-                              {col.name}
-                            </p>
-                            <div className="flex items-center space-x-2 mt-1">
-                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase ${
-                                col.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' :
-                                col.status === 'Pending Review' ? 'bg-blue-100 text-blue-800' :
-                                col.status === 'Sent Back' ? 'bg-amber-100 text-amber-800' :
-                                'bg-red-100 text-red-800'
-                              }`}>
-                                {col.status}
-                              </span>
-                              <span className="text-[10px] text-slate-400 font-bold">{totalScore} Marks</span>
-                            </div>
+                            <span className={`h-8 w-8 rounded-lg flex items-center justify-center ring-4 ring-white ${
+                              col.status === 'Approved' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' :
+                              col.status === 'Pending Review' ? 'bg-blue-50 text-blue-600 border border-blue-200' :
+                              col.status === 'Sent Back' ? 'bg-amber-50 text-amber-600 border border-amber-200' :
+                              'bg-red-50 text-red-600 border border-red-200'
+                            }`}>
+                              <School className="w-4 h-4" />
+                            </span>
                           </div>
-                          <div className="text-right text-[10px] whitespace-nowrap text-slate-400 font-medium">
-                            <time>{latestHistory.date.split(' ')[0]}</time>
-                            <span className="block text-[8px] text-slate-400/80 mt-0.5">{latestHistory.user}</span>
+                          <div className="min-w-0 flex-1 pt-1 flex justify-between space-x-4">
+                            <div>
+                              <p 
+                                onClick={() => navigate(`/admin/colleges/${col.id}`)}
+                                className="text-xs font-bold text-slate-700 hover:text-[#1D4ED8] transition-colors cursor-pointer truncate max-w-[140px]"
+                                title={col.name}
+                              >
+                                {col.name}
+                              </p>
+                              <div className="flex items-center space-x-2 mt-1">
+                                <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase ${
+                                  col.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' :
+                                  col.status === 'Pending Review' ? 'bg-blue-100 text-blue-800' :
+                                  col.status === 'Sent Back' ? 'bg-amber-100 text-amber-800' :
+                                  'bg-red-100 text-red-800'
+                                }`}>
+                                  {col.status}
+                                </span>
+                                <span className="text-[10px] text-slate-400 font-bold">{totalScore} Marks</span>
+                              </div>
+                            </div>
+                            <div className="text-right text-[10px] whitespace-nowrap text-slate-400 font-medium">
+                              <time>{latestHistory.date.split(' ')[0]}</time>
+                              <span className="block text-[8px] text-slate-400/80 mt-0.5">{latestHistory.user}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </li>
-                );
-              })}
+                    </li>
+                  );
+                })
+              )}
             </ul>
           </div>
         </div>
