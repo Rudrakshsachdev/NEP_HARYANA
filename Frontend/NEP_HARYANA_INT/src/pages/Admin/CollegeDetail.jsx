@@ -61,6 +61,15 @@ const CollegeDetail = () => {
     loadData();
   }, [id]);
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 space-y-4">
+        <div className="w-10 h-10 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
+        <p className="text-xs text-slate-400 font-bold uppercase tracking-wider animate-pulse">Loading College Profile...</p>
+      </div>
+    );
+  }
+
   if (!college) {
     return (
       <div className="flex flex-col items-center justify-center py-24 space-y-4">
