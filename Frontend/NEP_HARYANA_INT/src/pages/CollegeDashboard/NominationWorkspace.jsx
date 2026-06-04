@@ -7,7 +7,6 @@ import {
   uploadEvidenceToCloudinary,
 } from "../../api/nomination";
 import styles from "./NominationWorkspace.module.css";
-import AwardJourney from "./AwardJourney";
 
 // Dynamic configuration of the 20 indicators
 const INDICATORS = [
@@ -661,7 +660,6 @@ export default function NominationWorkspace({ formId, onBack }) {
 
       {/* Main Workspace Panels */}
       <main className={styles.formPanel}>
-        <AwardJourney score={liveScore} award={liveAward} />
         {errorMessage && (
           <div
             className={styles.errorMessageBlock}

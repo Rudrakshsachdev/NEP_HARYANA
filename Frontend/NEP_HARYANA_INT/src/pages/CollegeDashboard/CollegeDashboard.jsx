@@ -5,6 +5,7 @@ import pageStyles from "./CollegeDashboard.module.css";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { fetchNominations, fetchNominationDetails } from "../../api/nomination";
 import NominationWorkspace from "./NominationWorkspace";
+import AwardJourney from "./AwardJourney";
 import {
   ResponsiveContainer,
   RadarChart,
@@ -386,6 +387,7 @@ function CollegeDashboard() {
               </div>
             ) : (
               <>
+                <AwardJourney score={nomination?.score || 0} award={nomination?.award_category || "No Award"} />
                 <div className={pageStyles.overviewGrid}>
                   <section className={pageStyles.welcomeCard}>
                     <h3>HSHEC Principal Portal</h3>
