@@ -105,11 +105,22 @@ class NominationSaveView(APIView):
         if nom.is_submitted:
             return Response({'detail': 'This nomination has already been submitted and cannot be edited.'}, status=status.HTTP_400_BAD_REQUEST)
             
-        # Update basic info fields
-        nom.head_name = request.data.get('head_name', nom.head_name)
-        nom.head_contact = request.data.get('head_contact', nom.head_contact)
-        nom.address = request.data.get('address', nom.address)
-        nom.institution_type = request.data.get('institution_type', nom.institution_type)
+        # Update basic info fields safely (avoid overwriting with empty/null values if they are already populated)
+        head_name = request.data.get('head_name')
+        if head_name is not None and head_name != "":
+            nom.head_name = head_name
+            
+        head_contact = request.data.get('head_contact')
+        if head_contact is not None and head_contact != "":
+            nom.head_contact = head_contact
+            
+        address = request.data.get('address')
+        if address is not None and address != "":
+            nom.address = address
+            
+        institution_type = request.data.get('institution_type')
+        if institution_type is not None and institution_type != "":
+            nom.institution_type = institution_type
         
         # Save answers
         answers = request.data.get('answers', nom.answers)

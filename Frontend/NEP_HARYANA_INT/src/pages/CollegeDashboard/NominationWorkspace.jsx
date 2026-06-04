@@ -471,7 +471,13 @@ export default function NominationWorkspace({ formId, onBack }) {
   useEffect(() => {
     return () => {
       const { basicInfo: bInfo, answers: ans, isFormLocked: locked, formId: fId } = latestStateRef.current;
-      if (!locked && fId) {
+      const token = localStorage.getItem("nep_haryana_access_token");
+      // Only auto-save on unmount if:
+      // 1. Form is not locked
+      // 2. formId is valid
+      // 3. User is still logged in (token exists)
+      // 4. basicInfo is not in its default empty state
+      if (!locked && fId && token && bInfo && (bInfo.head_name || bInfo.head_contact || bInfo.address)) {
         saveNomination(fId, { ...bInfo, answers: ans }).catch((err) => {
           console.error("Auto-save on unmount failed:", err);
         });
