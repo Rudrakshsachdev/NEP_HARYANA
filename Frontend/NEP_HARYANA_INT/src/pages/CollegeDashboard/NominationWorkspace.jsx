@@ -7,6 +7,7 @@ import {
   uploadEvidenceToCloudinary,
 } from "../../api/nomination";
 import styles from "./NominationWorkspace.module.css";
+import AwardJourney from "./AwardJourney";
 
 // Dynamic configuration of the 20 indicators
 const INDICATORS = [
@@ -660,6 +661,11 @@ export default function NominationWorkspace({ formId, onBack }) {
         </div>
       </header>
 
+      {/* Award Journey Milestones */}
+      <div style={{ gridColumn: "1 / -1", marginBottom: "16px" }}>
+        <AwardJourney score={liveScore} award={liveAward} />
+      </div>
+
       {/* Sidebar Panel (Live score) */}
       <aside className={styles.summaryPanel}>
         <div className={styles.scoreWidget}>
@@ -800,11 +806,11 @@ export default function NominationWorkspace({ formId, onBack }) {
             <div className={styles.basicInfoGrid}>
               <div className={styles.formGroup}>
                 <label>Institution Name</label>
-                <input type="text" value={user?.college_name || ""} readonly />
+                <input type="text" value={user?.college_name || ""} readOnly />
               </div>
               <div className={styles.formGroup}>
                 <label>AISHE Code</label>
-                <input type="text" value={user?.aishe_code || ""} readonly />
+                <input type="text" value={user?.aishe_code || ""} readOnly />
               </div>
               <div className={styles.formGroup}>
                 <label>Name of Head of Institute</label>
