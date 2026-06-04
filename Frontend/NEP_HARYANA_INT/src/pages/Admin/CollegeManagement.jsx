@@ -14,7 +14,7 @@ import {
 } from '../../utils/mockData';
 import { fetchAdminInstitutions } from '../../api/admin';
 
-const CollegeManagement = () => {
+const CollegeManagement = ({ onlySubmitted = false }) => {
   const navigate = useNavigate();
   const [colleges, setColleges] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -79,6 +79,7 @@ const CollegeManagement = () => {
       };
     })
     .filter(c => {
+      if (onlySubmitted && !c.is_submitted) return false;
       const matchSearch = c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           c.aishe.toLowerCase().includes(searchTerm.toLowerCase());
       const matchStatus = selectedStatus ? c.status === selectedStatus : true;
@@ -134,8 +135,12 @@ const CollegeManagement = () => {
       {/* Title block */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-800 tracking-tight">Institutional Self-Appraisals</h1>
-          <p className="text-xs text-slate-400 font-medium">Verify submissions, review marks, and manage classifications.</p>
+          <h1 className="text-xl font-bold text-slate-800 tracking-tight">
+            {onlySubmitted ? "Review Applications" : "Institutional Self-Appraisals"}
+          </h1>
+          <p className="text-xs text-slate-400 font-medium">
+            {onlySubmitted ? "Review and evaluate submitted institutional self-appraisals." : "Verify submissions, review marks, and manage classifications."}
+          </p>
         </div>
         <button
           onClick={handleExportCSV}

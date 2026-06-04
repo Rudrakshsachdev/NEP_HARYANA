@@ -97,6 +97,7 @@ function App() {
           }
         >
           <Route path="/admin" element={<AdminOverview />} />
+          <Route path="/admin/reviews" element={<CollegeManagement onlySubmitted={true} />} />
           <Route path="/admin/colleges" element={<CollegeManagement />} />
           <Route path="/admin/colleges/:id" element={<CollegeDetail />} />
           <Route path="/admin/scoring" element={<Scoring />} />

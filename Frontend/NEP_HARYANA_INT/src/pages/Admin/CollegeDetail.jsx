@@ -20,7 +20,7 @@ import {
   PARAMETERS,
   CATEGORIES 
 } from '../../utils/mockData';
-import { fetchAdminInstitutions } from '../../api/admin';
+import { fetchAdminInstitutions, reviewAdminNomination } from '../../api/admin';
 
 const CollegeDetail = () => {
   const { id } = useParams();
@@ -74,7 +74,7 @@ const CollegeDetail = () => {
   }
 
   // Calculate scores on the fly for display
-  const currentTotalScore = calculateTotalScore(tempScores);
+  const currentTotalScore = college.score || 0;
   const currentClassification = getClassification(currentTotalScore);
 
   // Group parameter configurations
@@ -112,49 +112,29 @@ const CollegeDetail = () => {
   };
 
   // Submit Decision Handler
-  const handleDecision = (newStatus) => {
+  const handleDecision = async (newStatus) => {
     if (!remarks.trim()) {
       alert("Please enter admin remarks before submitting your decision.");
       return;
     }
 
-    const timestamp = new Date().toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    }) + ' ' + new Date().toLocaleTimeString('en-IN', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-
-    const updatedHistoryItem = {
-      date: timestamp,
-      status: newStatus,
-      user: 'Dr. Ramesh Kumar (Admin)'
-    };
-
-    const updatedColleges = colleges.map(c => {
-      if (c.id === id) {
-        return {
-          ...c,
-          status: newStatus,
-          remarks: remarks,
-          scores: tempScores,
-          history: [...(c.history || []), updatedHistoryItem]
-        };
+    try {
+      const res = await reviewAdminNomination(college.college_id, {
+        status: newStatus,
+        remarks: remarks,
+        scores: tempScores
+      });
+      
+      alert(`Institutional Status Updated to: ${newStatus}`);
+      if (res.institution) {
+        setCollege(res.institution);
+        setRemarks(res.institution.remarks || '');
+        setTempScores(res.institution.scores || {});
       }
-      return c;
-    });
-
-    saveColleges(updatedColleges);
-    alert(`Institutional Status Updated to: ${newStatus}`);
-    
-    // Refresh local states
-    const refreshed = updatedColleges.find(c => c.id === id);
-    setCollege(refreshed);
-    setRemarks(refreshed.remarks);
-    setTempScores(refreshed.scores);
+    } catch (err) {
+      console.error("Failed to submit review:", err);
+      alert(err.message || "Failed to submit review decision.");
+    }
   };
 
   return (

@@ -8,14 +8,7 @@ def get_all_applications():
     nominations = Nomination.objects.all().order_by("-updated_at")
     apps = []
     for nom in nominations:
-        status_str = "Draft"
-        if nom.is_submitted:
-            if nom.score >= 50:
-                status_str = "Approved"
-            else:
-                status_str = "Pending Review"
-        else:
-            status_str = "Sent Back"
+        status_str = nom.status or ("Pending Review" if nom.is_submitted else "Draft")
             
         apps.append({
             "id": nom.id,
@@ -43,6 +36,8 @@ def get_institutions_summary():
         status_str = "not_started"
         score = 0
         award = "No Award"
+        remarks_str = ""
+        history_list = []
         
         # Derive type from nomination or default to Govt
         college_type = "Govt"
@@ -51,6 +46,8 @@ def get_institutions_summary():
         if has_app:
             score = nom.score
             award = nom.award_category
+            remarks_str = nom.remarks or ""
+            history_list = nom.history or []
             
             # Map type
             inst_type = str(nom.institution_type or "").lower()
@@ -69,13 +66,7 @@ def get_institutions_summary():
                     district = dist.capitalize()
                     break
 
-            if nom.is_submitted:
-                if nom.score >= 50:
-                    status_str = "Approved"
-                else:
-                    status_str = "Pending Review"
-            else:
-                status_str = "Sent Back"
+            status_str = nom.status or ("Pending Review" if nom.is_submitted else "Draft")
 
         institutions.append(
             {
@@ -92,10 +83,13 @@ def get_institutions_summary():
                 "is_submitted": is_sub,
                 "score": score,
                 "scores": (
+                    nom.reviewer_scores if (has_app and nom.reviewer_scores) else
                     get_individual_indicator_scores(nom.answers or {}) 
                     if has_app else 
                     {f"p{i}": 0 for i in range(1, 23)}
                 ),
+                "remarks": remarks_str,
+                "history": history_list,
                 "grand_total": score,
                 "award_category": award,
                 "classification": {

@@ -20,6 +20,11 @@ class Nomination(models.Model):
     
     # Status
     is_submitted = models.BooleanField(default=False)
+    status = models.CharField(max_length=50, default="Draft")
+    remarks = models.TextField(blank=True, null=True)
+    history = models.JSONField(default=list, blank=True)
+    reviewer_scores = models.JSONField(default=dict, blank=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     submitted_at = models.DateTimeField(null=True, blank=True)
