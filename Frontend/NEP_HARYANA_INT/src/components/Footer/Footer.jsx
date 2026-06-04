@@ -1,4 +1,6 @@
 import React from 'react';
+import { MapPin, Phone, Mail } from 'lucide-react';
+import hshecLogo from '../../assets/hshec_logo.jpeg';
 import styles from './Footer.module.css';
 
 /* ============================================
@@ -69,10 +71,7 @@ function Footer() {
           <div className={styles.footerCol}>
             <div className={styles.brandHeader}>
               <div className={styles.logoCircle}>
-                {/* Fallback SVG for logo since we don't have the exact seal asset */}
-                <svg viewBox="0 0 24 24" fill="#0A1628" width="24" height="24">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#FFFFFF" strokeWidth="2" strokeLinejoin="round"/>
-                </svg>
+                <img src={hshecLogo} alt="HSHEC Logo" className="w-full h-full object-contain" />
               </div>
               <div className={styles.brandText}>
                 <span className={styles.brandTitle}>HSHEC</span>
@@ -133,15 +132,15 @@ function Footer() {
             <h3 className={styles.colHeading}>Reach Us</h3>
             <ul className={styles.contactList}>
               <li className={styles.contactItem}>
-                <span className={styles.contactIcon} aria-hidden="true">📍</span>
+                <MapPin className={`${styles.contactIcon} w-4 h-4 text-slate-400 shrink-0`} />
                 <span>Plot No. 1A, Sector 5, Panchkula, Haryana — 134109</span>
               </li>
               <li className={styles.contactItem}>
-                <span className={styles.contactIcon} aria-hidden="true">📞</span>
+                <Phone className={`${styles.contactIcon} w-4 h-4 text-slate-400 shrink-0`} />
                 <span>0172-2560888</span>
               </li>
               <li className={styles.contactItem}>
-                <span className={styles.contactIcon} aria-hidden="true">✉️</span>
+                <Mail className={`${styles.contactIcon} w-4 h-4 text-slate-400 shrink-0`} />
                 <span>info@hshec.gov.in</span>
               </li>
             </ul>

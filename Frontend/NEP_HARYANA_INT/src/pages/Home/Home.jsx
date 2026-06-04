@@ -14,8 +14,8 @@ function Home() {
       {isMobile ? <MobileHeroSection /> : <Hero />}
       <LeadershipSection />
       <AboutSystem />
-      <StatsAndNews />
       <Schemes />
+      <StatsAndNews />
 
     </main>
   );

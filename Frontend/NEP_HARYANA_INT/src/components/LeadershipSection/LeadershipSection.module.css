@@ -2,19 +2,19 @@
   position: relative;
   overflow: hidden;
   padding: 96px 0 88px;
-  color: #f8fafc;
+  color: #334155;
   background:
     radial-gradient(
       circle at top left,
-      rgba(249, 115, 22, 0.16),
+      rgba(249, 115, 22, 0.04),
       transparent 34%
     ),
     radial-gradient(
       circle at top right,
-      rgba(244, 196, 99, 0.12),
+      rgba(244, 196, 99, 0.04),
       transparent 28%
     ),
-    linear-gradient(180deg, #09111e 0%, #0c1726 46%, #08111b 100%);
+    #ffffff;
 }
 
 .section::before {
@@ -24,14 +24,14 @@
   background:
     linear-gradient(
       120deg,
-      rgba(255, 255, 255, 0.03) 0%,
+      rgba(0, 0, 0, 0.01) 0%,
       transparent 18%,
       transparent 82%,
-      rgba(255, 255, 255, 0.02) 100%
+      rgba(0, 0, 0, 0.01) 100%
     ),
     repeating-linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.015) 0 1px,
+      rgba(0, 0, 0, 0.008) 0 1px,
       transparent 1px 72px
     );
   pointer-events: none;
@@ -53,7 +53,7 @@
   align-items: stretch;
   padding-bottom: 2rem;
   margin-bottom: 2.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .copyColumn {
@@ -66,9 +66,9 @@
   width: fit-content;
   padding: 0.55rem 0.95rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #f8fafc;
+  background: rgba(249, 115, 22, 0.08);
+  border: 1px solid rgba(249, 115, 22, 0.15);
+  color: #ea580c;
   font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -82,13 +82,13 @@
   font-size: clamp(2.2rem, 4.3vw, 4rem);
   line-height: 1.06;
   letter-spacing: -0.03em;
-  color: #fffaf2;
+  color: #0f172a;
 }
 
 .sectionLead {
   max-width: 62ch;
   margin: 0;
-  color: rgba(248, 250, 252, 0.76);
+  color: #475569;
   font-size: 1.04rem;
   line-height: 1.85;
 }
@@ -102,9 +102,9 @@
 .highlightPill {
   padding: 0.72rem 1rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  color: #e2e8f0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
   font-size: 0.92rem;
   font-weight: 600;
   letter-spacing: 0.01em;
@@ -123,15 +123,9 @@
   gap: 1.3rem;
   padding: 1.5rem;
   border-radius: 28px;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.08),
-      rgba(255, 255, 255, 0.04)
-    ),
-    rgba(9, 17, 30, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.26);
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.03);
   overflow: hidden;
 }
 
@@ -162,9 +156,9 @@
   min-width: 3rem;
   height: 3rem;
   border-radius: 999px;
-  background: rgba(249, 115, 22, 0.14);
-  border: 1px solid rgba(249, 115, 22, 0.28);
-  color: #ffd9b0;
+  background: rgba(249, 115, 22, 0.08);
+  border: 1px solid rgba(249, 115, 22, 0.15);
+  color: #ea580c;
   font-size: 0.88rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -180,7 +174,7 @@
     rgba(249, 115, 22, 0.88),
     rgba(244, 196, 99, 0.86)
   );
-  box-shadow: 0 14px 30px rgba(249, 115, 22, 0.16);
+  box-shadow: 0 14px 30px rgba(249, 115, 22, 0.08);
 }
 
 .portraitImg {
@@ -207,7 +201,7 @@
 
 .leaderName {
   margin: 0;
-  color: #fffaf2;
+  color: #0f172a;
   font-size: 1.3rem;
   line-height: 1.25;
   letter-spacing: -0.02em;
@@ -215,14 +209,14 @@
 
 .leaderTitle {
   margin: 0.35rem 0 0;
-  color: rgba(248, 250, 252, 0.88);
+  color: #334155;
   font-size: 0.98rem;
   font-weight: 600;
 }
 
 .leaderDesignation {
   margin: 0.45rem 0 0;
-  color: rgba(226, 232, 240, 0.68);
+  color: #64748b;
   font-size: 0.9rem;
   line-height: 1.55;
 }
@@ -250,7 +244,7 @@
 
 .messageText {
   margin: 0;
-  color: rgba(248, 250, 252, 0.8);
+  color: #475569;
   font-size: 0.99rem;
   line-height: 1.85;
 }
@@ -261,13 +255,13 @@
   align-items: end;
   gap: 1rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid #f1f5f9;
 }
 
 .closingLabel {
   display: block;
   margin-bottom: 0.3rem;
-  color: rgba(248, 250, 252, 0.52);
+  color: #94a3b8;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -276,7 +270,7 @@
 
 .closingText {
   margin: 0;
-  color: #fffaf2;
+  color: #1e293b;
   font-size: 0.97rem;
   font-weight: 600;
 }
@@ -301,7 +295,7 @@
 }
 
 .signatureName {
-  color: rgba(248, 250, 252, 0.72);
+  color: #64748b;
   font-size: 0.84rem;
   font-weight: 700;
   letter-spacing: 0.08em;
