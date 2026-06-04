@@ -449,3 +449,45 @@
     transform: none;
   }
 }
+
+.tierIconWrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease;
+}
+
+.tier:hover .tierIconWrapper {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.tierIconSvg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Platinum Tier Colors */
+.platinumIcon {
+  background: rgba(148, 163, 184, 0.12);
+  color: #64748b;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* Gold Tier Colors */
+.goldIcon {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* Silver Tier Colors */
+.silverIcon {
+  background: rgba(200, 150, 110, 0.12);
+  color: #b45309;
+  border: 1px solid rgba(200, 150, 110, 0.2);
+}
