@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar/Navbar";
 import MobileNavbar from "./components/MobileNavbar/MobileNavbar";
 import Footer from "./components/Footer/Footer";
 import Home from "./pages/Home/Home";
+import HomeV2 from "./pages/HomeV2/HomeV2";
 import { useMobile } from "./hooks/useMobile";
 import Signup from "./pages/Signup/Signup";
 import Signin from "./pages/Signin/Signin";
@@ -36,7 +37,8 @@ function App() {
     <AuthProvider>
       {!isDashboard && (isMobile ? <MobileNavbar /> : <Navbar />)}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<HomeV2 />} />
+        <Route path="/v1" element={<Home />} />
 
         {/* Guest Routes */}
         <Route
