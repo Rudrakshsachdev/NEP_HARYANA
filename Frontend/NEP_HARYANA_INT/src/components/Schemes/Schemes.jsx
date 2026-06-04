@@ -199,15 +199,6 @@ function Schemes() {
           </div>
         </div>
 
-        {/* Bottom CTA Strip */}
-        <div className={styles.bottomCta}>
-          <h3 className={styles.bottomCtaTitle}>Is your college ready to participate?</h3>
-          <div className={styles.bottomCtaButtons}>
-            <button className={styles.btnFilled}>Register as a College →</button>
-            <button className={styles.btnOutlined}>View All Schemes</button>
-          </div>
-        </div>
-
       </div>
     </section>
   );

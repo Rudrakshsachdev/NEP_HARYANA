@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Bell, Calendar, MapPin, ChevronRight, Megaphone } from 'lucide-react';
 import styles from './StatsAndNews.module.css';
 import bgImage from '../../assets/graduation_students.png';
 
@@ -130,6 +131,12 @@ const events = [
   { dateNum: '02', dateMon: 'JUN', name: 'Vice-Chancellors\' Conclave 2026', location: 'Gurugram' },
 ];
 
+const bulletinBulletins = [
+  "Model Sanskriti College registration deadline extended to June 15, 2026.",
+  "New Academic Bank of Credits (ABC) portal submission guidelines released.",
+  "State-level higher education portal scheduled maintenance on Sunday between 2:00 AM and 5:00 AM.",
+  "UGC workshop links and program circular uploaded for online training."
+];
 
 /* ============================================
    Main Component
@@ -137,6 +144,9 @@ const events = [
 function StatsAndNews() {
   const noticesRef = useScrollRevealMany('[data-reveal="notice"]', 50);
   const eventsRef = useScrollRevealMany('[data-reveal="event"]', 100);
+
+  // Duplicate bulletin items to make a seamless infinite loop
+  const infiniteBulletins = [...bulletinBulletins, ...bulletinBulletins];
 
   return (
     <>
@@ -172,6 +182,27 @@ function StatsAndNews() {
 
       {/* SECTION 2 — Notices & Upcoming Events */}
       <section className={styles.newsSection} id="news-events">
+        
+        {/* Moving Live Bulletin Ticker */}
+        <div className={styles.tickerContainer}>
+          <div className={styles.tickerWrapper}>
+            <div className={styles.tickerHeader}>
+              <Megaphone className={styles.tickerHeaderIcon} />
+              <span>LIVE UPDATES</span>
+            </div>
+            <div className={styles.tickerTrack}>
+              <div className={styles.tickerMarquee}>
+                {infiniteBulletins.map((text, idx) => (
+                  <span key={idx} className={styles.tickerItem}>
+                    <span className={styles.tickerBullet}>•</span>
+                    <span>{text}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className={styles.newsContainer}>
           
           {/* Left Column — Notices */}
@@ -194,7 +225,7 @@ function StatsAndNews() {
                     <p className={styles.noticeText}>{notice.text}</p>
                   </div>
                   <div className={styles.noticeChevron} aria-hidden="true">
-                    ›
+                    <ChevronRight className="w-4 h-4" />
                   </div>
                 </div>
               ))}
@@ -218,7 +249,8 @@ function StatsAndNews() {
                   <div className={styles.eventContent}>
                     <h3 className={styles.eventName}>{event.name}</h3>
                     <div className={styles.eventLocation}>
-                      <span aria-hidden="true">📍</span> {event.location}
+                      <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>{event.location}</span>
                     </div>
                   </div>
                 </div>
