@@ -1,8 +1,8 @@
 .pageShell {
   position: relative;
   overflow: hidden;
-  min-height: calc(100vh - 200px);
-  padding: 72px 0;
+  min-height: calc(100vh - 120px);
+  padding: 140px 0 80px 0;
   background:
     radial-gradient(circle at top left, rgba(249, 115, 22, 0.16), transparent 28%),
     radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.16), transparent 24%),
@@ -276,6 +276,10 @@
 }
 
 @media (max-width: 900px) {
+  .pageShell {
+    padding: 110px 0 60px 0;
+  }
+
   .pageContainer {
     grid-template-columns: 1fr;
   }
@@ -283,7 +287,7 @@
 
 @media (max-width: 640px) {
   .pageShell {
-    padding: 20px 0 40px;
+    padding: 96px 0 40px 0;
   }
 
   .pageContainer {
