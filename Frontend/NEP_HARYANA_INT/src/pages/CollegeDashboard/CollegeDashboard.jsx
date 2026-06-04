@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import styles from "../Dashboard/Dashboard.module.css";
 import pageStyles from "./CollegeDashboard.module.css";
 import { useAuth } from "../../context/AuthContext.jsx";
-import { fetchNominations, fetchNominationDetails } from "../../api/nomination";
+import { fetchNominations, fetchNominationDetails, fetchMySubmissions } from "../../api/nomination";
 import NominationWorkspace from "./NominationWorkspace";
 import AwardJourney from "./AwardJourney";
 import {
@@ -162,6 +162,11 @@ function CollegeDashboard() {
   const [formsError, setFormsError] = useState("");
   const [selectedFormId, setSelectedFormId] = useState(null);
 
+  // Submissions loading state
+  const [submissionsList, setSubmissionsList] = useState([]);
+  const [submissionsLoading, setSubmissionsLoading] = useState(false);
+  const [submissionsError, setSubmissionsError] = useState("");
+
   const collegeNameSlug = String(savedUser?.college_name || "college")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
@@ -190,10 +195,24 @@ function CollegeDashboard() {
       const data = await fetchNominations();
       setFormsList(data);
     } catch (err) {
-      console.error("Failed to load forms list:", err);
+      console.error("Failed to load available forms:", err);
       setFormsError(err.message || "Failed to load available forms.");
     } finally {
       setFormsLoading(false);
+    }
+  }, []);
+
+  const loadSubmissionsList = useCallback(async () => {
+    setSubmissionsLoading(true);
+    setSubmissionsError("");
+    try {
+      const data = await fetchMySubmissions();
+      setSubmissionsList(data);
+    } catch (err) {
+      console.error("Failed to load submissions list:", err);
+      setSubmissionsError(err.message || "Failed to load submissions.");
+    } finally {
+      setSubmissionsLoading(false);
     }
   }, []);
 
@@ -202,6 +221,12 @@ function CollegeDashboard() {
       loadFormsList();
     }
   }, [activeMenu, loadFormsList]);
+
+  useEffect(() => {
+    if (activeMenu === "My Submissions") {
+      loadSubmissionsList();
+    }
+  }, [activeMenu, loadSubmissionsList]);
 
   const loadNomination = useCallback(async () => {
     setNominationLoading(true);
@@ -237,6 +262,10 @@ function CollegeDashboard() {
     {
       title: "Forms",
       icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+    },
+    {
+      title: "My Submissions",
+      icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
     }
   ];
 
@@ -610,6 +639,84 @@ function CollegeDashboard() {
                       >
                         Open Form
                       </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : activeMenu === "My Submissions" ? (
+          <div style={{ padding: "24px" }}>
+            <h3 style={{ fontSize: "1.25rem", fontWeight: "700", marginBottom: "18px", color: "#1e293b" }}>My Submissions</h3>
+            {submissionsError && (
+              <div style={{ backgroundColor: "#fee2e2", borderLeft: "4px solid #ef4444", color: "#b91c1c", padding: "12px", borderRadius: "8px", fontSize: "0.875rem", marginBottom: "16px" }}>
+                {submissionsError}
+              </div>
+            )}
+            {submissionsLoading ? (
+              <div className={pageStyles.loadingContainer}>
+                <div className={pageStyles.spinner}></div>
+                <p style={{ color: "#64748b", fontSize: "0.875rem" }}>Loading submissions...</p>
+              </div>
+            ) : submissionsList.length === 0 ? (
+              <p style={{ color: "#64748b", fontSize: "0.875rem" }}>No submissions found for your institution.</p>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                {submissionsList.map((sub) => (
+                  <div key={sub.id} style={{ backgroundColor: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "16px", padding: "24px", boxShadow: "0 4px 20px rgba(0,0,0,0.02)", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "20px" }}>
+                    <div style={{ flex: "1", minWidth: "280px" }}>
+                      <span style={{ fontSize: "0.6875rem", backgroundColor: "#f1f5f9", padding: "4px 10px", borderRadius: "9999px", textTransform: "uppercase", fontWeight: "700", color: "#64748b" }}>Form ID: {sub.form_id}</span>
+                      <h4 style={{ fontSize: "1.1rem", fontWeight: "700", marginTop: "12px", marginBottom: "8px", color: "#0f172a" }}>
+                        {sub.form_id === "nep-excellence-nomination-2025" 
+                          ? "Haryana State NEP 2020 Implementation Excellence Award — Nomination Form 2025" 
+                          : "Institutional Nomination Form"}
+                      </h4>
+                      <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", fontSize: "0.85rem", color: "#64748b", marginTop: "12px" }}>
+                        <span><strong>Head:</strong> {sub.head_name || "N/A"}</span>
+                        <span><strong>Contact:</strong> {sub.head_contact || "N/A"}</span>
+                        <span><strong>Updated:</strong> {new Date(sub.updated_at).toLocaleDateString()}</span>
+                        {sub.submitted_at && <span><strong>Submitted:</strong> {new Date(sub.submitted_at).toLocaleDateString()}</span>}
+                      </div>
+                    </div>
+                    
+                    <div style={{ display: "flex", alignItems: "center", gap: "24px", flexWrap: "wrap" }}>
+                      <div style={{ textAlign: "center" }}>
+                        <span style={{ display: "block", fontSize: "0.75rem", color: "#64748b", fontWeight: "600", textTransform: "uppercase", marginBottom: "4px" }}>Score</span>
+                        <strong style={{ fontSize: "1.4rem", color: "#e8791d" }}>{sub.score} <span style={{ fontSize: "0.9rem", color: "#94a3b8", fontWeight: "normal" }}>/ 100</span></strong>
+                      </div>
+                      
+                      <div style={{ textAlign: "center" }}>
+                        <span style={{ display: "block", fontSize: "0.75rem", color: "#64748b", fontWeight: "600", textTransform: "uppercase", marginBottom: "4px" }}>Award</span>
+                        <span className={`${pageStyles.tierBadge} ${
+                          sub.award_category === "Platinum" ? pageStyles.badgePlatinum : sub.award_category === "Gold" ? pageStyles.badgeGold : sub.award_category === "Silver" ? pageStyles.badgeSilver : pageStyles.badgeNone
+                        }`} style={{ padding: "6px 14px", fontSize: "0.75rem", marginTop: 0 }}>
+                          {sub.award_category}
+                        </span>
+                      </div>
+
+                      <div style={{ textAlign: "center" }}>
+                        <span style={{ display: "block", fontSize: "0.75rem", color: "#64748b", fontWeight: "600", textTransform: "uppercase", marginBottom: "4px" }}>Status</span>
+                        <span style={{
+                          fontSize: "0.75rem",
+                          fontWeight: "700",
+                          padding: "6px 14px",
+                          borderRadius: "9999px",
+                          textTransform: "uppercase",
+                          backgroundColor: sub.is_submitted ? "#d1fae5" : "#fef3c7",
+                          color: sub.is_submitted ? "#065f46" : "#78350f"
+                        }}>{sub.is_submitted ? "Submitted" : "Draft"}</span>
+                      </div>
+
+                      <div>
+                        <button
+                          type="button"
+                          className={styles.secondaryBtn}
+                          style={{ padding: "10px 20px", fontSize: "0.875rem", fontWeight: "600", borderColor: "#e8791d", color: "#e8791d", cursor: "pointer" }}
+                          onClick={() => navigate(`/institution/${instName}/${instAishe}/dashboard/forms/${sub.form_id}`)}
+                        >
+                          {sub.is_submitted ? "View Answers" : "Continue Editing"}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}

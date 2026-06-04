@@ -4,6 +4,10 @@ export function fetchNominations() {
   return request("/nominations/");
 }
 
+export function fetchMySubmissions() {
+  return request("/nominations/my-submissions/");
+}
+
 export function fetchNominationDetails(id) {
   return request(`/nominations/${id}/`);
 }

@@ -180,3 +180,15 @@ class NominationSubmitView(APIView):
             'nomination': serializer.data
         }, status=status.HTTP_200_OK)
 
+
+class MySubmissionsListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        college = get_user_college(user)
+        nominations = Nomination.objects.filter(college=college).order_by('-updated_at')
+        serializer = NominationSerializer(nominations, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
