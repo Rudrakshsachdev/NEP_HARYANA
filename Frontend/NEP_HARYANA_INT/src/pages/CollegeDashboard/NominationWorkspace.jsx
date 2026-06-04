@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import {
   fetchNominationDetails,
@@ -7,7 +7,6 @@ import {
   uploadEvidenceToCloudinary,
 } from "../../api/nomination";
 import styles from "./NominationWorkspace.module.css";
-import AwardJourney from "./AwardJourney";
 
 // Dynamic configuration of the 20 indicators
 const INDICATORS = [
@@ -460,6 +459,52 @@ export default function NominationWorkspace({ formId, onBack }) {
     }
   };
 
+  // Ref to always hold the latest state for unmount auto-save
+  const latestStateRef = useRef({ basicInfo, answers, isFormLocked, formId });
+  useEffect(() => {
+    latestStateRef.current = { basicInfo, answers, isFormLocked, formId };
+  }, [basicInfo, answers, isFormLocked, formId]);
+
+  // Auto-save on component unmount (navigating away / redirect / logout)
+  useEffect(() => {
+    return () => {
+      const { basicInfo: bInfo, answers: ans, isFormLocked: locked, formId: fId } = latestStateRef.current;
+      if (!locked && fId) {
+        saveNomination(fId, { ...bInfo, answers: ans }).catch((err) => {
+          console.error("Auto-save on unmount failed:", err);
+        });
+      }
+    };
+  }, []);
+
+  // Auto-save on tab change (activeStep change)
+  const prevActiveStepRef = useRef(activeStep);
+  useEffect(() => {
+    if (prevActiveStepRef.current !== activeStep) {
+      if (!isFormLocked && formId) {
+        saveNomination(formId, { ...basicInfo, answers }).catch((err) => {
+          console.error("Auto-save on tab change failed:", err);
+        });
+      }
+      prevActiveStepRef.current = activeStep;
+    }
+  }, [activeStep, basicInfo, answers, isFormLocked, formId]);
+
+  // Back to Forms button click handler with automatic draft save
+  const handleBackWithSave = async () => {
+    if (!isFormLocked && formId) {
+      setSaving(true);
+      try {
+        await saveNomination(formId, { ...basicInfo, answers });
+      } catch (err) {
+        console.error("Auto-save on exit failed:", err);
+      } finally {
+        setSaving(false);
+      }
+    }
+    onBack();
+  };
+
   // Navigation handlers
   const handleNextStep = () => {
     setActiveStep((prev) => Math.min(prev + 1, 6));
@@ -581,7 +626,7 @@ export default function NominationWorkspace({ formId, onBack }) {
       <header className={styles.workspaceHeader}>
         <div className={styles.headerTitleGroup}>
           <button
-            onClick={onBack}
+            onClick={handleBackWithSave}
             className={styles.secondaryBtn}
             style={{
               marginBottom: "12px",
@@ -661,7 +706,6 @@ export default function NominationWorkspace({ formId, onBack }) {
 
       {/* Main Workspace Panels */}
       <main className={styles.formPanel}>
-        <AwardJourney score={liveScore} award={liveAward} />
         {errorMessage && (
           <div
             className={styles.errorMessageBlock}
