@@ -350,13 +350,15 @@ export default function NominationWorkspace({ formId, onBack }) {
   const updateIndicatorValue = (num, field, val) => {
     if (isFormLocked) return;
     const key = `indicator_${num}`;
-    const current = answers[key] || {};
-    setAnswers({
-      ...answers,
-      [key]: {
-        ...current,
-        [field]: val,
-      },
+    setAnswers((prevAnswers) => {
+      const current = prevAnswers[key] || {};
+      return {
+        ...prevAnswers,
+        [key]: {
+          ...current,
+          [field]: val,
+        },
+      };
     });
   };
 
