@@ -99,8 +99,8 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.UserRateThrottle',
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '60/minute',
-        'user': '120/minute',
+        'anon': '120/minute',
+        'user': '240/minute',
     }
 }
 
@@ -198,7 +198,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # Email configuration
-EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND')
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
 EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() in ('true', '1', 't')
