@@ -8,6 +8,7 @@ import OverviewSection from "./sections/OverviewSection";
 import ApplicationsSection from "./sections/ApplicationsSection";
 import InstitutionsSection from "./sections/InstitutionsSection";
 import AnalyticsSection from "./sections/AnalyticsSection";
+import Footer from "../../components/admin/Footer";
 import { useAuth } from "../../context/AuthContext.jsx";
 import {
   fetchAdminAnalytics,
@@ -214,6 +215,7 @@ export default function AdminDashboard() {
         />
 
         <main className={pageStyles.pageContent}>{renderSection()}</main>
+        <Footer />
       </div>
     </div>
   );

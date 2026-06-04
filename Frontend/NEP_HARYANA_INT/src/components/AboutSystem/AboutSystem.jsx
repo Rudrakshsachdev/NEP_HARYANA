@@ -199,8 +199,6 @@ function useScrollRevealMany(selector, staggerMs = 120) {
    ============================================ */
 
 function AboutSystem() {
-  const pillarsRef = useScrollRevealMany('[data-reveal="pillar"]', 150);
-  const rolesRef = useScrollReveal({ threshold: 0.1 });
   const statsRef = useScrollRevealMany('[data-reveal="stat"]', 100);
 
   return (
@@ -229,125 +227,6 @@ function AboutSystem() {
               government administrators with real-time, data-driven oversight
               across all 22 districts of the state.
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ——————————————— PART 2 — Three Pillar Cards ——————————————— */}
-      <section
-        className={styles.pillarsSection}
-        id="about-pillars"
-        aria-labelledby="pillars-heading"
-      >
-        <div className={styles.container}>
-          {/* Reuse section header style */}
-          <div className={styles.rolesSectionHeader}>
-            <div className={styles.rolesSectionAccent} aria-hidden="true" />
-            <h2 className={styles.rolesSectionTitle} id="pillars-heading">
-              Core Pillars of the System
-            </h2>
-            <p className={styles.rolesSectionSubtitle}>
-              Built for precision, transparency, and governance at scale
-            </p>
-          </div>
-
-          <div className={styles.pillarsGrid} ref={pillarsRef}>
-            {pillars.map((pillar) => (
-              <div
-                key={pillar.id}
-                className={styles.pillarCard}
-                data-reveal="pillar"
-                id={`pillar-${pillar.id}`}
-              >
-                <div className={styles.pillarIcon} aria-hidden="true">
-                  {pillar.icon}
-                </div>
-                <h3 className={styles.pillarTitle}>{pillar.title}</h3>
-                <p className={styles.pillarText}>{pillar.text}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ——————————————— PART 3 — Role-Based Access Strip ——————————————— */}
-      <section
-        className={styles.rolesSection}
-        id="about-roles"
-        aria-labelledby="roles-heading"
-      >
-        <div className={styles.container}>
-          <div className={styles.rolesSectionHeader}>
-            <div className={styles.rolesSectionAccent} aria-hidden="true" />
-            <h2 className={styles.rolesSectionTitle} id="roles-heading">
-              Who Is This Platform For?
-            </h2>
-            <p className={styles.rolesSectionSubtitle}>
-              Tailored portals for every stakeholder in Haryana's higher
-              education ecosystem
-            </p>
-          </div>
-
-          <div
-            className={styles.rolesGrid}
-            ref={rolesRef}
-            id="roles-grid"
-          >
-            {/* ---- College Portal ---- */}
-            <div
-              className={`${styles.rolePanel} ${styles.rolePanelCollege}`}
-              id="role-college"
-            >
-              <div className={styles.rolePanelHeader}>
-                <div className={styles.roleIconWrap} aria-hidden="true">
-                  <IconUniversity />
-                </div>
-                <div>
-                  <h3 className={styles.rolePanelTitle}>For Colleges</h3>
-                  <p className={styles.rolePanelSubtitle}>
-                    Institutional Portal
-                  </p>
-                </div>
-              </div>
-              <ul className={styles.roleBullets}>
-                {collegeBullets.map((bullet, i) => (
-                  <li key={i} className={styles.roleBulletItem}>
-                    <span className={styles.bulletIcon} aria-hidden="true">
-                      <IconChevronRight />
-                    </span>
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* ---- Admin Portal ---- */}
-            <div
-              className={`${styles.rolePanel} ${styles.rolePanelAdmin}`}
-              id="role-admin"
-            >
-              <div className={styles.rolePanelHeader}>
-                <div className={styles.roleIconWrap} aria-hidden="true">
-                  <IconShield />
-                </div>
-                <div>
-                  <h3 className={styles.rolePanelTitle}>For Administrators</h3>
-                  <p className={styles.rolePanelSubtitle}>
-                    Government Dashboard
-                  </p>
-                </div>
-              </div>
-              <ul className={styles.roleBullets}>
-                {adminBullets.map((bullet, i) => (
-                  <li key={i} className={styles.roleBulletItem}>
-                    <span className={styles.bulletIcon} aria-hidden="true">
-                      <IconChevronRight />
-                    </span>
-                    <span>{bullet}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         </div>
       </section>

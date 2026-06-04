@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import styles from './Schemes.module.css';
+import { Award } from 'lucide-react';
 
 // SVG Icons
 const IconLotus = () => (
@@ -174,7 +175,9 @@ function Schemes() {
         {/* Evaluation Tier Visual */}
         <div className={styles.tiersContainer} data-reveal>
           <div className={styles.tier}>
-            <span className={styles.tierIcon} title="Platinum">🥇</span>
+            <div className={`${styles.tierIconWrapper} ${styles.platinumIcon}`}>
+              <Award className={styles.tierIconSvg} />
+            </div>
             <h4 className={styles.tierTitle}>Platinum</h4>
             <p className={styles.tierDesc}>
               Highest Score Band<br/>
@@ -182,7 +185,9 @@ function Schemes() {
             </p>
           </div>
           <div className={styles.tier}>
-            <span className={styles.tierIcon} title="Gold">🥈</span>
+            <div className={`${styles.tierIconWrapper} ${styles.goldIcon}`}>
+              <Award className={styles.tierIconSvg} />
+            </div>
             <h4 className={styles.tierTitle}>Gold</h4>
             <p className={styles.tierDesc}>
               Mid-Level Performance<br/>
@@ -190,21 +195,14 @@ function Schemes() {
             </p>
           </div>
           <div className={styles.tier}>
-            <span className={styles.tierIcon} title="Silver">🥉</span>
+            <div className={`${styles.tierIconWrapper} ${styles.silverIcon}`}>
+              <Award className={styles.tierIconSvg} />
+            </div>
             <h4 className={styles.tierTitle}>Silver</h4>
             <p className={styles.tierDesc}>
               Entry-Level Recognition<br/>
               Active participation
             </p>
-          </div>
-        </div>
-
-        {/* Bottom CTA Strip */}
-        <div className={styles.bottomCta}>
-          <h3 className={styles.bottomCtaTitle}>Is your college ready to participate?</h3>
-          <div className={styles.bottomCtaButtons}>
-            <button className={styles.btnFilled}>Register as a College →</button>
-            <button className={styles.btnOutlined}>View All Schemes</button>
           </div>
         </div>
 
