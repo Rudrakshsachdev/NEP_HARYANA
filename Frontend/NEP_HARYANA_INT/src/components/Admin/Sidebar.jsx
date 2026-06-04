@@ -1,9 +1,9 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  School, 
-  Award, 
-  FileSpreadsheet, 
+import {
+  LayoutDashboard,
+  School,
+  Award,
+  FileSpreadsheet,
   Settings as SettingsIcon,
   LogOut,
   UserCheck
@@ -26,6 +26,7 @@ const Sidebar = () => {
 
   const links = [
     { name: 'Overview', path: '/admin', icon: LayoutDashboard },
+    { name: 'Review Applications', path: '/admin/reviews', icon: UserCheck },
     { name: 'College List', path: '/admin/colleges', icon: School },
     { name: 'Scoring & Comparison', path: '/admin/scoring', icon: Award },
     { name: 'Reports', path: '/admin/reports', icon: FileSpreadsheet },
@@ -55,21 +56,19 @@ const Sidebar = () => {
         <ul className="space-y-1">
           {links.map((link) => {
             const Icon = link.icon;
-            const isActive = location.pathname === link.path || 
-                             (link.path !== '/admin' && location.pathname.startsWith(link.path));
+            const isActive = location.pathname === link.path ||
+              (link.path !== '/admin' && location.pathname.startsWith(link.path));
             return (
               <li key={link.path}>
                 <Link
                   to={link.path}
-                  className={`flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-200 text-sm font-medium ${
-                    isActive 
-                      ? 'bg-[#1D4ED8] text-white shadow-lg shadow-blue-600/30 font-semibold' 
+                  className={`flex items-center gap-3 px-3.5 py-3 rounded-xl transition-all duration-200 text-sm font-medium ${isActive
+                      ? 'bg-[#1D4ED8] text-white shadow-lg shadow-blue-600/30 font-semibold'
                       : 'text-slate-300 hover:bg-[#1D4ED8] hover:text-white hover:shadow-lg hover:shadow-blue-600/30'
-                  }`}
+                    }`}
                 >
-                  <Icon className={`w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110 ${
-                    isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'
-                  }`} />
+                  <Icon className={`w-5 h-5 shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'
+                    }`} />
                   <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                     {link.name}
                   </span>
@@ -91,7 +90,7 @@ const Sidebar = () => {
             <p className="text-[10px] text-blue-300 font-medium truncate">{user?.role === "admin" ? "DHE Admin" : "Evaluator"}</p>
           </div>
         </div>
-        <button 
+        <button
           onClick={handleLogout}
           className="w-full flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors border border-transparent hover:border-red-500/20 cursor-pointer"
         >

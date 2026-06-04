@@ -130,7 +130,8 @@ class NominationSaveView(APIView):
         score, category = calculate_nomination_score(answers)
         nom.score = score
         nom.award_category = category
-        
+        if not nom.status or nom.status == "Sent Back":
+            nom.status = "Draft"
         nom.save()
         
         serializer = NominationSerializer(nom)
@@ -183,6 +184,17 @@ class NominationSubmitView(APIView):
         nom.award_category = category
         nom.is_submitted = True
         nom.submitted_at = timezone.now()
+        nom.status = "Pending Review"
+        
+        # Append history log
+        timestamp = timezone.now().strftime("%d/%m/%Y %H:%M")
+        nom.history = nom.history or []
+        nom.history.append({
+            "date": timestamp,
+            "status": "Pending Review",
+            "user": f"{user.full_name or user.username} (Principal)"
+        })
+        
         nom.save()
         
         serializer = NominationSerializer(nom)
