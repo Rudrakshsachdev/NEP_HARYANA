@@ -800,11 +800,11 @@ export default function NominationWorkspace({ formId, onBack }) {
             <div className={styles.basicInfoGrid}>
               <div className={styles.formGroup}>
                 <label>Institution Name</label>
-                <input type="text" value={user?.college_name || ""} readonly />
+                <input type="text" value={user?.college_name || ""} readOnly />
               </div>
               <div className={styles.formGroup}>
                 <label>AISHE Code</label>
-                <input type="text" value={user?.aishe_code || ""} readonly />
+                <input type="text" value={user?.aishe_code || ""} readOnly />
               </div>
               <div className={styles.formGroup}>
                 <label>Name of Head of Institute</label>
