@@ -12,11 +12,12 @@ function LeadershipSection() {
       <div className={styles.container}>
         <div className={styles.heroPanel}>
           <div className={styles.copyColumn}>
-            <span className={styles.sectionBadge}>
-              Messages from leadership
-            </span>
+            <div className={styles.accentLine} aria-hidden="true" />
             <h2 className={styles.sectionTitle}>
-              Guidance that sets the tone for the entire platform
+              Guidance that sets the tone{" "}
+              <span className={styles.sectionTitleHighlight}>
+                for the entire platform
+              </span>
             </h2>
             <p className={styles.sectionLead}>
               A clear institutional mandate for quality, accountability, and

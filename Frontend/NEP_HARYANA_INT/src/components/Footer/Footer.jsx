@@ -132,15 +132,15 @@ function Footer() {
             <h3 className={styles.colHeading}>Reach Us</h3>
             <ul className={styles.contactList}>
               <li className={styles.contactItem}>
-                <MapPin className={`${styles.contactIcon} w-4 h-4 text-slate-400 shrink-0`} />
+                <MapPin className={`${styles.contactIcon} w-4 h-4 shrink-0`} />
                 <span>Plot No. 1A, Sector 5, Panchkula, Haryana — 134109</span>
               </li>
               <li className={styles.contactItem}>
-                <Phone className={`${styles.contactIcon} w-4 h-4 text-slate-400 shrink-0`} />
+                <Phone className={`${styles.contactIcon} w-4 h-4 shrink-0`} />
                 <span>0172-2560888</span>
               </li>
               <li className={styles.contactItem}>
-                <Mail className={`${styles.contactIcon} w-4 h-4 text-slate-400 shrink-0`} />
+                <Mail className={`${styles.contactIcon} w-4 h-4 shrink-0`} />
                 <span>info@hshec.gov.in</span>
               </li>
             </ul>
