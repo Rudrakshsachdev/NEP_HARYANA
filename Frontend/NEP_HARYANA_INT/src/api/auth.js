@@ -17,26 +17,26 @@ function onRefreshed() {
 
 // Token storage utilities
 export function getAccessToken() {
-  return localStorage.getItem("nep_haryana_access_token");
+  return sessionStorage.getItem("nep_haryana_access_token");
 }
 
 export function setAccessToken(token) {
   if (token) {
-    localStorage.setItem("nep_haryana_access_token", token);
+    sessionStorage.setItem("nep_haryana_access_token", token);
   } else {
-    localStorage.removeItem("nep_haryana_access_token");
+    sessionStorage.removeItem("nep_haryana_access_token");
   }
 }
 
 export function getRefreshToken() {
-  return localStorage.getItem("nep_haryana_refresh_token");
+  return sessionStorage.getItem("nep_haryana_refresh_token");
 }
 
 export function setRefreshToken(token) {
   if (token) {
-    localStorage.setItem("nep_haryana_refresh_token", token);
+    sessionStorage.setItem("nep_haryana_refresh_token", token);
   } else {
-    localStorage.removeItem("nep_haryana_refresh_token");
+    sessionStorage.removeItem("nep_haryana_refresh_token");
   }
 }
 
