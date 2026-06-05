@@ -27,9 +27,9 @@ function Hero() {
           <h2 className={styles.headline}>
             Building a Future{' '}
             <span className={styles.headlineBreak}>Ready</span>
-            <br />
+            <br className={styles.desktopBr} />{' '}
             Higher Education in
-            <br />
+            <br className={styles.desktopBr} />{' '}
             Haryana
           </h2>
 
