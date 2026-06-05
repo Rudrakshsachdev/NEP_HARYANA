@@ -378,6 +378,9 @@ export default function NominationWorkspace({ formId, onBack }) {
   };
 
   const { score: liveScore, award: liveAward } = getLiveScore();
+  const displayScore = nomination?.is_submitted ? (nomination.score ?? 0) : liveScore;
+  const displayAward = nomination?.is_submitted ? (nomination.award_category ?? "No Award") : liveAward;
+
 
   // Basic Info Change Handler
   const handleBasicInfoChange = (e) => {
@@ -735,7 +738,7 @@ export default function NominationWorkspace({ formId, onBack }) {
 
       {/* Award Journey Milestones */}
       <div style={{ gridColumn: "1 / -1", marginBottom: "16px" }}>
-        <AwardJourney score={liveScore} award={liveAward} />
+        <AwardJourney score={displayScore} award={displayAward} />
       </div>
 
       {/* Sidebar Panel (Live score) */}
@@ -743,13 +746,13 @@ export default function NominationWorkspace({ formId, onBack }) {
         <div className={styles.scoreWidget}>
           <h3>Nomination Score</h3>
           <div className={styles.scoreValue}>
-            {liveScore}
+            {displayScore}
             <span>/100</span>
           </div>
           <span
-            className={`${styles.awardBadge} ${styles[liveAward.replace(/\s+/g, "")]}`}
+            className={`${styles.awardBadge} ${styles[displayAward.replace(/\s+/g, "")]}`}
           >
-            {liveAward}
+            {displayAward}
           </span>
         </div>
 
@@ -1053,9 +1056,16 @@ export default function NominationWorkspace({ formId, onBack }) {
                         <strong>Benchmarks / Scoring Logic:</strong> {ind.rule}
                       </p>
                     </div>
-                    <span className={styles.indicatorMaxScore}>
-                      Max: {ind.max} Marks
-                    </span>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "4px" }}>
+                      <span className={styles.indicatorMaxScore}>
+                        Max: {ind.max} Marks
+                      </span>
+                      {nomination?.is_submitted && nomination?.reviewer_scores?.[`indicator_${ind.num}`] !== undefined && (
+                        <span style={{ fontSize: "0.725rem", fontWeight: "bold", color: "#10b981", backgroundColor: "#ecfdf5", border: "1px solid #a7f3d0", padding: "2px 8px", borderRadius: "4px" }}>
+                          Verified: {nomination.reviewer_scores[`indicator_${ind.num}`]} / {ind.max}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div className={styles.indicatorBody}>
