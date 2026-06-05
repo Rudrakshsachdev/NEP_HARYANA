@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getDashboardPathForUser } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext.jsx";
+import hshecLogo from "../../assets/hshec_logo.jpeg";
 import styles from "../Signup/Signup.module.css";
 
 function Signin() {
@@ -51,6 +52,9 @@ function Signin() {
       <div className={`${styles.pageContainer} ${styles.centerFormWrapper}`}>
         <section className={styles.formPanel} aria-labelledby="signin-title">
           <div className={styles.formHeader}>
+            <div className={styles.logoWrapper}>
+              <img src={hshecLogo} alt="HSHEC Logo" className={styles.logoImage} />
+            </div>
             <span className={styles.formBadge}>Sign in</span>
             <h2 id="signin-title" className={styles.formTitle}>
               Access your portal dashboard using your registered credentials.

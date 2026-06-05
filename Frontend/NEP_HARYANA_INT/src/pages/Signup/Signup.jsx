@@ -5,6 +5,7 @@ import {
   fetchColleges,
 } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext.jsx";
+import hshecLogo from "../../assets/hshec_logo.jpeg";
 import styles from "./Signup.module.css";
 
 const initialFormState = {
@@ -149,6 +150,9 @@ function Signup() {
       <div className={`${styles.pageContainer} ${styles.centerFormWrapper}`}>
         <section className={styles.formPanel} aria-labelledby="signup-title">
           <div className={styles.formHeader}>
+            <div className={styles.logoWrapper}>
+              <img src={hshecLogo} alt="HSHEC Logo" className={styles.logoImage} />
+            </div>
             <span className={styles.formBadge}>Create account</span>
             <h2 id="signup-title" className={styles.formTitle}>
               Applicant Registration
