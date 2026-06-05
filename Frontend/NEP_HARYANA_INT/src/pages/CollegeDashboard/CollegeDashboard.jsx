@@ -120,18 +120,30 @@ function getIndicatorScore(num, answers = {}) {
   }
 }
 
-function calculateCategoryScores(answers = {}) {
+function calculateCategoryScores(nomination = {}) {
+  const answers = nomination?.answers || {};
+  const reviewerScores = nomination?.reviewer_scores || {};
+  const isSubmitted = nomination?.is_submitted;
+
+  const getScore = (num) => {
+    const key = `indicator_${num}`;
+    if (isSubmitted && reviewerScores[key] !== undefined && reviewerScores[key] !== null) {
+      return Number(reviewerScores[key]);
+    }
+    return getIndicatorScore(num, answers);
+  };
+
   let cat1 = 0;
-  for (let i = 1; i <= 4; i++) cat1 += getIndicatorScore(i, answers);
+  for (let i = 1; i <= 4; i++) cat1 += getScore(i);
 
   let cat2 = 0;
-  for (let i = 5; i <= 10; i++) cat2 += getIndicatorScore(i, answers);
+  for (let i = 5; i <= 10; i++) cat2 += getScore(i);
 
   let cat3 = 0;
-  for (let i = 11; i <= 15; i++) cat3 += getIndicatorScore(i, answers);
+  for (let i = 11; i <= 15; i++) cat3 += getScore(i);
 
   let cat4 = 0;
-  for (let i = 16; i <= 20; i++) cat4 += getIndicatorScore(i, answers);
+  for (let i = 16; i <= 20; i++) cat4 += getScore(i);
 
   return [
     { name: "Academic Programs", score: cat1, max: 16 },
@@ -569,7 +581,7 @@ function CollegeDashboard() {
                     <div style={{ flex: 1, minHeight: 0 }}>
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart
-                          data={calculateCategoryScores(nomination?.answers || {})}
+                          data={calculateCategoryScores(nomination)}
                           margin={{ top: 10, right: 10, left: -20, bottom: 5 }}
                         >
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -589,7 +601,7 @@ function CollegeDashboard() {
                     <p>Balance distribution map showing overall strengths and area focus.</p>
                     <div style={{ flex: 1, minHeight: 0 }}>
                       <ResponsiveContainer width="100%" height="100%">
-                        <RadarChart cx="50%" cy="50%" outerRadius="75%" data={calculateCategoryScores(nomination?.answers || {})}>
+                        <RadarChart cx="50%" cy="50%" outerRadius="75%" data={calculateCategoryScores(nomination)}>
                           <PolarGrid stroke="#cbd5e1" />
                           <PolarAngleAxis dataKey="name" tick={{ fill: "#475569", fontSize: 9 }} />
                           <PolarRadiusAxis angle={30} domain={[0, 30]} tick={{ fill: "#94a3b8", fontSize: 8 }} />
@@ -609,7 +621,9 @@ function CollegeDashboard() {
                   
                   <div className={pageStyles.indicatorList}>
                     {INDICATORS_METADATA.map((ind) => {
-                      const points = getIndicatorScore(ind.num, nomination?.answers || {});
+                      const points = (nomination?.is_submitted && nomination?.reviewer_scores?.[`indicator_${ind.num}`] !== undefined)
+                        ? nomination.reviewer_scores[`indicator_${ind.num}`]
+                        : getIndicatorScore(ind.num, nomination?.answers || {});
                       const isFilled = nomination?.answers?.[`indicator_${ind.num}`]?.value || (ind.num === 20 && nomination?.answers?.[`indicator_${ind.num}`]?.percentage !== undefined && nomination?.answers?.[`indicator_${ind.num}`]?.percentage !== "");
                       
                       return (
