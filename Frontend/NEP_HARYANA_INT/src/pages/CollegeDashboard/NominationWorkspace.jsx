@@ -1,11 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
+import { HelpCircle } from "lucide-react";
 import {
   fetchNominationDetails,
   saveNomination,
   submitNomination,
   uploadEvidenceToCloudinary,
 } from "../../api/nomination";
+import {
+  fetchPrincipalClarification,
+  submitPrincipalClarification
+} from "../../api/committee";
 import styles from "./NominationWorkspace.module.css";
 import AwardJourney from "./AwardJourney";
 
@@ -228,12 +233,34 @@ export default function NominationWorkspace({ formId, onBack }) {
   // Local dynamic input temporary strings
   const [tempListInputs, setTempListInputs] = useState({});
 
+  // Clarification workflow states
+  const [activeClarification, setActiveClarification] = useState(null);
+  const [allowedFields, setAllowedFields] = useState([]);
+  const [clarificationResponse, setClarificationResponse] = useState("");
+  const [submittingClarification, setSubmittingClarification] = useState(false);
+
   // Coerce submission state into a reliable boolean. Backend may send strings.
   const isFormLocked = nomination
     ? nomination.is_submitted === true ||
       String(nomination.is_submitted).toLowerCase() === "true" ||
       nomination.status === "submitted"
     : false;
+
+  const isFieldLocked = (num) => {
+    if (!nomination) return true;
+    const isSubmitted = nomination.is_submitted === true ||
+      String(nomination.is_submitted).toLowerCase() === "true" ||
+      nomination.status === "submitted" ||
+      nomination.status === "Clarification Requested";
+      
+    if (!isSubmitted) return false;
+    
+    if (nomination.status === "Clarification Requested") {
+      return !allowedFields.includes(`indicator_${num}`);
+    }
+    
+    return true;
+  };
 
   useEffect(() => {
     async function loadData() {
@@ -248,6 +275,19 @@ export default function NominationWorkspace({ formId, onBack }) {
         });
         setAnswers(data.answers || {});
         setDeclarationAccepted(false);
+
+        if (data.status === "Clarification Requested") {
+          try {
+            const clars = await fetchPrincipalClarification(formId);
+            const active = clars.find(c => c.status === "Pending");
+            if (active) {
+              setActiveClarification(active);
+              setAllowedFields(active.fields_to_edit || []);
+            }
+          } catch (err) {
+            console.error("Error loading clarification details:", err);
+          }
+        }
       } catch (err) {
         setErrorMessage(err.message || "Failed to load form details.");
       } finally {
@@ -349,7 +389,7 @@ export default function NominationWorkspace({ formId, onBack }) {
 
   // Answers Change Handler
   const updateIndicatorValue = (num, field, val) => {
-    if (isFormLocked) return;
+    if (isFieldLocked(num)) return;
     const key = `indicator_${num}`;
     setAnswers((prevAnswers) => {
       const current = prevAnswers[key] || {};
@@ -365,7 +405,7 @@ export default function NominationWorkspace({ formId, onBack }) {
 
   // Add Item to Dynamic List
   const handleAddListItem = (num) => {
-    if (isFormLocked) return;
+    if (isFieldLocked(num)) return;
     const val = tempListInputs[num] || "";
     if (!val.trim()) return;
 
@@ -382,7 +422,7 @@ export default function NominationWorkspace({ formId, onBack }) {
 
   // Remove Item from Dynamic List
   const handleRemoveListItem = (num, indexToRemove) => {
-    if (isFormLocked) return;
+    if (isFieldLocked(num)) return;
     const key = `indicator_${num}`;
     const current = answers[key] || {};
     const items = current.items || [];
@@ -396,7 +436,7 @@ export default function NominationWorkspace({ formId, onBack }) {
 
   // Cloudinary File Upload Handler
   const handleFileUpload = async (num, e) => {
-    if (isFormLocked) return;
+    if (isFieldLocked(num)) return;
     const file = e.target.files[0];
     if (!file) return;
 
@@ -413,9 +453,13 @@ export default function NominationWorkspace({ formId, onBack }) {
     }
   };
 
+  const isSaveDisabled = nomination
+    ? (nomination.is_submitted === true || String(nomination.is_submitted).toLowerCase() === "true" || nomination.status === "submitted") && nomination.status !== "Clarification Requested"
+    : false;
+
   // Save Draft Action
   const handleSaveDraft = async () => {
-    if (saving || isFormLocked) return;
+    if (saving || isSaveDisabled) return;
     setSaving(true);
     setErrorMessage("");
     setSuccessMessage("");
@@ -462,23 +506,51 @@ export default function NominationWorkspace({ formId, onBack }) {
     }
   };
 
+  // Submit Clarification Response Action
+  const handleSubmitClarification = async () => {
+    if (!clarificationResponse.trim()) {
+      alert("Please enter your clarification response text.");
+      return;
+    }
+    setSubmittingClarification(true);
+    setErrorMessage("");
+    setSuccessMessage("");
+    try {
+      // First save the latest values of allowed fields
+      const payloadSave = {
+        ...basicInfo,
+        answers,
+      };
+      await saveNomination(formId, payloadSave);
+
+      // Then submit the clarification response
+      const res = await submitPrincipalClarification(formId, {
+        response: clarificationResponse
+      });
+      setSuccessMessage(res.message || "Clarification response submitted successfully.");
+      setActiveClarification(null);
+      // Reload nomination status
+      const updatedNom = await fetchNominationDetails(formId);
+      setNomination(updatedNom);
+    } catch (err) {
+      setErrorMessage(err.message || "Could not submit clarification response.");
+    } finally {
+      setSubmittingClarification(false);
+    }
+  };
+
   // Ref to always hold the latest state for unmount auto-save
-  const latestStateRef = useRef({ basicInfo, answers, isFormLocked, formId });
+  const latestStateRef = useRef({ basicInfo, answers, isSaveDisabled, formId });
   useEffect(() => {
-    latestStateRef.current = { basicInfo, answers, isFormLocked, formId };
-  }, [basicInfo, answers, isFormLocked, formId]);
+    latestStateRef.current = { basicInfo, answers, isSaveDisabled, formId };
+  }, [basicInfo, answers, isSaveDisabled, formId]);
 
   // Auto-save on component unmount (navigating away / redirect / logout)
   useEffect(() => {
     return () => {
-      const { basicInfo: bInfo, answers: ans, isFormLocked: locked, formId: fId } = latestStateRef.current;
+      const { basicInfo: bInfo, answers: ans, isSaveDisabled: saveDisabled, formId: fId } = latestStateRef.current;
       const token = localStorage.getItem("nep_haryana_access_token");
-      // Only auto-save on unmount if:
-      // 1. Form is not locked
-      // 2. formId is valid
-      // 3. User is still logged in (token exists)
-      // 4. basicInfo is not in its default empty state
-      if (!locked && fId && token && bInfo && (bInfo.head_name || bInfo.head_contact || bInfo.address)) {
+      if (!saveDisabled && fId && token && bInfo && (bInfo.head_name || bInfo.head_contact || bInfo.address)) {
         saveNomination(fId, { ...bInfo, answers: ans }).catch((err) => {
           console.error("Auto-save on unmount failed:", err);
         });
@@ -490,18 +562,18 @@ export default function NominationWorkspace({ formId, onBack }) {
   const prevActiveStepRef = useRef(activeStep);
   useEffect(() => {
     if (prevActiveStepRef.current !== activeStep) {
-      if (!isFormLocked && formId) {
+      if (!isSaveDisabled && formId) {
         saveNomination(formId, { ...basicInfo, answers }).catch((err) => {
           console.error("Auto-save on tab change failed:", err);
         });
       }
       prevActiveStepRef.current = activeStep;
     }
-  }, [activeStep, basicInfo, answers, isFormLocked, formId]);
+  }, [activeStep, basicInfo, answers, isSaveDisabled, formId]);
 
   // Back to Forms button click handler with automatic draft save
   const handleBackWithSave = async () => {
-    if (!isFormLocked && formId) {
+    if (!isSaveDisabled && formId) {
       setSaving(true);
       try {
         await saveNomination(formId, { ...basicInfo, answers });
@@ -751,6 +823,80 @@ export default function NominationWorkspace({ formId, onBack }) {
           </div>
         )}
 
+        {activeClarification && (
+          <div
+            style={{
+              backgroundColor: "#fef3c7",
+              border: "1px solid #f59e0b",
+              borderRadius: "12px",
+              padding: "20px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              boxShadow: "0 4px 15px rgba(245, 158, 11, 0.08)",
+              marginBottom: "16px"
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#b45309" }}>
+              <HelpCircle className="w-5 h-5" />
+              <h4 style={{ fontWeight: "700", margin: 0, fontSize: "1rem" }}>
+                Clarification Requested by Screening Committee
+              </h4>
+            </div>
+            
+            <p style={{ fontSize: "0.875rem", color: "#78350f", margin: 0, lineHeight: "1.5" }}>
+              <strong>Query:</strong> {activeClarification.query}
+            </p>
+
+            <p style={{ fontSize: "0.8125rem", color: "#78350f", margin: 0 }}>
+              <strong>Fields open for editing:</strong>{" "}
+              <span style={{ textDecoration: "underline", fontWeight: "600" }}>
+                {activeClarification.fields_to_edit?.map(f => f.replace("indicator_", "Indicator ")).join(", ") || "None"}
+              </span>
+            </p>
+            
+            <div style={{ marginTop: "8px", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <label style={{ fontSize: "0.75rem", fontWeight: "700", color: "#78350f", textTransform: "uppercase" }}>
+                Your Response / Clarification
+              </label>
+              <textarea
+                rows="3"
+                value={clarificationResponse}
+                onChange={(e) => setClarificationResponse(e.target.value)}
+                placeholder="Explain the changes made or provide the requested information..."
+                style={{
+                  padding: "10px 14px",
+                  borderRadius: "8px",
+                  border: "1px solid #d97706",
+                  fontSize: "0.875rem",
+                  color: "#1e293b",
+                  backgroundColor: "#ffffff",
+                  width: "100%",
+                  outline: "none"
+                }}
+              />
+            </div>
+            
+            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "4px" }}>
+              <button
+                type="button"
+                className={styles.submitBtn}
+                style={{
+                  backgroundColor: "#d97706",
+                  background: "#d97706",
+                  fontSize: "0.8125rem",
+                  padding: "8px 20px",
+                  boxShadow: "0 2px 8px rgba(217, 119, 6, 0.2)"
+                }}
+                disabled={submittingClarification || !clarificationResponse.trim()}
+                onClick={handleSubmitClarification}
+              >
+                {submittingClarification ? "Submitting Response..." : "Submit Response & Resubmit Form"}
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Tab Selection */}
         <div className={styles.stepperTabs}>
           <button
@@ -917,7 +1063,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                         <label className="inline-flex items-center gap-2 mr-4">
                           <input
                             type="radio"
-                            disabled={isFormLocked}
+                            disabled={isFieldLocked(ind.num)}
                             checked={data.value === "Yes"}
                             onChange={() =>
                               updateIndicatorValue(ind.num, "value", "Yes")
@@ -928,7 +1074,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                         <label className="inline-flex items-center gap-2">
                           <input
                             type="radio"
-                            disabled={isFormLocked}
+                            disabled={isFieldLocked(ind.num)}
                             checked={data.value === "No"}
                             onChange={() =>
                               updateIndicatorValue(ind.num, "value", "No")
@@ -951,24 +1097,24 @@ export default function NominationWorkspace({ formId, onBack }) {
                           <label className="inline-flex items-center gap-2 mr-4">
                             <input
                               type="radio"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               checked={data.value === "Yes"}
                               onChange={() =>
                                 updateIndicatorValue(ind.num, "value", "Yes")
                               }
                             />{" "}
-                            Yes
+                              Yes
                           </label>
                           <label className="inline-flex items-center gap-2">
                             <input
                               type="radio"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               checked={data.value === "No"}
                               onChange={() =>
                                 updateIndicatorValue(ind.num, "value", "No")
                               }
                             />{" "}
-                            No
+                              No
                           </label>
                         </div>
                         {data.value === "Yes" && (
@@ -978,7 +1124,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                             </label>
                             <input
                               type="text"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               value={data.note || ""}
                               onChange={(e) =>
                                 updateIndicatorValue(
@@ -1006,24 +1152,24 @@ export default function NominationWorkspace({ formId, onBack }) {
                           <label className="inline-flex items-center gap-2 mr-4">
                             <input
                               type="radio"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               checked={data.value === "Yes"}
                               onChange={() =>
                                 updateIndicatorValue(ind.num, "value", "Yes")
                               }
                             />{" "}
-                            Yes
+                              Yes
                           </label>
                           <label className="inline-flex items-center gap-2">
                             <input
                               type="radio"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               checked={data.value === "No"}
                               onChange={() =>
                                 updateIndicatorValue(ind.num, "value", "No")
                               }
                             />{" "}
-                            No
+                              No
                           </label>
                         </div>
                         {data.value === "Yes" && (
@@ -1033,7 +1179,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                             </label>
                             <input
                               type="url"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               value={data.url || ""}
                               onChange={(e) =>
                                 updateIndicatorValue(
@@ -1055,7 +1201,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                         style={{ maxWidth: "250px" }}
                       >
                         <select
-                          disabled={isFormLocked}
+                          disabled={isFieldLocked(ind.num)}
                           value={data.value || ""}
                           onChange={(e) =>
                             updateIndicatorValue(
@@ -1091,7 +1237,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                           <label className="inline-flex items-center gap-2 mr-4">
                             <input
                               type="radio"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               checked={data.value === "Yes"}
                               onChange={() =>
                                 updateIndicatorValue(ind.num, "value", "Yes")
@@ -1102,7 +1248,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                           <label className="inline-flex items-center gap-2">
                             <input
                               type="radio"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               checked={data.value === "No"}
                               onChange={() => {
                                 updateIndicatorValue(ind.num, "value", "No");
@@ -1136,7 +1282,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                               <div className={styles.percentageInputWrapper}>
                                 <input
                                   type="number"
-                                  disabled={isFormLocked}
+                                  disabled={isFieldLocked(ind.num)}
                                   min="0"
                                   max="100"
                                   value={data.percentage || ""}
@@ -1215,7 +1361,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                           <div className={styles.percentageInputWrapper}>
                             <input
                               type="number"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               min="0"
                               max="100"
                               value={data.percentage || ""}
@@ -1285,7 +1431,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                           <label className="inline-flex items-center gap-2 mr-4">
                             <input
                               type="radio"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               checked={data.value === "Yes"}
                               onChange={() =>
                                 updateIndicatorValue(ind.num, "value", "Yes")
@@ -1296,7 +1442,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                           <label className="inline-flex items-center gap-2">
                             <input
                               type="radio"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               checked={data.value === "No"}
                               onChange={() =>
                                 updateIndicatorValue(ind.num, "value", "No")
@@ -1322,7 +1468,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                               <input
                                 type="text"
                                 disabled={
-                                  isFormLocked ||
+                                  isFieldLocked(ind.num) ||
                                   data.items?.length >= ind.maxItems
                                 }
                                 value={tempListInputs[ind.num] || ""}
@@ -1338,7 +1484,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                                 type="button"
                                 className={styles.secondaryBtn}
                                 disabled={
-                                  isFormLocked ||
+                                  isFieldLocked(ind.num) ||
                                   data.items?.length >= ind.maxItems
                                 }
                                 onClick={() => handleAddListItem(ind.num)}
@@ -1355,7 +1501,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                                   <span>
                                     {idx + 1}. {item}
                                   </span>
-                                  {!isFormLocked && (
+                                  {!isFieldLocked(ind.num) && (
                                     <button
                                       type="button"
                                       className={styles.removeBtn}
@@ -1396,7 +1542,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                           <label className="inline-flex items-center gap-2 mr-4">
                             <input
                               type="radio"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               checked={data.value === "Yes"}
                               onChange={() =>
                                 updateIndicatorValue(ind.num, "value", "Yes")
@@ -1407,7 +1553,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                           <label className="inline-flex items-center gap-2">
                             <input
                               type="radio"
-                              disabled={isFormLocked}
+                              disabled={isFieldLocked(ind.num)}
                               checked={data.value === "No"}
                               onChange={() =>
                                 updateIndicatorValue(ind.num, "value", "No")
@@ -1437,7 +1583,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                               <input
                                 type="number"
                                 min="0"
-                                disabled={isFormLocked}
+                                disabled={isFieldLocked(ind.num)}
                                 value={data.count || ""}
                                 onChange={(e) =>
                                   updateIndicatorValue(
@@ -1490,7 +1636,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                             <div className={styles.dynamicListInputRow}>
                               <input
                                 type="text"
-                                disabled={isFormLocked}
+                                disabled={isFieldLocked(ind.num)}
                                 value={tempListInputs[ind.num] || ""}
                                 onChange={(e) =>
                                   setTempListInputs({
@@ -1503,7 +1649,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                               <button
                                 type="button"
                                 className={styles.secondaryBtn}
-                                disabled={isFormLocked}
+                                disabled={isFieldLocked(ind.num)}
                                 onClick={() => handleAddListItem(ind.num)}
                               >
                                 Add
@@ -1518,7 +1664,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                                   <span>
                                     {idx + 1}. {item}
                                   </span>
-                                  {!isFormLocked && (
+                                  {!isFieldLocked(ind.num) && (
                                     <button
                                       type="button"
                                       className={styles.removeBtn}
@@ -1558,7 +1704,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                             marginTop: "4px",
                           }}
                         >
-                          {!isFormLocked ? (
+                          {!isFieldLocked(ind.num) ? (
                             <label
                               className={styles.uploadButtonLabel}
                               style={{ margin: 0 }}
@@ -1623,7 +1769,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                                   : "📄"}{" "}
                                 {evidenceName || "View Evidence Document"}
                               </a>
-                              {!isFormLocked && (
+                              {!isFieldLocked(ind.num) && (
                                 <button
                                   type="button"
                                   onClick={() => {
@@ -1670,7 +1816,7 @@ export default function NominationWorkspace({ formId, onBack }) {
                         </label>
                         <input
                           type="number"
-                          disabled={isFormLocked}
+                          disabled={isFieldLocked(ind.num)}
                           min="1"
                           value={pageNo}
                           onChange={(e) =>
