@@ -32,10 +32,10 @@ function NavbarV2() {
     },
     {
       name: "Institutions",
-      path: null,
-      scrollId: "about-stats",
+      path: "/institutions",
+      scrollId: null,
       submenu: [
-        { name: "Colleges", scrollId: "about-stats" },
+        { name: "Colleges List", path: "/institutions" },
         { name: "Statistics", scrollId: "about-stats" },
       ],
     },

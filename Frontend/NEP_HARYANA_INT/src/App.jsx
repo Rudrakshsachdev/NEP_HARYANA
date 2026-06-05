@@ -3,6 +3,7 @@ import NavbarV2 from "./components/NavbarV2/NavbarV2";
 import Footer from "./components/Footer/Footer";
 import Home from "./pages/Home/Home";
 import AboutUs from "./pages/AboutUs/AboutUs";
+import Institutions from "./pages/Institutions/Institutions";
 import Signup from "./pages/Signup/Signup";
 import Signin from "./pages/Signin/Signin";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
@@ -43,6 +44,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/institutions" element={<Institutions />} />
 
         {/* Guest Routes */}
         <Route
