@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
-import Navbar from "./components/Navbar/Navbar";
+import NavbarV2 from "./components/NavbarV2/NavbarV2";
 import Footer from "./components/Footer/Footer";
 import Home from "./pages/Home/Home";
 import Signup from "./pages/Signup/Signup";
@@ -38,7 +38,7 @@ function App() {
 
   return (
     <AuthProvider>
-      {!isDashboard && <Navbar />}
+      {!isDashboard && <NavbarV2 />}
       <Routes>
         <Route path="/" element={<Home />} />
 

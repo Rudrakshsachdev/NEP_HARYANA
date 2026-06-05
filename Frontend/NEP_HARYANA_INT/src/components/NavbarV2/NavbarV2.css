@@ -1,0 +1,523 @@
+/* ==========================================================================
+   Haryana State Higher Education Council — Redesigned Government Portal NavbarV2
+   ========================================================================== */
+
+:root {
+  --v2-maroon: #600b0b;          /* Main Deep Burgundy/Maroon from screenshot */
+  --v2-maroon-hover: #4a0707;    /* Slightly darker shade for hovers */
+  
+  --v2-cream-bg: #eaded2;        /* Warm cream/beige background of navigation */
+  --v2-input-bg: #eedecf;        /* Warmer pale color for search box */
+  
+  --v2-white: #ffffff;
+  --v2-black: #000000;
+  --v2-text-dark: #333333;
+  --v2-text-muted: #666666;
+  --v2-border-light: rgba(0, 0, 0, 0.08);
+  
+  --v2-font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --v2-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.06);
+  --v2-shadow-md: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Reset Scope styles */
+.navbar-v2 *,
+.navbar-v2 *::before,
+.navbar-v2 *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-v2 {
+  font-family: var(--v2-font-sans);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  box-shadow: var(--v2-shadow-md);
+  background-color: var(--v2-white);
+}
+
+/* ==========================================================================
+   TIER 1 — Utility & Accessibility Bar
+   ========================================================================== */
+.v2-utility-bar {
+  background-color: var(--v2-maroon);
+  color: var(--v2-white);
+  font-size: 0.82rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.v2-utility-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 6px 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.v2-utility-left {
+  display: flex;
+  align-items: center;
+}
+
+.v2-state-indicator {
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.v2-utility-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.v2-utility-item {
+  color: var(--v2-white);
+  text-decoration: none;
+  font-size: 0.8rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  transition: opacity 0.2s ease;
+}
+
+.v2-utility-item:hover {
+  opacity: 0.8;
+}
+
+.v2-utility-divider {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+}
+
+.text-size-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.v2-size-btn {
+  background: transparent;
+  border: none;
+  color: var(--v2-white);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.v2-language-switcher {
+  display: flex;
+  gap: 8px;
+}
+
+.v2-lang-btn {
+  background: transparent;
+  border: none;
+  color: var(--v2-white);
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.v2-lang-btn.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   TIER 2 — Branding & Search / Login
+   ========================================================================== */
+.v2-header-bar {
+  background-color: var(--v2-white);
+  border-bottom: 1px solid var(--v2-border-light);
+}
+
+.v2-header-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 12px 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.v2-header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+}
+
+.v2-brand-logo {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.v2-brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.v2-brand-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.v2-brand-subtitle {
+  font-size: 0.8rem;
+  color: var(--v2-text-muted);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.v2-header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.v2-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--v2-input-bg);
+  border-radius: 4px;
+  padding: 0 12px;
+  width: 260px;
+  height: 38px;
+}
+
+.v2-search-icon {
+  color: #666666;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.v2-search-box input {
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 0.88rem;
+  color: var(--v2-text-dark);
+}
+
+.v2-search-box input::placeholder {
+  color: #777777;
+}
+
+.v2-login-btn {
+  background-color: var(--v2-maroon);
+  color: var(--v2-white);
+  border: none;
+  border-radius: 4px;
+  padding: 0 18px;
+  height: 38px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.v2-login-btn:hover {
+  background-color: var(--v2-maroon-hover);
+}
+
+.v2-login-btn:active {
+  transform: scale(0.98);
+}
+
+/* ==========================================================================
+   TIER 3 — Navigation Menu
+   ========================================================================== */
+.v2-nav-bar {
+  background-color: var(--v2-cream-bg);
+  border-bottom: 2px solid var(--v2-maroon);
+}
+
+.v2-nav-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.v2-nav-list {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+.v2-nav-item {
+  position: relative;
+}
+
+.v2-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 18px;
+  color: #3e271a; /* Dark brownish text color matching screenshot */
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.v2-nav-link:hover {
+  background-color: rgba(96, 11, 11, 0.08);
+}
+
+.v2-caret {
+  font-size: 0.7rem;
+  display: inline-block;
+  margin-left: 2px;
+}
+
+/* Active & Opened Submenu background */
+.v2-nav-item.active .v2-nav-link {
+  background-color: var(--v2-maroon);
+  color: var(--v2-white);
+}
+
+/* Dropdown Menu styling */
+.v2-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: var(--v2-white);
+  border: 1px solid var(--v2-border-light);
+  box-shadow: var(--v2-shadow-md);
+  list-style: none;
+  min-width: 180px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+  z-index: 1010;
+  border-radius: 0 0 4px 4px;
+}
+
+.v2-nav-item:hover .v2-dropdown-menu,
+.v2-dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.v2-dropdown-menu li a {
+  display: block;
+  padding: 10px 16px;
+  color: var(--v2-text-dark);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background-color 0.15s ease;
+}
+
+.v2-dropdown-menu li a:hover {
+  background-color: var(--v2-cream-bg);
+  color: var(--v2-maroon);
+}
+
+/* Mobile Hamburger Style */
+.v2-nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  cursor: pointer;
+  padding: 10px 0;
+  box-sizing: content-box;
+}
+
+.v2-nav-hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: var(--v2-maroon);
+  transition: all 0.3s ease;
+}
+
+/* Hamburger animations */
+.v2-nav-hamburger.open span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+
+.v2-nav-hamburger.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.v2-nav-hamburger.open span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ==========================================================================
+   HIGH CONTRAST ACCESSIBILITY MODE
+   ========================================================================== */
+body.high-contrast .navbar-v2 {
+  background-color: var(--v2-black) !important;
+}
+
+body.high-contrast .v2-utility-bar {
+  background-color: var(--v2-black) !important;
+  border-bottom: 2px solid yellow !important;
+}
+
+body.high-contrast .v2-utility-item,
+body.high-contrast .v2-state-indicator,
+body.high-contrast .v2-size-btn,
+body.high-contrast .v2-lang-btn {
+  color: yellow !important;
+}
+
+body.high-contrast .v2-header-bar {
+  background-color: var(--v2-black) !important;
+  border-bottom: 2px solid yellow !important;
+}
+
+body.high-contrast .v2-brand-title,
+body.high-contrast .v2-brand-subtitle {
+  color: var(--v2-white) !important;
+}
+
+body.high-contrast .v2-search-box {
+  background-color: var(--v2-black) !important;
+  border: 1px solid yellow !important;
+}
+
+body.high-contrast .v2-search-box input {
+  color: yellow !important;
+}
+
+body.high-contrast .v2-search-box input::placeholder {
+  color: #aaaaaa !important;
+}
+
+body.high-contrast .v2-login-btn {
+  background-color: var(--v2-black) !important;
+  color: yellow !important;
+  border: 1.5px solid yellow !important;
+}
+
+body.high-contrast .v2-login-btn:hover {
+  background-color: yellow !important;
+  color: var(--v2-black) !important;
+}
+
+body.high-contrast .v2-nav-bar {
+  background-color: var(--v2-black) !important;
+  border-bottom: 2px solid yellow !important;
+}
+
+body.high-contrast .v2-nav-link {
+  color: var(--v2-white) !important;
+}
+
+body.high-contrast .v2-nav-link:hover {
+  background-color: yellow !important;
+  color: var(--v2-black) !important;
+}
+
+body.high-contrast .v2-nav-item.active .v2-nav-link {
+  background-color: yellow !important;
+  color: var(--v2-black) !important;
+}
+
+/* ==========================================================================
+   RESPONSIVE LAYOUTS
+   ========================================================================== */
+@media (max-width: 992px) {
+  .v2-brand-title {
+    font-size: 1.15rem;
+  }
+  .v2-brand-subtitle {
+    font-size: 0.72rem;
+  }
+  .v2-search-box {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .v2-utility-right {
+    display: none; /* Hide helper items on smaller screens */
+  }
+
+  .v2-header-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .v2-header-left {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .v2-header-right {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .v2-search-box {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  /* Hamburger and Mobile Drawer */
+  .v2-nav-hamburger {
+    display: flex;
+  }
+
+  .v2-nav-list {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: var(--v2-cream-bg);
+    border-top: 1px solid var(--v2-border-light);
+  }
+
+  .v2-nav-list.open {
+    display: flex;
+  }
+
+  .v2-nav-item {
+    width: 100%;
+  }
+
+  .v2-nav-link {
+    width: 100%;
+    padding: 12px 1.5rem;
+    border-bottom: 1px solid var(--v2-border-light);
+  }
+
+  .v2-dropdown-menu {
+    position: static;
+    display: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    box-shadow: none;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.03);
+    width: 100%;
+  }
+
+  .v2-nav-item.has-submenu:hover .v2-dropdown-menu {
+    display: block;
+  }
+}
