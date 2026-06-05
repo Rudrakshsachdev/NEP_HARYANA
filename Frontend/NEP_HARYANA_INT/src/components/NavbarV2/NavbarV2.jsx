@@ -23,11 +23,11 @@ function NavbarV2() {
     },
     {
       name: "About",
-      path: null,
-      scrollId: "leadership-section",
+      path: "/about",
+      scrollId: null,
       submenu: [
-        { name: "About Council", scrollId: "leadership-section" },
-        { name: "Leadership", scrollId: "leadership-section" },
+        { name: "About Council & Portal", path: "/about" },
+        { name: "Leadership Messages", scrollId: "leadership-section" },
       ],
     },
     {
@@ -137,6 +137,10 @@ function NavbarV2() {
       e.preventDefault();
       navigate("/");
       window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (item.path) {
+      e.preventDefault();
+      navigate(item.path);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } else if (item.scrollId) {
       e.preventDefault();
       performScroll(item.scrollId);
@@ -147,7 +151,12 @@ function NavbarV2() {
     e.preventDefault();
     setIsMenuOpen(false);
     setActiveDropdown(null);
-    performScroll(subitem.scrollId);
+    if (subitem.path) {
+      navigate(subitem.path);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (subitem.scrollId) {
+      performScroll(subitem.scrollId);
+    }
   };
 
   return (
