@@ -4,15 +4,14 @@
 
 /* ---------- Design Tokens ---------- */
 :root {
-  --footer-cta-bg: #0a1628;
-  --footer-main-bg: #07101f;
-  --footer-bottom-bg: #040c18;
-  --footer-orange: #f97316;
-  --footer-orange-hover: #ea6a00;
-  --footer-green: #16a34a;
+  --footer-cta-bg: #600b0b;          /* Main Deep Burgundy */
+  --footer-main-bg: #4a0707;         /* Mid-tone Dark Burgundy */
+  --footer-bottom-bg: #300303;       /* Extra Dark Burgundy */
+  --footer-gold: #c29b68;            /* Premium Gold */
+  --footer-gold-hover: #dfb987;      /* Lighter Gold for Hover */
   --footer-white: #ffffff;
-  --footer-muted: #94a3b8;
-  --footer-font: 'DM Sans', 'Inter', system-ui, sans-serif;
+  --footer-muted: #dfcbb5;           /* Warm Sand/Cream Muted Text */
+  --footer-font: 'Inter', system-ui, sans-serif;
   --footer-max-width: 1200px;
 }
 
@@ -22,15 +21,13 @@
 .ctaSection {
   background: var(--footer-cta-bg);
   position: relative;
-  /* Top 2px border — left half orange, right half green */
-  border-top: 2px solid transparent;
-  border-image: linear-gradient(90deg, var(--footer-orange) 50%, var(--footer-green) 50%) 1;
+  border-top: 3px solid var(--footer-gold);
 }
 
 .ctaContainer {
   max-width: var(--footer-max-width);
   margin: 0 auto;
-  padding: 30px 2rem;
+  padding: 36px 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -45,8 +42,8 @@
 
 .ctaHeading {
   font-family: var(--footer-font);
-  font-size: 1.5rem; /* ~24px */
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--footer-white);
   margin: 0;
   line-height: 1.2;
@@ -54,7 +51,7 @@
 
 .ctaSubtitle {
   font-family: var(--footer-font);
-  font-size: 0.8125rem; /* ~13px */
+  font-size: 0.85rem;
   color: var(--footer-muted);
   margin: 0;
 }
@@ -67,23 +64,23 @@
 }
 
 .btnPrimary {
-  background: var(--footer-orange);
-  color: var(--footer-white);
+  background: var(--footer-gold);
+  color: var(--footer-bottom-bg);
   font-family: var(--footer-font);
-  font-size: 0.875rem; /* 14px */
+  font-size: 0.875rem;
   font-weight: 700;
   padding: 12px 28px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   text-decoration: none;
   display: inline-block;
 }
 
 .btnPrimary:hover {
-  background: var(--footer-orange-hover);
+  background: var(--footer-gold-hover);
   transform: translateY(-1px);
 }
 
@@ -91,19 +88,20 @@
   background: transparent;
   color: var(--footer-white);
   font-family: var(--footer-font);
-  font-size: 0.875rem; /* 14px */
-  font-weight: 700;
+  font-size: 0.875rem;
+  font-weight: 600;
   padding: 12px 28px;
   border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
   text-decoration: none;
   display: inline-block;
 }
 
 .btnSecondary:hover {
   background: rgba(255, 255, 255, 0.08);
+  border-color: var(--footer-white);
   transform: translateY(-1px);
 }
 
@@ -120,9 +118,6 @@
   margin: 0 auto;
   padding: 0 2rem;
   display: grid;
-  grid-template-columns: 25% 20% 25% 30%; /* 4 columns */
-  /* Calculate gap based on percentages to fill exactly 100% (25+20+25+30=100) */
-  /* Actually with gap we should use 1fr or adjust percentages. Let's use 1fr syntax with custom widths */
   grid-template-columns: 2.5fr 2fr 2.5fr 3fr;
   gap: 48px;
 }
@@ -159,7 +154,7 @@
 
 .brandTitle {
   font-family: var(--footer-font);
-  font-size: 1rem; /* 16px */
+  font-size: 1rem;
   font-weight: 700;
   color: var(--footer-white);
   line-height: 1.2;
@@ -167,14 +162,14 @@
 
 .brandSubtitle {
   font-family: var(--footer-font);
-  font-size: 0.75rem; /* 12px */
+  font-size: 0.75rem;
   color: var(--footer-muted);
   line-height: 1.2;
 }
 
 .brandDesc {
   font-family: var(--footer-font);
-  font-size: 0.8125rem; /* 13px */
+  font-size: 0.8125rem;
   color: var(--footer-muted);
   line-height: 1.7;
   margin: 0;
@@ -183,11 +178,11 @@
 /* --- Columns 2 & 3: Links --- */
 .colHeading {
   font-family: var(--footer-font);
-  font-size: 0.875rem; /* 14px */
+  font-size: 0.875rem;
   font-weight: 700;
-  color: var(--footer-orange);
+  color: var(--footer-gold);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   margin: 0 0 16px 0;
 }
 
@@ -197,7 +192,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px; /* Breathing room, line-height handles the rest */
+  gap: 8px;
 }
 
 .linkItem {
@@ -206,8 +201,8 @@
 
 .footerLink {
   font-family: var(--footer-font);
-  font-size: 0.8125rem; /* 13px */
-  color: var(--footer-white);
+  font-size: 0.85rem;
+  color: var(--footer-muted);
   text-decoration: none;
   line-height: 2;
   transition: color 0.2s ease;
@@ -224,12 +219,12 @@
   bottom: 0;
   width: 0;
   height: 1px;
-  background: var(--footer-orange);
+  background: var(--footer-gold);
   transition: width 0.2s ease;
 }
 
 .footerLink:hover {
-  color: var(--footer-orange);
+  color: var(--footer-white);
 }
 
 .footerLink:hover::after {
@@ -238,7 +233,7 @@
 
 .externalIcon {
   font-size: 0.75rem;
-  opacity: 0;
+  opacity: 0.5;
   transform: translateX(-4px);
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
@@ -263,7 +258,7 @@
   align-items: flex-start;
   gap: 12px;
   font-family: var(--footer-font);
-  font-size: 0.875rem; /* 14px */
+  font-size: 0.85rem;
   color: var(--footer-muted);
   line-height: 1.5;
 }
@@ -272,7 +267,7 @@
   font-size: 14px;
   margin-top: 2px;
   flex-shrink: 0;
-  color: var(--footer-muted);
+  color: var(--footer-gold) !important;
 }
 
 .socialRow {
@@ -301,8 +296,8 @@
 }
 
 .socialLink:hover {
-  border-color: var(--footer-orange);
-  color: var(--footer-orange);
+  border-color: var(--footer-gold);
+  color: var(--footer-gold);
 }
 
 /* ===================================================
@@ -310,10 +305,11 @@
    =================================================== */
 .footerBottom {
   background: var(--footer-bottom-bg);
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   min-height: 44px;
   display: flex;
   align-items: center;
+  padding: 12px 0;
 }
 
 .bottomContainer {
@@ -328,7 +324,7 @@
 
 .bottomText {
   font-family: var(--footer-font);
-  font-size: 0.75rem; /* 12px */
+  font-size: 0.75rem;
   color: var(--footer-muted);
   margin: 0;
 }
