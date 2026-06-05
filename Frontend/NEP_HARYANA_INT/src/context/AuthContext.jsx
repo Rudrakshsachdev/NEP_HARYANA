@@ -36,6 +36,34 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (!user) return;
+
+    let timeoutId;
+
+    const resetTimer = () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        console.warn("User session timed out due to 10 minutes of inactivity.");
+        logout();
+      }, 10 * 60 * 1000); // 10 minutes = 600,000 ms
+    };
+
+    resetTimer();
+
+    const events = ["mousedown", "mousemove", "keypress", "scroll", "touchstart"];
+    events.forEach((evt) => {
+      window.addEventListener(evt, resetTimer);
+    });
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      events.forEach((evt) => {
+        window.removeEventListener(evt, resetTimer);
+      });
+    };
+  }, [user]);
+
   const login = async (credentials) => {
     try {
       const res = await loginCollege(credentials);
