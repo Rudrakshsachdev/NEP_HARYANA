@@ -5,6 +5,8 @@ import Home from "./pages/Home/Home";
 import AboutUs from "./pages/AboutUs/AboutUs";
 import Institutions from "./pages/Institutions/Institutions";
 import Notifications from "./pages/Notifications/Notifications";
+import Schemes from "./components/Schemes/Schemes";
+import ContactUs from "./pages/ContactUs/ContactUs";
 import Signup from "./pages/Signup/Signup";
 import Signin from "./pages/Signin/Signin";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
@@ -47,6 +49,12 @@ function App() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/institutions" element={<Institutions />} />
         <Route path="/notifications" element={<Notifications />} />
+        <Route path="/schemes" element={
+          <div style={{ paddingTop: '80px' }}>
+            <Schemes />
+          </div>
+        } />
+        <Route path="/contact" element={<ContactUs />} />
 
         {/* Guest Routes */}
         <Route

@@ -38,13 +38,13 @@ function NavbarV2() {
     },
     {
       name: "Schemes",
-      path: null,
-      scrollId: "schemes",
+      path: "/schemes",
+      scrollId: null,
     },
     {
       name: "Contact",
-      path: null,
-      scrollId: "contact",
+      path: "/contact",
+      scrollId: null,
     },
   ];
 
