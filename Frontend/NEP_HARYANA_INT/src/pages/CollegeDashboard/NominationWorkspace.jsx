@@ -782,6 +782,11 @@ export default function NominationWorkspace({ formId, onBack }) {
                   ></span>
                   <span className={styles.indicatorLabel}>
                     Ind {ind.num}: {ind.title.split(" — ")[1]}
+                    {allowedFields.includes(`indicator_${ind.num}`) && (
+                      <span style={{ color: "#d97706", fontSize: "0.6875rem", fontWeight: "bold", marginLeft: "6px", backgroundColor: "#fef3c7", padding: "1px 6px", borderRadius: "4px", border: "1px solid #f59e0b" }}>
+                        Edit Open
+                      </span>
+                    )}
                   </span>
                 </div>
               );
@@ -1030,7 +1035,14 @@ export default function NominationWorkspace({ formId, onBack }) {
                 <article key={ind.num} className={styles.indicatorCard}>
                   <div className={styles.indicatorHeader}>
                     <div className={styles.indicatorTitleGroup}>
-                      <h4>{ind.title}</h4>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                        <h4>{ind.title}</h4>
+                        {allowedFields.includes(`indicator_${ind.num}`) && (
+                          <span style={{ color: "#d97706", fontSize: "0.6875rem", fontWeight: "bold", backgroundColor: "#fef3c7", border: "1px solid #f59e0b", padding: "2px 8px", borderRadius: "9999px" }}>
+                            ✏️ Edit Unlocked
+                          </span>
+                        )}
+                      </div>
                       <p
                         style={{
                           fontSize: "0.75rem",

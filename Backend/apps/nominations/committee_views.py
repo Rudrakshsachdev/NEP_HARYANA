@@ -29,10 +29,10 @@ class CommitteeDashboardStatsView(APIView):
         submitted_qs = Nomination.objects.filter(is_submitted=True)
         
         total_assigned = submitted_qs.count()
-        pending_reviews = submitted_qs.filter(status__in=['Pending Review', 'Under Review']).count()
-        reviewed = submitted_qs.filter(status__in=['Approved', 'Rejected']).count()
+        pending_reviews = submitted_qs.filter(status__in=['Pending Review', 'Under Review', 'Clarification Requested', 'Responded']).count()
+        reviewed = submitted_qs.filter(status__in=['Recommended', 'Not Recommended', 'Approved', 'Rejected']).count()
         clarification_requests = submitted_qs.filter(status='Clarification Requested').count()
-        completed = submitted_qs.filter(status__in=['Approved', 'Rejected']).count()
+        completed = submitted_qs.filter(status__in=['Recommended', 'Not Recommended', 'Approved', 'Rejected']).count()
 
         # Build recent activity from nomination histories
         all_activities = []
@@ -185,8 +185,14 @@ class CommitteeReviewDetailView(APIView):
         if recommendation not in ["Approved", "Rejected", "Sent Back"]:
             return Response({"detail": "Invalid recommendation type."}, status=status.HTTP_400_BAD_REQUEST)
 
-        nom.status = recommendation
-        if recommendation == "Sent Back":
+        status_mapping = {
+            "Approved": "Recommended",
+            "Rejected": "Not Recommended",
+            "Sent Back": "Sent Back"
+        }
+        mapped_status = status_mapping[recommendation]
+        nom.status = mapped_status
+        if mapped_status == "Sent Back":
             nom.is_submitted = False  # Allow principal to edit
 
         if remarks:
@@ -197,7 +203,7 @@ class CommitteeReviewDetailView(APIView):
         nom.history = nom.history or []
         nom.history.append({
             "date": timestamp,
-            "status": recommendation,
+            "status": mapped_status,
             "user": f"{request.user.full_name or request.user.email} (Committee Recommendation)"
         })
         nom.save()

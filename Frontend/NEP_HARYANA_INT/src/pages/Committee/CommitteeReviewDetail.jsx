@@ -186,6 +186,77 @@ const CommitteeReviewDetail = () => {
     );
   }
 
+  const calculateSystemScoreForIndicator = (num, data) => {
+    if (!data || !data.value) return 0;
+    
+    switch (num) {
+      case 1:
+        return data.value === "Yes" ? 4 : 0;
+      case 2:
+        return data.value === "Yes" ? 4 : 0;
+      case 3:
+        return data.value === "Yes" ? Math.min(data.items?.length || 0, 4) : 0;
+      case 4:
+        return data.value === "Yes" ? Math.min(data.items?.length || 0, 4) : 0;
+      case 5:
+        return data.value === "Yes" ? 6 : 0;
+      case 6:
+        return data.value === "Yes" ? 2 : 0;
+      case 7:
+        if (data.value === "A++") return 8;
+        if (data.value === "A+") return 6;
+        if (data.value === "A") return 4;
+        if (data.value === "B+") return 3;
+        if (data.value === "B" || data.value === "C") return 2;
+        return 0;
+      case 8:
+        return data.value === "Yes" ? 2 : 0;
+      case 9:
+        if (data.value === "Yes") {
+          const pct = parseFloat(data.percentage || 0);
+          if (pct > 75) return 8;
+          if (pct > 50) return 6;
+          if (pct > 25) return 4;
+          if (pct > 0) return 2;
+        }
+        return 0;
+      case 10:
+        return data.value === "Yes" ? 4 : 0;
+      case 11:
+        return data.value === "Yes" ? Math.min((data.items?.length || 0) * 2, 4) : 0;
+      case 12:
+        if (data.value === "Yes") {
+          const count = parseInt(data.count || 0, 10);
+          if (count > 10) return 6;
+          if (count >= 6) return 4;
+          if (count >= 1) return 2;
+        }
+        return 0;
+      case 13:
+        return data.value === "Yes" ? 4 : 0;
+      case 14:
+        return data.value === "Yes" ? Math.min(data.items?.length || 0, 6) : 0;
+      case 15:
+        return data.value === "Yes" ? Math.min(data.items?.length || 0, 6) : 0;
+      case 16:
+        return data.value === "Yes" ? Math.min(data.items?.length || 0, 6) : 0;
+      case 17:
+        return data.value === "Yes" ? Math.min(data.items?.length || 0, 6) : 0;
+      case 18:
+        return data.value === "Yes" ? Math.min(data.items?.length || 0, 6) : 0;
+      case 19:
+        return data.value === "Yes" ? 4 : 0;
+      case 20:
+        const pct20 = parseFloat(data.percentage || 0);
+        if (pct20 > 75) return 6;
+        if (pct20 > 50) return 4;
+        if (pct20 > 0) return 2;
+        return 0;
+      default:
+        return 0;
+    }
+  };
+
   const liveTotalScore = Object.values(tempScores).reduce((sum, v) => sum + v, 0);
 
   return (
@@ -330,18 +401,23 @@ const CommitteeReviewDetail = () => {
                     </div>
 
                     {/* Evaluated Score editor */}
-                    <div className="flex items-center justify-end space-x-2 pt-2">
-                      <span className="text-xs font-bold text-slate-500">Verified Score:</span>
-                      <div className="flex items-center space-x-2 bg-white border border-slate-200 rounded-lg p-1.5">
-                        <input
-                          type="number"
-                          min="0"
-                          max={ind.max}
-                          className="w-10 text-center font-bold text-xs text-slate-800 focus:outline-none"
-                          value={scoreVal}
-                          onChange={(e) => handleScoreChange(key, e.target.value, ind.max)}
-                        />
-                        <span className="text-xs text-slate-400 font-bold">/ {ind.max}</span>
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-100/80">
+                      <div className="text-xs text-slate-500 font-medium">
+                        Claimed Score: <span className="font-extrabold text-orange-600 bg-orange-50 border border-orange-100 px-2 py-0.5 rounded-full">{calculateSystemScoreForIndicator(ind.num, data)} / {ind.max}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-xs font-bold text-slate-500">Verified Score:</span>
+                        <div className="flex items-center space-x-2 bg-white border border-slate-200 rounded-lg p-1.5 shadow-sm">
+                          <input
+                            type="number"
+                            min="0"
+                            max={ind.max}
+                            className="w-10 text-center font-bold text-xs text-slate-800 focus:outline-none"
+                            value={scoreVal}
+                            onChange={(e) => handleScoreChange(key, e.target.value, ind.max)}
+                          />
+                          <span className="text-xs text-slate-400 font-bold">/ {ind.max}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
