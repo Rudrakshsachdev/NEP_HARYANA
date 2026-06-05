@@ -5,7 +5,6 @@ import {
   fetchColleges,
 } from "../../api/auth";
 import { useAuth } from "../../context/AuthContext.jsx";
-import SignupHero from "./SignupHero";
 import styles from "./Signup.module.css";
 
 const initialFormState = {
@@ -144,18 +143,15 @@ function Signup() {
   return (
     <main className={styles.pageShell}>
       <div className={styles.pageGlow} aria-hidden="true" />
-      <div className={styles.pageContainer}>
-        <SignupHero />
-
+      <div className={`${styles.pageContainer} ${styles.centerFormWrapper}`}>
         <section className={styles.formPanel} aria-labelledby="signup-title">
           <div className={styles.formHeader}>
             <span className={styles.formBadge}>Create account</span>
-            <h1 id="signup-title" className={styles.formTitle}>
-              Register your institution access
-            </h1>
+            <h2 id="signup-title" className={styles.formTitle}>
+              Applicant Registration
+            </h2>
             <p className={styles.formIntro}>
-              Enter your official details to create a secure account for the
-              higher education portal.
+              Please fill in the details below to register on the portal.
             </p>
           </div>
 

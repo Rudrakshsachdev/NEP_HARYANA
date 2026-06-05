@@ -305,3 +305,14 @@
     align-items: flex-start;
   }
 }
+
+.centerFormWrapper {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  align-items: center;
+}
+
+.centerFormWrapper .recoveryCard {
+  max-width: 560px;
+  width: 100%;
+}
