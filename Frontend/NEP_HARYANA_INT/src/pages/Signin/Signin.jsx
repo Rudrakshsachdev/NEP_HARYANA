@@ -52,12 +52,9 @@ function Signin() {
         <section className={styles.formPanel} aria-labelledby="signin-title">
           <div className={styles.formHeader}>
             <span className={styles.formBadge}>Sign in</span>
-            <h1 id="signin-title" className={styles.formTitle}>
-              Access your institutional dashboard
-            </h1>
-            <p className={styles.formIntro}>
-              Enter your credentials to access the higher education portal.
-            </p>
+            <h2 id="signin-title" className={styles.formTitle}>
+              Access your portal dashboard using your registered credentials.
+            </h2>
           </div>
 
           {status.message && (

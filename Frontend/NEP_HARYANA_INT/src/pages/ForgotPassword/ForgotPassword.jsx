@@ -34,7 +34,7 @@ function ForgotPassword() {
   return (
     <main className={styles.pageShell}>
       <div className={styles.pageGlow} aria-hidden="true" />
-      <div className={styles.pageContainer}>
+      <div className={`${styles.pageContainer} ${styles.centerFormWrapper}`}>
         <section className={styles.recoveryCard} aria-labelledby="forgot-password-title">
           <span className={styles.badge}>Password recovery</span>
           <h1 id="forgot-password-title" className={styles.title}>
@@ -87,31 +87,6 @@ function ForgotPassword() {
             </div>
           </form>
         </section>
-
-        <aside className={styles.infoCard} aria-label="Password reset guidance">
-          <span className={styles.infoLabel}>What happens next</span>
-          <h2>We send a direct link to a reset page, not a plain password.</h2>
-          <div className={styles.infoList}>
-            <div className={styles.infoItem}>
-              <span className={styles.infoDot} aria-hidden="true" />
-              <p>The email contains a secure frontend URL with a one-time token.</p>
-            </div>
-            <div className={styles.infoItem}>
-              <span className={styles.infoDot} aria-hidden="true" />
-              <p>After verification, you can set a new password from the browser.</p>
-            </div>
-            <div className={styles.infoItem}>
-              <span className={styles.infoDot} aria-hidden="true" />
-              <p>Once the password changes, the old login token is invalidated.
-              </p>
-            </div>
-          </div>
-          <div className={styles.infoFoot}>
-            <p>
-              If you do not receive the email, check spam or verify that the address matches your registered account.
-            </p>
-          </div>
-        </aside>
       </div>
     </main>
   );
