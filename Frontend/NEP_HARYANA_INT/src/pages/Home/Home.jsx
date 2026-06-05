@@ -10,8 +10,9 @@ function Home() {
       <HeroV2 />
       <LeadershipSection />
       <AboutSystem />
-      <Schemes />
       <StatsAndNews />
+      <Schemes />
+
     </main>
   );
 }
